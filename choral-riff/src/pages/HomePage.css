@@ -1,0 +1,210 @@
+/* src/pages/HomePage.css */
+
+/* Variables de couleur pour une maintenance facile */
+:root {
+  --primary-color: #f38d68; /* Orange/Pêche du bouton */
+  --dark-text: #333;
+  --light-text: #fff;
+  --background-light: #f9f9f9; /* Gris très clair pour les sections */
+  --border-color: #eee;
+}
+
+/* Styles globaux pour la page */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home-container {
+  color: var(--dark-text);
+  text-align: center;
+}
+
+/* 1. Header */
+.home-header {
+  background-color: var(--primary-color); /* CHANGEMENT: Le fond du header est orange */
+  color: var(--light-text); /* CHANGEMENT: Le texte du header est blanc */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--light-text); /* Le texte du logo est blanc pour se détacher du fond orange */
+}
+
+.menu-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* 2. Hero Section */
+.hero-section {
+  position: relative;
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.hero-section h1 {
+  color: var(--light-text);
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Améliore la lisibilité */
+}
+
+/* 3. Features Section */
+.features-section {
+  background-color: white; /* Le fond reste blanc comme l'original */
+  color: var(--dark-text); /* Le texte reste noir comme l'original */
+  padding: 3rem 1rem;
+}
+
+.features-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 500px;
+  margin: auto;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* 4. Testimonials Section */
+.testimonials-section {
+  padding: 3rem 1rem;
+  background-color: var(--background-light); /* MAINTIEN */
+}
+
+.testimonials-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.testimonials-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.testimonial-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* MAINTIEN */
+  color: var(--dark-text);
+}
+
+/* Assurez-vous d'utiliser des <img> dans votre JSX ! */
+.testimonial-card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  object-fit: cover;
+}
+
+/* 5. Call to Action (CTA) Section */
+.cta-section {
+  padding: 3rem 1rem;
+  background-color: var(--background-light); /* MAINTIEN */
+}
+
+.cta-section h4 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.cta-button {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  border-radius: 50px;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #e5734f;
+  transform: scale(1.05);
+}
+
+/* 6. Footer */
+.home-footer {
+  background-color: #2c2c2c;
+  color: var(--light-text);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.home-footer a {
+  color: var(--light-text);
+  text-decoration: none;
+}
+
+/* --- MEDIA QUERIES --- */
+@media (min-width: 768px) {
+  .testimonials-container {
+    flex-direction: row;
+    justify-content: center;
+    max-width: 900px;
+    margin: auto;
+  }
+  .home-footer {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1000px;
+  }
+}
