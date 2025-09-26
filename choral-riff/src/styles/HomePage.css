@@ -22,8 +22,8 @@ body {
 
 /* 1. Header */
 .home-header {
-  background-color: var(--primary-color); /* CHANGEMENT: Le fond du header est orange */
-  color: var(--light-text); /* CHANGEMENT: Le texte du header est blanc */
+  background-color: #FFDDCC; /* Maintien la couleur de fond */
+  color: var(--dark-text);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -40,7 +40,15 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--light-text); /* Le texte du logo est blanc pour se détacher du fond orange */
+  color: var(--light-text); /* Le texte est maintenant blanc */
+  /* Ajout du contour noir sur tout le texte du logo */
+  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+}
+
+/* La classe pour les lettres C et R en orange */
+.logo-orange {
+  color: #F58159; /* Couleur orange pour C et R */
+  text-shadow: none; /* Supprime l'ombre noire pour ces lettres afin de les faire ressortir */
 }
 
 .menu-icon {
@@ -81,8 +89,8 @@ body {
 
 /* 3. Features Section */
 .features-section {
-  background-color: white; /* Le fond reste blanc comme l'original */
-  color: var(--dark-text); /* Le texte reste noir comme l'original */
+  background-color: white; /* Le fond reste blanc */
+  color: var(--dark-text); /* Le texte reste noir */
   padding: 3rem 1rem;
 }
 
@@ -127,11 +135,12 @@ body {
   background-color: white;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* MAINTIEN */
+  /* La première ombre est une ombre portée, la deuxième est l'ombre intérieure */
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1), inset 0 0 20px rgba(0,0,0,0.1);
   color: var(--dark-text);
+  border: none; 
 }
 
-/* Assurez-vous d'utiliser des <img> dans votre JSX ! */
 .testimonial-card img {
   width: 70px;
   height: 70px;
@@ -143,17 +152,31 @@ body {
 /* 5. Call to Action (CTA) Section */
 .cta-section {
   padding: 3rem 1rem;
-  background-color: var(--background-light); /* MAINTIEN */
+  background-color: var(--background-light); /* Le fond de la section reste gris clair */
 }
 
-.cta-section h4 {
+/* Style de la boîte */
+.cta-box {
+  /* CHANGEMENT: La couleur de fond est maintenant #FFDDCC */
+  background-color: #FFDDCC; 
+  color: var(--dark-text); /* Le texte est maintenant noir pour contraster sur le fond clair */
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 0 20px rgba(0,0,0,0.1); 
+}
+
+.cta-box h4 {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
+/* Ajustement du bouton : Fond ORANGE F58159, Texte BLANC */
 .cta-button {
-  background-color: var(--primary-color);
-  color: var(--light-text);
+  /* CHANGEMENT: Le fond du bouton est maintenant #F58159 */
+  background-color: #F58159; 
+  color: var(--light-text); /* Texte en blanc pour un bon contraste */
   border: none;
   border-radius: 50px;
   padding: 1rem 2.5rem;
@@ -163,12 +186,17 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 1rem;
-  transition: transform 0.2s ease, background-color 0.3s ease;
+  
+  /* Ajout de l'ombre pour l'effet de relief */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
+  
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 .cta-button:hover {
-  background-color: #e5734f;
-  transform: scale(1.05);
+  background-color: #e5734f; /* Une couleur légèrement plus foncée au survol */
+  transform: translateY(-2px); 
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3); 
 }
 
 /* 6. Footer */

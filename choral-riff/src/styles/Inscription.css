@@ -1,0 +1,161 @@
+/* src/pages/Inscription.css */
+
+/* Variables de couleur pour une maintenance facile */
+:root {
+  --primary-color: #f38d68; /* Orange/Pêche du bouton */
+  --dark-text: #333;
+  --light-text: #fff;
+  --background-light: #f9f9f9; /* Gris très clair pour les sections */
+  --border-color: #eee;
+  --header-bg: #FFDDCC; /* Couleur de fond du header pour correspondre à la maquette */
+}
+
+/* Styles globaux */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.inscription-container {
+  color: var(--dark-text);
+  text-align: center;
+}
+
+/* Header (réutilisé de la page d'accueil) */
+.home-header {
+  background-color: var(--header-bg);
+  color: var(--dark-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  /* Pour le texte du logo sans image */
+  color: #fff;
+  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+}
+
+/* Section du formulaire */
+.form-section {
+  padding: 2rem 1rem;
+  background-color: var(--background-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1), inset 0 0 20px rgba(0,0,0,0.1); 
+  width: 90%;
+  max-width: 400px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  /* Couleur de fond des champs */
+  background-color: #F4F0FF; 
+  /* Couleur du texte tapé dans le champ (maintenant noir/dark-text) */
+  color: var(--dark-text); 
+}
+
+.form-input::placeholder {
+  /* CHANGEMENT: Un noir presque complet pour une lisibilité maximale */
+  color: #333; 
+  opacity: 1; /* Assure que la couleur est appliquée sans transparence */
+}
+
+.validate-button {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 2.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.validate-button:hover {
+  background-color: #e5734f;
+  transform: scale(1.05);
+}
+
+/* Section de la bannière */
+.banner-section {
+  position: relative;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.banner-overlay p {
+  color: var(--light-text);
+  font-size: 1rem;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+  padding: 0 1rem;
+}
+
+/* Footer (réutilisé de la page d'accueil) */
+.home-footer {
+  background-color: #2c2c2c;
+  color: var(--light-text);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.home-footer a {
+  color: var(--light-text);
+  text-decoration: none;
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+  .home-footer {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+}

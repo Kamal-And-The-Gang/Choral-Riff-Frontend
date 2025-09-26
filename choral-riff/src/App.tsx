@@ -1,17 +1,21 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
+import { Inscription } from './pages/Inscription';
+import { Connexion } from './pages/Connexion';
+import { Ensembles } from './pages/Ensembles';
 
-
-function App() {
+export const App = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        {/* <Route path="/login" element={<LoginPage />} /> */}
-        {/* ... autres routes */}
+        <Route path="/inscription" element={<Inscription />} />
+        <Route path="/connexion" element={<Connexion />} />
+        <Route path="/ensembles" element={<Ensembles />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

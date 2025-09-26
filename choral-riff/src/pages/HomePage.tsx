@@ -1,11 +1,10 @@
 import React from 'react';
-import './HomePage.css'; // Nous allons créer ce fichier CSS juste après
+import '../styles/HomePage.css';
 import { FaUsers, FaFileAlt, FaPlayCircle, FaHandshake, FaBars, FaMusic } from 'react-icons/fa';
 
-// Importe les images depuis le dossier assets
-import heroImage from '../assets/hero-background.jpg'// Mettez votre image de fond ici
-import avatarLucas from '../assets/avatar-lucas.jpg'; // Mettez l'avatar de Lucas ici
-import avatarFlo from '../assets/avatar-flo.jpg'; // Mettez l'avatar de Flo ici
+import heroImage from '../assets/hero-background.jpg'
+import avatarLucas from '../assets/avatar-lucas.jpg';
+import avatarFlo from '../assets/avatar-flo.jpg';
 
 
 export const HomePage = () => {
@@ -69,12 +68,16 @@ export const HomePage = () => {
 
         {/* 5. Section "Call to Action" */}
         <section className="cta-section">
-          <h4>Entre dans la vibe !</h4>
-          <button className="cta-button">
-            S'inscrire 
-            {/* L'icône de l'onde sonore est complexe, on la simule ici */}
-            <span className="sound-wave">|||</span>
-          </button>
+          {/* NOUVEAU: Ajout de la div pour la boîte orange */}
+          <div className="cta-box"> 
+            <h4>Entre dans la vibe !</h4>
+            <a href="/Inscription">
+              <button className="cta-button">
+                S'inscrire 
+                <span className="sound-wave">|||</span>
+              </button>
+            </a>
+          </div>
         </section>
       </main>
 
