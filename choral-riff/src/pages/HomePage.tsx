@@ -1,6 +1,7 @@
-import React from 'react';
+import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
 import '../styles/HomePage.css';
-import { FaUsers, FaFileAlt, FaPlayCircle, FaHandshake, FaBars, FaMusic } from 'react-icons/fa';
+import { FaUsers, FaFileAlt, FaPlayCircle, FaHandshake } from 'react-icons/fa';
 
 import heroImage from '../assets/hero-background.jpg'
 import avatarLucas from '../assets/avatar-lucas.jpg';
@@ -11,14 +12,7 @@ export const HomePage = () => {
   return (
     <div className="home-container">
       {/* 1. Header */}
-      <header className="home-header">
-        <div className="logo">
-          <FaMusic /> Choral Riff
-        </div>
-        <div className="menu-icon">
-          <FaBars />
-        </div>
-      </header>
+      <Header />
 
       <main>
         {/* 2. Section "Hero" */}
@@ -69,11 +63,11 @@ export const HomePage = () => {
         {/* 5. Section "Call to Action" */}
         <section className="cta-section">
           {/* NOUVEAU: Ajout de la div pour la boîte orange */}
-          <div className="cta-box"> 
+          <div className="cta-box">
             <h4>Entre dans la vibe !</h4>
             <a href="/Inscription">
               <button className="cta-button">
-                S'inscrire 
+                S'inscrire
                 <span className="sound-wave">|||</span>
               </button>
             </a>
@@ -81,12 +75,8 @@ export const HomePage = () => {
         </section>
       </main>
 
-      {/* 6. Footer */}
-      <footer className="home-footer">
-        <a href="#">Liens utiles</a>
-        <a href="#">Contacts</a>
-        <a href="#">Mentions légales</a>
-      </footer>
+      {/* 6. Footer*/}
+      <Footer />
     </div>
   );
 };

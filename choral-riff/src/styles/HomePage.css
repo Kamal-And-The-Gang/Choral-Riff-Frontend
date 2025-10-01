@@ -40,9 +40,12 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--light-text); /* Le texte est maintenant blanc */
-  /* Ajout du contour noir sur tout le texte du logo */
+  color: var(--light-text);
   text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+}
+.logo-link {
+    text-decoration: none;
+    cursor: pointer;
 }
 
 /* La classe pour les lettres C et R en orange */
@@ -51,10 +54,49 @@ body {
   text-shadow: none; /* Supprime l'ombre noire pour ces lettres afin de les faire ressortir */
 }
 
+.nav-menu {
+  position: relative;
+}
+
 .menu-icon {
   font-size: 1.5rem;
   cursor: pointer;
+  z-index: 100; 
 }
+
+.main-nav-links {
+  /* Par défaut, masque les liens pour le mobile */
+  display: none; 
+}
+
+.main-nav-links.open {
+  display: flex; 
+  flex-direction: column;
+  
+  position: absolute;
+  top: 100%; 
+  right: 1.5rem; 
+  
+  background-color: white; 
+  min-width: 180px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  padding: 0; 
+  z-index: 90;
+  overflow: hidden;
+}
+.main-nav-links.open a {
+  color: var(--dark-text);
+  text-align: left; 
+  padding: 0.75rem 1.5rem; 
+  text-decoration: none;
+  width: 100%; 
+  transition: background-color 0.3s ease;
+}
+.main-nav-links.open a:hover {
+  background-color: var(--background-light);
+}
+
 
 /* 2. Hero Section */
 .hero-section {
@@ -217,6 +259,32 @@ body {
 
 /* --- MEDIA QUERIES --- */
 @media (min-width: 768px) {
+
+  .menu-icon {
+    /* Cache l'icône burger sur les grands écrans */
+    display: none;
+  }
+  
+  .main-nav-links {
+    /* Affiche les liens en ligne sur les grands écrans */
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .main-nav-links a {
+    color: var(--dark-text); /* Couleur du texte (noir) */
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .main-nav-links a:hover {
+    background-color: rgba(243, 141, 104, 0.2); /* Un fond légèrement orangé au survol */
+  }
+
   .testimonials-container {
     flex-direction: row;
     justify-content: center;

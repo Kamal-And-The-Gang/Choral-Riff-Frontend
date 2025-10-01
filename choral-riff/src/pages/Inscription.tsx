@@ -1,27 +1,18 @@
-import React from 'react';
+import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
 import '../styles/Inscription.css';
-import { FaBars } from 'react-icons/fa';
 import registrationBanner from '../assets/registration-banner.jpg'; // Mettez votre image de bannière ici
 
 
 
 export const Inscription = () => {
   return (
-    <div className="inscription-container">
-      <header className="home-header">
-        {/*
-          Remplacez le texte par une image de logo si vous en avez une.
-          Sinon, gardez la structure de la maquette.
-        */}
-        <div className="logo">
-          Choral Riff
-        </div>
-        <div className="menu-icon">
-          <FaBars />
-        </div>
-      </header>
+    <div className="home-container">
+      {/* 1. Header  */}
+      <Header />
 
       <main>
+        {/* 2. Formulaire*/}
         <section className="form-section">
           <h2>Inscription</h2>
           <div className="form-card">
@@ -43,11 +34,8 @@ export const Inscription = () => {
         </section>
       </main>
 
-      <footer className="home-footer">
-        <a href="#">Liens utiles</a>
-        <a href="#">Contacts</a>
-        <a href="#">Mentions légales</a>
-      </footer>
+      {/* 3. Footer*/}
+      <Footer />
     </div>
   );
 };

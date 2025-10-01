@@ -1,25 +1,18 @@
-import React from 'react';
-import '../styles/Connexion.css'; // Nouveau fichier CSS
-import { FaBars } from 'react-icons/fa';
+
+import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
+import '../styles/Connexion.css';
 import registrationBanner from '../assets/registration-banner.jpg'; // Réutilisation de la bannière
 
-// Assurez-vous d'avoir une image de logo si vous en avez une.
 
 export const Connexion = () => {
   return (
-    <div className="connexion-container">
-      {/* 1. Header (Identique à la page Inscription/Home) */}
-      <header className="home-header">
-        <div className="logo">
-          Choral Riff
-        </div>
-        <div className="menu-icon">
-          <FaBars />
-        </div>
-      </header>
+    <div className="home-container">
+      {/* 1. Header  */}
+      <Header />
 
       <main>
-        {/* Section du formulaire */}
+        {/* 2. Section du formulaire */}
         <section className="form-section">
           <h2>Connexion</h2>
           <div className="form-card">
@@ -31,7 +24,7 @@ export const Connexion = () => {
           </div>
         </section>
 
-        {/* Section de la bannière (Identique à la page Inscription) */}
+        {/*3. Section de la bannière (Identique à la page Inscription) */}
         <section className="banner-section" style={{ backgroundImage: `url(${registrationBanner})` }}>
           <div className="banner-overlay">
             <p>"Simplifiez le partage, l'écoute et l'organisation de vos partitions et fichiers audios"</p>
@@ -39,12 +32,8 @@ export const Connexion = () => {
         </section>
       </main>
 
-      {/* Footer (Identique) */}
-      <footer className="home-footer">
-        <a href="#">Liens utiles</a>
-        <a href="#">Contacts</a>
-        <a href="#">Mentions légales</a>
-      </footer>
+      {/* 4. Footer*/}
+      <Footer />
     </div>
   );
 };

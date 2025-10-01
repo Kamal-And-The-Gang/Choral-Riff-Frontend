@@ -1,0 +1,295 @@
+/* src/styles/EnsembleDetails.css */
+
+/* --- Variables de couleur (réutilisées) --- */
+:root {
+  --primary-color: #f38d68; 
+  --dark-text: #333;
+  --light-text: #fff;
+  --background-light: #f9f9f9; 
+  --card-background: #ffffff;
+}
+
+.details-container {
+    background-color: var(--background-light); 
+    min-height: 100vh;
+    padding-bottom: 2rem;
+}
+
+.details-main {
+    padding: 1rem;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* --- 1. Bannière/Titre 'Fiche ensemble' --- */
+.ensemble-header-section.detail-header {
+    background-color: #f9f9f9; /* Fond clair pour laisser l'image se démarquer */
+    height: 150px;
+    background-image: url('../assets/ensemble-banner-bg.jpg'); /* Image de fond de la maquette */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 0;
+    margin-bottom: -50px; /* Remonter la carte */
+}
+
+.fiche-title-box {
+    /* Positionnement de la boîte de titre blanche et rose */
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background-color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    /* Ombre subtilement rosée/orange comme sur la maquette */
+    box-shadow: 0 4px 15px rgba(243, 141, 104, 0.4); 
+}
+
+.fiche-title {
+    color: var(--dark-text);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* --- 2. Carte de Contenu Principal (Fiche) --- */
+.details-content-card.fiche-card {
+    background-color: var(--card-background);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1), inset 0 0 20px rgba(0,0,0,0.1); 
+    border-radius: 12px;
+    position: relative;
+    z-index: 5;
+    padding: 1.5rem 1rem;
+    text-align: left;
+}
+
+/* Infos de l'ensemble (Haut) */
+.ensemble-info-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--background-light);
+}
+
+.ensemble-profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.ensemble-info-details h2 {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+}
+.ensemble-info-details p {
+    font-size: 0.9rem;
+    margin: 0 0 0.2rem 0;
+    color: #666;
+}
+
+.members-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--dark-text);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+/* --- 3. Sections de Contenu --- */
+.section-title {
+    font-size: 1.2rem;
+    margin: 1.5rem 0 1rem 0;
+}
+.subsection-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+/* Dernière Track */
+.last-track-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--background-light);
+    padding: 1rem;
+    border-radius: 8px;
+}
+.track-icon {
+    color: var(--primary-color);
+}
+.track-info p {
+    margin: 0;
+    line-height: 1.2;
+}
+.track-title-name {
+    font-weight: bold;
+    color: var(--dark-text);
+}
+.track-subtitle {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* Fichiers et Audios (Vidéos) */
+.video-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.video-vignette {
+    /* Fond gris foncé comme sur la maquette */
+    background-color: #444; 
+    color: var(--light-text);
+    flex-basis: calc(50% - 0.5rem); 
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.play-icon {
+    color: var(--primary-color);
+}
+
+.video-text p {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+.youtube-tag {
+    font-weight: bold;
+    color: #f38d68; /* Couleur du texte sur le fond sombre */
+    font-size: 0.7rem !important;
+    text-align: right;
+    margin-top: 0.2rem;
+}
+
+/* --- 4. Boutons d'Action --- */
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.share-button {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 50%; /* Bouton rond */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.share-button:hover {
+    background-color: rgba(243, 141, 104, 0.1);
+}
+
+.invite-button {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.scores-list {
+    margin-bottom: 2rem; /* Espace avant la prochaine section */
+}
+
+.score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--background-light);
+    color: var(--dark-text);
+}
+
+.score-item:last-child {
+    border-bottom: none;
+}
+
+.score-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* Permet à cette section de prendre le plus d'espace */
+}
+
+.score-icon {
+    color: #4CAF50; /* Couleur verte pour les icônes de fichiers PDF/Partitions */
+    margin-right: 1rem;
+}
+
+.score-name {
+    font-weight: 500;
+}
+
+.score-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.score-format, .score-size {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.download-button {
+    background: none;
+    border: 1px solid #ccc;
+    color: var(--dark-text);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.download-button:hover {
+    background-color: var(--background-light);
+}
+
+/* --- Style du bouton d'ajout de fichier --- */
+.add-file-section {
+    text-align: right; /* Aligner le bouton à droite */
+    margin-bottom: 1.5rem;
+}
+
+.add-file-button {
+    background-color: #5cb85c; /* Vert pour l'action d'ajout/succès */
+    color: var(--light-text);
+    border: none;
+    border-radius: 50px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: background-color 0.2s;
+}
+
+.add-file-button:hover {
+    background-color: #4cae4c;
+}
