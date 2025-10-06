@@ -2,10 +2,10 @@
 
 /* Variables de couleur et styles de base réutilisés */
 :root {
-  --primary-color: #f38d68; /* Orange/Pêche du bouton */
+  --primary-color: #f38d68;
   --dark-text: #333;
   --light-text: #fff;
-  --background-light: #f9f9f9; /* Gris très clair pour les sections */
+  --background-light: #f9f9f9; 
   --header-bg: #FFDDCC;
 }
 

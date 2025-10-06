@@ -67,7 +67,7 @@ export const EnsembleDetails = () => {
         creator: "Michelle Leeb",
         createdDate: "18/08/2025",
         membersCount: 58,
-        profilePic: '../assets/ensemble-pic.jpg', // À remplacer
+        profilePic: '../assets/ensemble-pic.jpg', 
         lastTrack: {
             title: "What's My Name ?",
             ensemble: "Ensemble : Snoop Dogg",

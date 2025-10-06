@@ -2,12 +2,12 @@
 
 /* Variables de couleur pour une maintenance facile */
 :root {
-  --primary-color: #f38d68; /* Orange/Pêche du bouton */
+  --primary-color: #f38d68; 
   --dark-text: #333;
   --light-text: #fff;
-  --background-light: #f9f9f9; /* Gris très clair pour les sections */
+  --background-light: #f9f9f9;
   --border-color: #eee;
-  --header-bg: #FFDDCC; /* Couleur de fond du header */
+  --header-bg: #FFDDCC; 
 }
 
 /* Styles globaux */
@@ -38,7 +38,6 @@ body {
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  /* Style du logo texte */
   color: #fff;
   text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
 }
@@ -75,13 +74,11 @@ body {
   border-radius: 8px;
   box-sizing: border-box;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  /* Style des champs selon la dernière correction */
   background-color: #F4F0FF; 
   color: var(--dark-text); 
 }
 
 .form-input::placeholder {
-  /* Placeholder en noir */
   color: #333; 
   opacity: 1;
 }

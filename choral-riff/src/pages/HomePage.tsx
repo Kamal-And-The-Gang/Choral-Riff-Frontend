@@ -62,7 +62,6 @@ export const HomePage = () => {
 
         {/* 5. Section "Call to Action" */}
         <section className="cta-section">
-          {/* NOUVEAU: Ajout de la div pour la boîte orange */}
           <div className="cta-box">
             <h4>Entre dans la vibe !</h4>
             <a href="/Inscription">

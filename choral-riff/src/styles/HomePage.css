@@ -194,14 +194,14 @@ body {
 /* 5. Call to Action (CTA) Section */
 .cta-section {
   padding: 3rem 1rem;
-  background-color: var(--background-light); /* Le fond de la section reste gris clair */
+  background-color: var(--background-light); 
 }
 
 /* Style de la boîte */
 .cta-box {
   /* CHANGEMENT: La couleur de fond est maintenant #FFDDCC */
   background-color: #FFDDCC; 
-  color: var(--dark-text); /* Le texte est maintenant noir pour contraster sur le fond clair */
+  color: var(--dark-text); 
   padding: 1.5rem 1rem;
   border-radius: 12px;
   max-width: 400px;
@@ -216,9 +216,8 @@ body {
 
 /* Ajustement du bouton : Fond ORANGE F58159, Texte BLANC */
 .cta-button {
-  /* CHANGEMENT: Le fond du bouton est maintenant #F58159 */
   background-color: #F58159; 
-  color: var(--light-text); /* Texte en blanc pour un bon contraste */
+  color: var(--light-text);
   border: none;
   border-radius: 50px;
   padding: 1rem 2.5rem;
@@ -228,15 +227,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 1rem;
-  
-  /* Ajout de l'ombre pour l'effet de relief */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
-  
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);  
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 .cta-button:hover {
-  background-color: #e5734f; /* Une couleur légèrement plus foncée au survol */
+  background-color: #e5734f; 
   transform: translateY(-2px); 
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3); 
 }
@@ -273,7 +269,7 @@ body {
   }
   
   .main-nav-links a {
-    color: var(--dark-text); /* Couleur du texte (noir) */
+    color: var(--dark-text);
     text-decoration: none;
     font-weight: 500;
     padding: 0.5rem 0.75rem;
@@ -282,7 +278,7 @@ body {
   }
   
   .main-nav-links a:hover {
-    background-color: rgba(243, 141, 104, 0.2); /* Un fond légèrement orangé au survol */
+    background-color: rgba(243, 141, 104, 0.2);
   }
 
   .testimonials-container {

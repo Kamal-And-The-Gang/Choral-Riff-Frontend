@@ -25,12 +25,12 @@
 .ensemble-header-section.detail-header {
     background-color: #f9f9f9; /* Fond clair pour laisser l'image se démarquer */
     height: 150px;
-    background-image: url('../assets/ensemble-banner-bg.jpg'); /* Image de fond de la maquette */
+    background-image: url('../assets/ensemble-banner-bg.jpg'); 
     background-size: cover;
     background-position: center;
     position: relative;
     padding: 0;
-    margin-bottom: -50px; /* Remonter la carte */
+    margin-bottom: -50px; 
 }
 
 .fiche-title-box {
@@ -42,7 +42,6 @@
     background-color: white;
     padding: 0.5rem 1.5rem;
     border-radius: 8px;
-    /* Ombre subtilement rosée/orange comme sur la maquette */
     box-shadow: 0 4px 15px rgba(243, 141, 104, 0.4); 
 }
 
@@ -145,7 +144,6 @@
 }
 
 .video-vignette {
-    /* Fond gris foncé comme sur la maquette */
     background-color: #444; 
     color: var(--light-text);
     flex-basis: calc(50% - 0.5rem); 
@@ -168,7 +166,7 @@
 }
 .youtube-tag {
     font-weight: bold;
-    color: #f38d68; /* Couleur du texte sur le fond sombre */
+    color: #f38d68; 
     font-size: 0.7rem !important;
     text-align: right;
     margin-top: 0.2rem;
@@ -186,7 +184,7 @@
     background-color: transparent;
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    border-radius: 50%; /* Bouton rond */
+    border-radius: 50%; 
     width: 40px;
     height: 40px;
     display: flex;
@@ -212,7 +210,7 @@
 }
 
 .scores-list {
-    margin-bottom: 2rem; /* Espace avant la prochaine section */
+    margin-bottom: 2rem; 
 }
 
 .score-item {
@@ -231,11 +229,11 @@
 .score-info {
     display: flex;
     align-items: center;
-    flex-grow: 1; /* Permet à cette section de prendre le plus d'espace */
+    flex-grow: 1; 
 }
 
 .score-icon {
-    color: #4CAF50; /* Couleur verte pour les icônes de fichiers PDF/Partitions */
+    color: #4CAF50; 
     margin-right: 1rem;
 }
 
@@ -275,7 +273,7 @@
 }
 
 .add-file-button {
-    background-color: #5cb85c; /* Vert pour l'action d'ajout/succès */
+    background-color: #5cb85c;
     color: var(--light-text);
     border: none;
     border-radius: 50px;

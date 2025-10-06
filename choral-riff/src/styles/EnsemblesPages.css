@@ -128,12 +128,12 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Ombre plus visible */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     transition: background-color 0.2s;
 }
 
 .add-ensemble-button:hover {
-    background-color: #e5734f; /* Assombrissement léger au survol */
+    background-color: #e5734f;
 }
 
 /* --- 5. Liste des Ensembles (Grille) --- */
@@ -146,9 +146,8 @@
 
 /* Le lien qui enveloppe la carte */
 .ensemble-card-link {
-    text-decoration: none; /* Supprime le soulignement du lien */
-    color: inherit; /* Hérite de la couleur du texte parent */
-    /* Permet de définir une largeur sur le lien */
+    text-decoration: none;
+    color: inherit; 
     display: block; 
 }
 
@@ -161,9 +160,8 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     cursor: pointer;
     transition: transform 0.2s;
-    /* Pour avoir 2 colonnes sur la plupart des mobiles, ajustez la taille */
     flex-basis: calc(50% - 0.5rem); 
-    max-width: 200px; /* Limite la taille des cartes individuelles */
+    max-width: 200px; 
 }
 
 .ensemble-card-item:hover {
