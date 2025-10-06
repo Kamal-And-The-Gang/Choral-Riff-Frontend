@@ -1,0 +1,164 @@
+/* src/styles/Ensembles.css */
+
+/* Variables de couleur et styles de base réutilisés */
+:root {
+  --primary-color: #f38d68; /* Orange/Pêche du bouton */
+  --dark-text: #333;
+  --light-text: #fff;
+  --background-light: #f9f9f9; /* Gris très clair pour les sections */
+  --header-bg: #FFDDCC;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: white;
+}
+
+.ensembles-container {
+  color: var(--dark-text);
+  text-align: center;
+}
+
+/* Styles du Header (basés sur home-header) */
+.home-header {
+  background-color: var(--header-bg);
+  color: var(--dark-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Section principale */
+.ensembles-main {
+  padding: 2rem 1rem;
+  background-color: white; 
+}
+
+.ensembles-header-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.ensembles-header-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Bouton Créer un nouvel ensemble */
+.new-ensemble-button {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.new-ensemble-button:hover {
+  background-color: #e5734f;
+}
+
+/* Liste des ensembles */
+.ensembles-list {
+  display: grid;
+  grid-template-columns: 1fr; 
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ensemble-card {
+  background-color: var(--background-light); 
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ensemble-icon {
+    color: var(--primary-color);
+}
+
+.ensemble-details {
+    flex-grow: 1;
+}
+
+.ensemble-details h3 {
+    margin: 0 0 0.2rem 0;
+    font-size: 1.1rem;
+}
+
+.ensemble-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.view-ensemble-button {
+  background-color: #555; 
+  color: var(--light-text);
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.view-ensemble-button:hover {
+  background-color: #333;
+}
+
+/* Footer (basé sur home-footer) */
+.home-footer {
+  background-color: #2c2c2c;
+  color: var(--light-text);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.home-footer a {
+  color: var(--light-text);
+  text-decoration: none;
+}
+
+/* Media Queries pour la liste */
+@media (min-width: 768px) {
+  .ensembles-list {
+    grid-template-columns: repeat(2, 1fr); 
+  }
+  .home-footer {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+}

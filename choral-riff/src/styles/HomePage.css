@@ -1,0 +1,306 @@
+/* src/pages/HomePage.css */
+
+/* Variables de couleur pour une maintenance facile */
+:root {
+  --primary-color: #f38d68; /* Orange/Pêche du bouton */
+  --dark-text: #333;
+  --light-text: #fff;
+  --background-light: #f9f9f9; /* Gris très clair pour les sections */
+  --border-color: #eee;
+}
+
+/* Styles globaux pour la page */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home-container {
+  color: var(--dark-text);
+  text-align: center;
+}
+
+/* 1. Header */
+.home-header {
+  background-color: #FFDDCC; /* Maintien la couleur de fond */
+  color: var(--dark-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--light-text);
+  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+}
+.logo-link {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* La classe pour les lettres C et R en orange */
+.logo-orange {
+  color: #F58159; /* Couleur orange pour C et R */
+  text-shadow: none; /* Supprime l'ombre noire pour ces lettres afin de les faire ressortir */
+}
+
+.nav-menu {
+  position: relative;
+}
+
+.menu-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 100; 
+}
+
+.main-nav-links {
+  /* Par défaut, masque les liens pour le mobile */
+  display: none; 
+}
+
+.main-nav-links.open {
+  display: flex; 
+  flex-direction: column;
+  
+  position: absolute;
+  top: 100%; 
+  right: 1.5rem; 
+  
+  background-color: white; 
+  min-width: 180px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  padding: 0; 
+  z-index: 90;
+  overflow: hidden;
+}
+.main-nav-links.open a {
+  color: var(--dark-text);
+  text-align: left; 
+  padding: 0.75rem 1.5rem; 
+  text-decoration: none;
+  width: 100%; 
+  transition: background-color 0.3s ease;
+}
+.main-nav-links.open a:hover {
+  background-color: var(--background-light);
+}
+
+
+/* 2. Hero Section */
+.hero-section {
+  position: relative;
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.hero-section h1 {
+  color: var(--light-text);
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* Améliore la lisibilité */
+}
+
+/* 3. Features Section */
+.features-section {
+  background-color: white; /* Le fond reste blanc */
+  color: var(--dark-text); /* Le texte reste noir */
+  padding: 3rem 1rem;
+}
+
+.features-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 500px;
+  margin: auto;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+/* 4. Testimonials Section */
+.testimonials-section {
+  padding: 3rem 1rem;
+  background-color: var(--background-light); /* MAINTIEN */
+}
+
+.testimonials-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.testimonials-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.testimonial-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  /* La première ombre est une ombre portée, la deuxième est l'ombre intérieure */
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1), inset 0 0 20px rgba(0,0,0,0.1);
+  color: var(--dark-text);
+  border: none; 
+}
+
+.testimonial-card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  object-fit: cover;
+}
+
+/* 5. Call to Action (CTA) Section */
+.cta-section {
+  padding: 3rem 1rem;
+  background-color: var(--background-light); /* Le fond de la section reste gris clair */
+}
+
+/* Style de la boîte */
+.cta-box {
+  /* CHANGEMENT: La couleur de fond est maintenant #FFDDCC */
+  background-color: #FFDDCC; 
+  color: var(--dark-text); /* Le texte est maintenant noir pour contraster sur le fond clair */
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15), inset 0 0 20px rgba(0,0,0,0.1); 
+}
+
+.cta-box h4 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Ajustement du bouton : Fond ORANGE F58159, Texte BLANC */
+.cta-button {
+  /* CHANGEMENT: Le fond du bouton est maintenant #F58159 */
+  background-color: #F58159; 
+  color: var(--light-text); /* Texte en blanc pour un bon contraste */
+  border: none;
+  border-radius: 50px;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  
+  /* Ajout de l'ombre pour l'effet de relief */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); 
+  
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #e5734f; /* Une couleur légèrement plus foncée au survol */
+  transform: translateY(-2px); 
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3); 
+}
+
+/* 6. Footer */
+.home-footer {
+  background-color: #2c2c2c;
+  color: var(--light-text);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.home-footer a {
+  color: var(--light-text);
+  text-decoration: none;
+}
+
+/* --- MEDIA QUERIES --- */
+@media (min-width: 768px) {
+
+  .menu-icon {
+    /* Cache l'icône burger sur les grands écrans */
+    display: none;
+  }
+  
+  .main-nav-links {
+    /* Affiche les liens en ligne sur les grands écrans */
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .main-nav-links a {
+    color: var(--dark-text); /* Couleur du texte (noir) */
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .main-nav-links a:hover {
+    background-color: rgba(243, 141, 104, 0.2); /* Un fond légèrement orangé au survol */
+  }
+
+  .testimonials-container {
+    flex-direction: row;
+    justify-content: center;
+    max-width: 900px;
+    margin: auto;
+  }
+  .home-footer {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1000px;
+  }
+}

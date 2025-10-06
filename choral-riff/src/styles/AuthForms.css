@@ -1,0 +1,96 @@
+/* src/styles/AuthForms.css - Version CLAIRE */
+
+/* --- Variables de couleur (réutilisées) --- */
+:root {
+  --primary-color: #f38d68; 
+  --dark-text: #333;
+  --light-text: #fff;
+  --background-light: #f9f9f9; 
+  --card-background: #ffffff;
+}
+
+/* --- Styles de la Carte/Conteneur du Formulaire --- */
+.auth-container {
+    background-color: var(--background-light);
+    min-height: 100vh;
+}
+
+.auth-main {
+    padding: 1rem;
+    max-width: 500px;
+    margin: auto;
+    text-align: center;
+}
+
+.form-title {
+    font-size: 2rem;
+    margin: 2rem 0 1.5rem 0;
+    color: var(--dark-text);
+}
+
+.form-card {
+    background-color: var(--card-background);
+    padding: 2rem;
+    border-radius: 12px;
+    /* Ombre subtile, comme sur les maquettes */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
+    text-align: left;
+}
+
+/* --- Styles des Champs de Saisie CLAIRS --- */
+.form-card input {
+    /* Couleur de fond claire, comme le lavande/blanc cassé des maquettes */
+    background-color: #f5f5ff; 
+    color: var(--dark-text); /* Texte foncé */
+    border: none;
+    border-radius: 50px; /* Bords très arrondis */
+    padding: 0.8rem 1.5rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    box-sizing: border-box; 
+    /* Ombre intérieure légère pour donner de la profondeur */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); 
+}
+
+/* Style du placeholder (texte par défaut) */
+.form-card input::placeholder {
+    color: #999;
+}
+
+/* Style au focus (lorsque l'utilisateur clique) */
+.form-card input:focus {
+    outline: none;
+    /* Bordure subtilement orangée au focus */
+    box-shadow: 0 0 0 3px rgba(243, 141, 104, 0.2), inset 0 2px 5px rgba(0,0,0,0.05); 
+}
+
+/* --- Styles du Bouton de Validation/Connexion --- */
+.submit-button {
+    background-color: var(--primary-color); /* Orange/Pêche */
+    color: var(--light-text);
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%; 
+    margin-top: 1.5rem; /* Ajuster la marge supérieure */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background-color 0.2s;
+}
+.submit-button:hover {
+    background-color: #e5734f;
+}
+
+/* Style du lien "Mot de passe oublié" */
+.forgot-password {
+    text-align: right;
+    margin-top: -0.5rem;
+    margin-bottom: 1.5rem;
+}
+.forgot-password a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+}

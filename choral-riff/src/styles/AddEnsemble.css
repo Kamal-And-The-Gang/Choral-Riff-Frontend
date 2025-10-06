@@ -1,0 +1,66 @@
+/* src/styles/AddEnsemble.css */
+
+/* --- Règle pour l'uniformité des labels --- */
+.form-label {
+    display: block; /* Prend toute la largeur */
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-text);
+    font-size: 0.95rem;
+    margin-top: 1rem;
+}
+
+/* --- Uniformisation du style pour SELECT et TEXTAREA --- */
+/* (Hérite de .form-input mais avec quelques ajustements) */
+
+.select-input, .textarea-input {
+    /* Hérite la couleur de fond, la bordure et le padding de .form-input */
+    /* On retire la marge supérieure pour éviter le double espacement avec le label */
+    margin-top: 0; 
+}
+
+/* Le SELECT doit être stylisé un peu différemment */
+.select-input {
+    /* Assure que la flèche du select est visible si nécessaire */
+    appearance: none; 
+    -webkit-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23999%22%20d%3D%22M287%20197.8L146.2%2057%205.4%20197.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 10px;
+    padding-right: 3rem; /* Espace pour la flèche */
+}
+
+/* Le TEXTAREA doit bien s'afficher avec le style arrondi */
+.textarea-input {
+    resize: vertical; /* Permet de redimensionner verticalement seulement */
+    border-radius: 12px; /* Peut-être un peu moins arrondi que les inputs */
+    padding: 1rem; /* Plus de padding pour le texte multiligne */
+}
+
+/* --- Style de la zone de téléversement (Upload Box) --- */
+.file-upload-box {
+    margin-bottom: 1.5rem;
+}
+
+.custom-file-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    cursor: pointer;
+    
+    /* Réutiliser le style d'input clair */
+    background-color: #f5f5ff; 
+    color: var(--dark-text);
+    padding: 1rem;
+    border-radius: 50px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    
+    transition: background-color 0.2s;
+    font-weight: 500;
+}
+
+.custom-file-label:hover {
+    background-color: #e0e0ff;
+}
