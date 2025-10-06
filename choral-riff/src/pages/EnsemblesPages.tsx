@@ -32,7 +32,7 @@ export const EnsemblesPage = () => {
     // Données fictives
     const ensembles = [
         { id: 1, name: "Les enfants de Dr Dre", image: '../assets/ensemble-1.jpg' },
-        { id: 2, name: "Le Chœur Allegro", image: '../assets/ensemble-2.jpg' },
+        { id: 2, name: "Red Hot Chili Peppers", image: '../assets/ensemble-2.jpg' },
         { id: 3, name: "Orchestre Lyrique", image: '../assets/ensemble-3.jpg' },
     ];
     

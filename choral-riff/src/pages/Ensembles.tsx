@@ -19,9 +19,9 @@ interface EnsembleListItemProps {
 
 // Données d'exemple pour simuler la liste des ensembles
 const ensembleData: Ensemble[] = [
-  { id: 1, name: "Chorale du Lac", members: 35, type: "Chorale" },
-  { id: 2, name: "Quatuor à Cordes Allegro", members: 4, type: "Quatuor" },
-  { id: 3, name: "Orchestre Philharmonique", members: 75, type: "Orchestre" },
+  { id: 1, name: "Les enfants de Dr Dre", members: 11, type: "Chorale" },
+  { id: 2, name: "Red Hot Chili Peppers", members: 4, type: "Quatuor" },
+  { id: 3, name: "Orchestre Lyrique", members: 75, type: "Orchestre" },
   { id: 4, name: "Harmonie Municipale", members: 42, type: "Orchestre d'Harmonie" },
 ];
 
