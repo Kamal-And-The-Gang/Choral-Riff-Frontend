@@ -1,23 +1,40 @@
-
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import '../styles/AuthForms.css'; 
-import '../styles/AddEnsemble.css'; // Pour les labels et le textarea
+import '../styles/AddEnsemble.css'; 
 import { FaUpload, FaFileAlt } from 'react-icons/fa';
 
 // Fausse donnée pour l'ensemble (devrait être dynamique)
 const ensembleName = "Les enfants de Dr Dre";
 
+// Morceaux existants simulés pour l'ensemble
+const mockTracks = [
+    { id: 1, title: "What's My Name ?" },
+    { id: 2, title: "Nuthin' but a 'G' Thang" },
+];
+
 export const AddScore = () => {
     const [file, setFile] = useState<File | null>(null);
-    const [title, setTitle] = useState('');
-    const [instrument, setInstrument] = useState('');
-    const [isUploading, setIsUploading] = useState(false);
+    // Remplacer 'title' par la logique de morcea
+    const [existingTrackId, setExistingTrackId] = useState<string>(''); // Utilise 'string' pour 'new' ou l'ID numérique
+    const [newTrackTitle, setNewTrackTitle] = useState<string>('');
+    
+    const [instrument, setInstrument] = useState<string>('');
+    const [isUploading, setIsUploading] = useState<boolean>(false);
+
+    // Logique de l'UI
+    const isNewTrack = existingTrackId === 'new';
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFile(e.target.files[0]);
+        if (e.target.files && e.target.files.length > 0) {
+            const selectedFile = e.target.files[0];
+            setFile(selectedFile);
+            // Optionnel : pré-remplir le titre si l'utilisateur crée un nouveau morceau
+            if (isNewTrack) {
+                 // Retire l'extension du nom de fichier pour le titre
+                 setNewTrackTitle(selectedFile.name.split('.').slice(0, -1).join('.'));
+            }
         }
     };
 
@@ -27,15 +44,26 @@ export const AddScore = () => {
             alert("Veuillez sélectionner un fichier à téléverser.");
             return;
         }
+        if (isNewTrack && !newTrackTitle.trim()) {
+            alert("Veuillez donner un titre au nouveau morceau.");
+            return;
+        }
+
+        const trackIdentifier = isNewTrack ? 
+            `Nouveau morceau : ${newTrackTitle}` : 
+            `Morceau ID: ${existingTrackId} (${mockTracks.find(t => t.id === Number(existingTrackId))?.title || 'Inconnu'})`;
+
 
         setIsUploading(true);
-        // Simuler un délai de téléversement de 2 secondes
         setTimeout(() => {
-            alert(`Fichier "${file.name}" téléversé avec succès pour l'ensemble ${ensembleName} !`);
+            alert(`Fichier "${file.name}" téléversé !
+            Associé à : ${trackIdentifier}
+            Rôle : ${instrument}`);
             setIsUploading(false);
-            // Réinitialiser le formulaire
+            // Réinitialiser
             setFile(null);
-            setTitle('');
+            setExistingTrackId('');
+            setNewTrackTitle('');
             setInstrument('');
         }, 2000);
     };
@@ -69,17 +97,42 @@ export const AddScore = () => {
                             </label>
                         </div>
                         
-                        {/* 2. Titre du morceau */}
-                        <label htmlFor="title" className="form-label">Titre du morceau</label>
-                        <input 
-                            type="text" 
-                            id="title"
-                            placeholder="Ex: Le Requiem de Riff" 
-                            className="form-input" 
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required 
-                        />
+                        {/* 2. Liaison au Morceau (EXISTANT ou NOUVEAU) */}
+                        <label htmlFor="track-link" className="form-label">Lier à un morceau</label>
+                        <select 
+                            id="track-link"
+                            className="form-input select-input"
+                            value={existingTrackId}
+                            onChange={(e) => setExistingTrackId(e.target.value)}
+                            required
+                        >
+                            <option value="" disabled>Associer à un morceau...</option>
+                            <option value="new" style={{ fontWeight: 'bold' }}>➕ Créer un nouveau morceau</option>
+                            {/* Séparateur visuel */}
+                            <option disabled>--- Morceaux existants ---</option>
+                            {mockTracks.map(track => (
+                                <option key={track.id} value={track.id.toString()}>
+                                    {track.title}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/* Champ pour le NOUVEAU TITRE (apparaît si "Créer un nouveau morceau" est sélectionné) */}
+                        {isNewTrack && (
+                            <>
+                                <label htmlFor="new-title" className="form-label">Titre du nouveau morceau</label>
+                                <input 
+                                    type="text" 
+                                    id="new-title"
+                                    placeholder="Nom du nouveau morceau (Ex: What's My Name ?)" 
+                                    className="form-input" 
+                                    value={newTrackTitle}
+                                    onChange={(e) => setNewTrackTitle(e.target.value)}
+                                    required
+                                />
+                            </>
+                        )}
+
 
                         {/* 3. Instrument/Rôle (Sélection) */}
                         <label htmlFor="instrument" className="form-label">Instrument / Rôle</label>
@@ -101,7 +154,8 @@ export const AddScore = () => {
                         <button 
                             type="submit" 
                             className="submit-button validate-button" 
-                            disabled={isUploading || !file}
+                            // Condition de désactivation mise à jour
+                            disabled={isUploading || !file || (isNewTrack && !newTrackTitle.trim())}
                         >
                             <FaUpload /> {isUploading ? "Téléversement..." : "Téléverser le fichier"}
                         </button>

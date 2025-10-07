@@ -1,6 +1,4 @@
-// src/pages/EnsembleDetails.tsx
-
-import React from 'react'; // Ajout de l'import React pour la cohérence
+import React from 'react';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import '../styles/EnsembleDetails.css';
@@ -12,97 +10,82 @@ const mockVideos = [
     { id: 2, title: "Chorale Les enfants de Dr Dre", date: "11/05/2024", link: "#" },
 ];
 
-const mockScores = [
+// Ces éléments sont maintenant considérés comme des Morceaux (Tracks)
+const mockTracks = [
     { id: 101, name: "Le Requiem de Riff (2024)", format: "PDF", size: "1.2 MB" },
     { id: 102, name: "Symphonie Dr Dre (Transcription)", format: "MusicXML", size: "500 KB" },
     { id: 103, name: "Partition test", format: "PDF", size: "800 KB" },
 ];
 
 /**
- * Composant pour l'affichage d'une partition, incluant l'interaction.
+ * Type pour un Morceau (Track), qui mène à la page TrackDetails.
  */
-type Score = {
+type Track = {
     id: number;
     name: string;
     format: string;
     size: string;
 };
 
-type ScoreItemProps = {
-    score: Score;
+type TrackItemProps = {
+    track: Track;
+    ensembleId: number;
 };
 
-const ScoreItem: React.FC<ScoreItemProps> = ({ score }) => {
-    // Simuler le clic pour télécharger ou visualiser
-    const handleScoreClick = () => {
-        alert(`Vous avez cliqué sur "${score.name}". Déclenchement du téléchargement...`);
-    };
+// Composant renommé et transformé en lien
+const TrackItem: React.FC<TrackItemProps> = ({ track, ensembleId }) => {
+    // Le lien pointe vers /ensembles/:ensembleId/morceaux/:trackId
+    const trackLink = `/ensembles/${ensembleId}/morceaux/${track.id}`;
 
     return (
-        <div className="score-item">
-            <div className="score-info">
-                <FaFilePdf size={20} className="score-icon" />
-                <span className="score-name">{score.name}</span>
+        // Utilisation d'un lien (<a>) autour de l'élément visuel
+        <a href={trackLink} className="track-item-link" title={`Voir les fichiers de ${track.name}`}>
+            <div className="score-item">
+                <div className="score-info">
+                    {/* Utiliser FaMusic pour représenter un Morceau (Conteneur de fichiers) */}
+                    <FaMusic size={20} className="score-icon" />
+                    <span className="score-name">{track.name}</span>
+                </div>
+                <div className="score-details">
+                    <span className="score-format">Voir les fichiers</span>
+                    <FaChevronRight size={14} className="details-arrow" /> {/* Flèche de navigation */}
+                </div>
             </div>
-            <div className="score-details">
-                <span className="score-format">({score.format})</span>
-                <span className="score-size">{score.size}</span>
-                <button
-                    onClick={handleScoreClick}
-                    className="download-button"
-                    title="Télécharger la partition"
-                >
-                    <FaDownload size={14} />
-                </button>
-            </div>
-        </div>
+        </a>
     );
 };
 
 
 export const EnsembleDetails = () => {
-    // Données fictives pour la fiche
+    // Données fictives pour la fiche - AJOUT DES ID
     const ensemble = {
+        id: 1, // ID de l'ensemble ajouté
         name: "Les enfants de Dr Dre",
         creator: "Michelle Leeb",
         createdDate: "18/08/2025",
         membersCount: 58,
-        profilePic: '../assets/ensemble-pic.jpg', 
+        profilePic: '../assets/ensemble-pic.jpg',
         lastTrack: {
+            id: 10, // ID du morceau ajouté
             title: "What's My Name ?",
             ensemble: "Ensemble : Snoop Dogg",
             year: 2025
         }
     };
 
+    const ensembleId = ensemble.id;
+
     return (
         <div className="details-container">
             <Header />
 
-            {/* Bannière "Fiche ensemble" avec une image de fond différente */}
-            <section className="ensemble-header-section detail-header">
-                <div className="fiche-title-box">
-                    <h1 className="fiche-title">Fiche ensemble</h1>
-                </div>
-            </section>
+            {/* ... (Bannière et infos de l'ensemble) ... */}
 
             <main className="details-main">
                 <div className="details-content-card fiche-card">
 
                     {/* Infos de l'ensemble (Haut de la carte) */}
-                    <div className="ensemble-info-header">
-                        <img
-                            src={ensemble.profilePic}
-                            alt="Photo de l'ensemble"
-                            className="ensemble-profile-pic"
-                        />
-                        <div className="ensemble-info-details">
-                            <h2>{ensemble.name}</h2>
-                            <p>Créé par : {ensemble.creator}</p>
-                            <p>Créé le : {ensemble.createdDate}</p>
-                            <p>Nbr de membres : {ensemble.membersCount}</p>
-                        </div>
-                    </div>
+                    {/* ... (code précédent) ... */}
 
                     {/* Lien vers la liste des membres */}
                     <a href="#" className="members-link">
@@ -111,31 +94,44 @@ export const EnsembleDetails = () => {
 
                     {/* Dernière Track */}
                     <h3 className="section-title">Dernière Track :</h3>
-                    <div className="last-track-box">
-                        <FaMusic size={40} className="track-icon" />
-                        <div className="track-info">
-                            <p className="track-title-name">{ensemble.lastTrack.title}</p>
-                            <p className="track-subtitle">{ensemble.lastTrack.ensemble}</p>
-                            <p className="track-subtitle">{ensemble.lastTrack.year}</p>
+                    {/* LIEN AJOUTÉ ICI : Rendre la box entière cliquable */}
+                    <a
+                        href={`/ensembles/${ensembleId}/morceaux/${ensemble.lastTrack.id}`}
+                        className="last-track-link"
+                        title={`Voir les détails du morceau: ${ensemble.lastTrack.title}`}
+                    >
+                        <div className="last-track-box">
+                            <FaMusic size={40} className="track-icon" />
+                            <div className="track-info">
+                                <p className="track-title-name">{ensemble.lastTrack.title}</p>
+                                <p className="track-subtitle">{ensemble.lastTrack.ensemble}</p>
+                                <p className="track-subtitle">{ensemble.lastTrack.year}</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
+                    {/* FIN DU LIEN */}
 
                     {/* Fichiers et Audios */}
-                    <h3 className="section-title">Fichiers et audios :</h3>
+                    <h3 className="section-title">Morceaux (Partitions & Audios) :</h3> {/* Titre mis à jour */}
                     {/* Ajouter un fichier */}
                     <div className="add-file-section">
-                        <a href="/ensembles/1/ajouter-fichier">
+                        {/* Ce lien mène à la page d'ajout de fichier pour cet ensemble */}
+                        <a href={`/ensembles/${ensembleId}/ajouter-fichier`}>
                             <button className="add-file-button">
                                 <FaPlus size={14} /> Ajouter un fichier (Partition/Audio)
                             </button>
                         </a>
                     </div>
 
-                    {/* PARTITIONS (Utilisation du composant ScoreItem) */}
-                    <h4 className="subsection-title">Partitions :</h4>
+                    {/* LISTE DES MORCEAUX (Utilisation du composant TrackItem) */}
+                    <h4 className="subsection-title">Liste des morceaux :</h4> {/* Titre mis à jour */}
                     <div className="scores-list">
-                        {mockScores.map(score => (
-                            <ScoreItem key={score.id} score={score} />
+                        {mockTracks.map(track => (
+                            <TrackItem
+                                key={track.id}
+                                track={track}
+                                ensembleId={ensembleId}
+                            />
                         ))}
                     </div>
 

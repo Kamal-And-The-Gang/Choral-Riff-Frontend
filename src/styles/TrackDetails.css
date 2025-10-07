@@ -1,0 +1,210 @@
+/* Réutilisation des variables de couleur de base */
+:root {
+    --primary-color: #f38d68; 
+    --dark-text: #333;
+    --light-text: #fff;
+    --background-light: #f9f9f9; 
+    --border-color: #eee;
+}
+
+/* Base de la page */
+.track-details-container {
+    background-color: var(--background-light);
+    min-height: 100vh;
+}
+
+/* Réutilisation du style d'en-tête de détail */
+.track-header-section {
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../assets/hero-background.jpg'); 
+    background-size: cover;
+    background-position: center;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fiche-title-box {
+    text-align: center;
+}
+
+.fiche-title {
+    color: var(--light-text);
+    font-size: 2rem;
+    margin: 0;
+}
+
+/* Contenu principal et carte */
+.details-main {
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.track-card {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    width: 95%;
+    max-width: 800px;
+    margin-top: -80px; /* Remonte la carte sur la bannière */
+    position: relative;
+    text-align: left;
+}
+
+/* Infos du Morceau (Header) */
+.track-info-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.big-track-icon {
+    color: var(--primary-color);
+}
+
+.track-info-details h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+    color: var(--dark-text);
+}
+
+.track-info-details p {
+    margin: 0.2rem 0;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.track-info-details a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Lien de retour */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.back-link:hover {
+    opacity: 0.8;
+}
+
+/* Section Fichiers */
+.section-title {
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark-text);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+}
+
+.files-list {
+    margin-bottom: 2rem;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--background-light);
+}
+
+.file-main-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1;
+}
+
+.file-icon {
+    /* Différencier visuellement Partition et Audio */
+    color: #4CAF50; /* Partition (Vert) */
+}
+.audio-item .file-icon {
+    color: #007bff; /* Audio (Bleu) */
+}
+
+.file-details-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.file-role {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.file-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-format-size {
+    font-size: 0.8rem;
+    color: #666;
+    margin-right: 10px;
+}
+
+.action-button {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: var(--dark-text);
+}
+
+.action-button:hover {
+    background-color: var(--background-light);
+}
+
+/* Actions globales */
+.global-actions {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.download-all-button {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border: none;
+    border-radius: 50px;
+    padding: 0.8rem 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.3s;
+}
+
+.download-all-button:hover {
+    background-color: #e5734f;
+}

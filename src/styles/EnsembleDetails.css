@@ -109,7 +109,6 @@
     margin: 0.5rem 0;
 }
 
-/* Dernière Track */
 .last-track-box {
     display: flex;
     align-items: center;
@@ -132,6 +131,54 @@
 .track-subtitle {
     font-size: 0.8rem;
     color: #666;
+}
+
+/* --- Nouveaux styles pour la liaison des Morceaux (Tracks) --- */
+
+.last-track-link {
+    text-decoration: none;
+    color: inherit; 
+    display: block;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.last-track-link:hover {
+    opacity: 0.95;
+    transform: translateY(-2px);
+}
+
+.track-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; 
+}
+
+.track-item-link .score-item {
+    transition: background-color 0.2s;
+}
+
+.track-item-link:hover .score-item {
+    background-color: #f0f0f0;
+}
+
+.score-details {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.score-details .score-format {
+    font-weight: 500;
+    color: var(--primary-color); 
+    font-size: 0.9rem;
+}
+
+.details-arrow {
+    color: var(--primary-color);
+}
+
+.download-button {
+    display: none; 
 }
 
 /* Fichiers et Audios (Vidéos) */
@@ -174,17 +221,18 @@
 .action-buttons {
     display: flex;
     justify-content: flex-end;
+    align-items: center; 
     gap: 1rem;
     margin-top: 2rem;
 }
 
 .share-button {
     background-color: transparent;
-    border: 1px solid var(--primary-color);
+    border: 2px solid var(--primary-color);
     color: var(--primary-color);
     border-radius: 50%; 
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -193,7 +241,7 @@
 }
 
 .share-button:hover {
-    background-color: rgba(243, 141, 104, 0.1);
+    background-color: rgba(243, 141, 104, 0.2);
 }
 
 .invite-button {

@@ -98,6 +98,47 @@ body {
   transform: scale(1.05);
 }
 
+/* --- LIENS DE NAVIGATION DU FORMULAIRE --- */
+
+/* Style du lien "Mot de passe oublié" */
+.forgot-password-link {
+    text-align: right;
+    margin-top: -0.5rem; 
+    margin-bottom: 1.5rem; 
+}
+.forgot-password-text {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+.forgot-password-text:hover {
+    color: #e5734f;
+    text-decoration: underline;
+}
+
+/* Lien vers l'inscription/connexion (en bas de carte) */
+.link-to-register {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: #666; 
+}
+.link-to-register a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+.link-to-register a:hover {
+    color: #e5734f;
+    text-decoration: underline;
+}
+
+.form-section {
+    min-height: 50vh; 
+}
+
 /* Section de la bannière */
 .banner-section {
   position: relative;
