@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
-import '../styles/TrackDetails.css'; 
+import '../styles/TrackDetails.css';
 import { FaMusic, FaChevronLeft, FaFilePdf, FaHeadphones, FaDownload, FaPlayCircle } from 'react-icons/fa';
 
 // --- TYPESCRIPT TYPES ---
@@ -33,19 +33,19 @@ const FileItemComponent = ({ file }: { file: FileItem }) => {
                     <span className="file-role">Rôle : {file.role}</span>
                 </div>
             </div>
-            
+
             <div className="file-actions">
                 <span className="file-format-size">{file.format} ({file.size})</span>
-                
-                <button 
-                    onClick={handleActionClick} 
+
+                <button
+                    onClick={handleActionClick}
                     className="action-button view-button"
                     title={isPartition ? "Visualiser la partition" : "Écouter la piste"}
                 >
-                    <FaPlayCircle size={14} /> 
+                    <FaPlayCircle size={14} />
                 </button>
-                
-                <button 
+
+                <button
                     onClick={() => alert(`Téléchargement de ${file.name}`)}
                     className="action-button download-button"
                     title="Télécharger"
@@ -71,8 +71,8 @@ export const TrackDetails = () => {
     // NOTE : En production, vous feriez ici un appel API (useEffect)
     const trackData = {
         id: currentTrackId,
-        title: "What's My Name ?", 
-        ensemble: "Les enfants de Dr Dre", 
+        title: "What's My Name ?",
+        ensemble: "Les enfants de Dr Dre",
         ensembleId: currentEnsembleId,
         composer: "Snoop Dogg / Dr. Dre",
         year: 2025,
@@ -101,7 +101,7 @@ export const TrackDetails = () => {
 
             <main className="details-main">
                 <div className="details-content-card track-card">
-                    
+
                     {/* Infos du Morceau */}
                     <div className="track-info-header">
                         <FaMusic size={60} className="big-track-icon" />
@@ -114,7 +114,7 @@ export const TrackDetails = () => {
                             <p>Dernière maj : {trackData.lastUpdate}</p>
                         </div>
                     </div>
-                    
+
                     {/* Bouton de retour dynamique */}
                     <a href={`/ensembles/${trackData.ensembleId}`} className="back-link">
                         <FaChevronLeft size={12} /> Retour à l'ensemble
@@ -122,7 +122,7 @@ export const TrackDetails = () => {
 
                     {/* Fichiers disponibles */}
                     <h3 className="section-title files-section-title">Fichiers disponibles :</h3>
-                    
+
                     <div className="files-list">
                         {mockFiles.map(file => (
                             <FileItemComponent key={file.id} file={file} />
@@ -131,7 +131,7 @@ export const TrackDetails = () => {
 
                     {/* Actions globales */}
                     <div className="global-actions">
-                        <button 
+                        <button
                             className="download-all-button"
                             onClick={() => alert('Téléchargement de tous les fichiers...')}
                         >

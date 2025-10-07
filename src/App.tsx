@@ -9,6 +9,9 @@ import { EnsembleDetails } from './pages/EnsembleDetails';
 import { AddEnsemble } from './pages/AddEnsemble';
 import { AddScore } from './pages/AddScore';
 import { TrackDetails } from './pages/TrackDetails';
+import { Dashboard } from './pages/Dashboard';
+import { MembersList } from './pages/MembersList';
+
 
 
 export const App = () => {
@@ -25,7 +28,10 @@ export const App = () => {
         <Route path="/addEnsemble" element={<AddEnsemble />} />
         <Route path="/ajouter-ensemble" element={<AddEnsemble />} />
         <Route path="/ensembles/:ensembleId/ajouter-fichier" element={<AddScore />} />
-        <Route path="/ensembles/:ensembleId/morceaux/:trackId" element={<TrackDetails />}/>
+        <Route path="/ensembles/:ensembleId/morceaux/:trackId" element={<TrackDetails />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/mon-espace" element={<Dashboard />} />
+        <Route path="/ensembles/:ensembleId/membres" element={<MembersList />} />
 
       </Routes>
     </BrowserRouter>

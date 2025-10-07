@@ -79,22 +79,20 @@ export const EnsembleDetails = () => {
         <div className="details-container">
             <Header />
 
-            {/* ... (Bannière et infos de l'ensemble) ... */}
+            {/* Bannière "Fiche Ensemble" */}
 
             <main className="details-main">
                 <div className="details-content-card fiche-card">
 
                     {/* Infos de l'ensemble (Haut de la carte) */}
-                    {/* ... (code précédent) ... */}
-
+            
                     {/* Lien vers la liste des membres */}
-                    <a href="#" className="members-link">
-                        Liste des membres <FaChevronRight size={12} />
+                    <a href={`/ensembles/${ensembleId}/membres`} className="members-link" title="Voir la liste des membres et gérer l'équipe">
+                        Liste des membres ({ensemble.membersCount}) <FaChevronRight size={12} />
                     </a>
 
                     {/* Dernière Track */}
                     <h3 className="section-title">Dernière Track :</h3>
-                    {/* LIEN AJOUTÉ ICI : Rendre la box entière cliquable */}
                     <a
                         href={`/ensembles/${ensembleId}/morceaux/${ensemble.lastTrack.id}`}
                         className="last-track-link"

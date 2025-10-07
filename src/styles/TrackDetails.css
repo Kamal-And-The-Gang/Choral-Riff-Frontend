@@ -1,40 +1,50 @@
-/* Réutilisation des variables de couleur de base */
+/* --- Variables de couleur de base --- */
 :root {
     --primary-color: #f38d68; 
     --dark-text: #333;
     --light-text: #fff;
     --background-light: #f9f9f9; 
     --border-color: #eee;
+    --partition-icon-color: #4CAF50; /* Vert */
+    --audio-icon-color: #007bff; /* Bleu */
 }
 
-/* Base de la page */
+/* --- Base de la page --- */
 .track-details-container {
     background-color: var(--background-light);
     min-height: 100vh;
 }
 
-/* Réutilisation du style d'en-tête de détail */
+/* --- 1. Bannière de l'en-tête --- */
 .track-header-section {
     background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../assets/hero-background.jpg'); 
     background-size: cover;
     background-position: center;
     height: 150px;
-    display: flex;
-    align-items: center;
+    display: flex; 
+    align-items: center; 
     justify-content: center;
+    position: relative; 
+    z-index: 1; 
 }
 
+/* Encadré du titre sur la bannière */
 .fiche-title-box {
     text-align: center;
+    background-color: rgba(255, 255, 255, 0.2); 
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
 }
 
 .fiche-title {
     color: var(--light-text);
     font-size: 2rem;
     margin: 0;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.7); 
 }
 
-/* Contenu principal et carte */
+/* --- 2. Contenu principal et carte --- */
 .details-main {
     padding: 20px 0;
     display: flex;
@@ -48,12 +58,13 @@
     padding: 25px;
     width: 95%;
     max-width: 800px;
-    margin-top: -80px; /* Remonte la carte sur la bannière */
+    margin-top: -40px; 
     position: relative;
+    z-index: 2; 
     text-align: left;
 }
 
-/* Infos du Morceau (Header) */
+/* --- 3. Infos du Morceau (Header) --- */
 .track-info-header {
     display: flex;
     align-items: center;
@@ -83,6 +94,10 @@
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.2s;
+}
+.track-info-details a:hover {
+    color: #e5734f;
 }
 
 /* Lien de retour */
@@ -102,15 +117,20 @@
     opacity: 0.8;
 }
 
-/* Section Fichiers */
+/* --- 4. Section Fichiers --- */
 .section-title {
     font-size: 1.3rem;
     margin-top: 1.5rem;
     margin-bottom: 1rem;
     color: var(--dark-text);
-    border-bottom: 2px solid var(--primary-color);
+    /* Amélioration : ligne plus simple sous le titre */
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 5px;
 }
+.files-section-title {
+     border-bottom: 2px solid var(--primary-color); /* Ligne plus accentuée pour les fichiers */
+}
+
 
 .files-list {
     margin-bottom: 2rem;
@@ -121,7 +141,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
-    border-bottom: 1px solid var(--background-light);
+    border-bottom: 1px solid var(--border-color); /* Utilisation de la variable */
+    transition: background-color 0.2s;
+}
+
+.file-item:hover {
+    background-color: var(--background-light);
 }
 
 .file-main-info {
@@ -131,12 +156,12 @@
     flex-grow: 1;
 }
 
+/* Utilisation des variables d'icône pour la cohérence */
 .file-icon {
-    /* Différencier visuellement Partition et Audio */
-    color: #4CAF50; /* Partition (Vert) */
+    color: var(--partition-icon-color);
 }
 .audio-item .file-icon {
-    color: #007bff; /* Audio (Bleu) */
+    color: var(--audio-icon-color);
 }
 
 .file-details-text {
@@ -147,6 +172,7 @@
 .file-name {
     font-weight: 600;
     font-size: 1rem;
+    color: var(--dark-text);
 }
 
 .file-role {
@@ -164,8 +190,13 @@
     font-size: 0.8rem;
     color: #666;
     margin-right: 10px;
+    /* Rendre invisible sur très petit écran pour prioriser les boutons */
+    @media (max-width: 450px) {
+        display: none;
+    }
 }
 
+/* Boutons d'action (Voir/Écouter et Télécharger) */
 .action-button {
     background: none;
     border: 1px solid #ccc;
@@ -176,15 +207,16 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, border-color 0.2s;
     color: var(--dark-text);
 }
-
 .action-button:hover {
-    background-color: var(--background-light);
+    background-color: rgba(243, 141, 104, 0.1);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
-/* Actions globales */
+/* --- 5. Actions globales --- */
 .global-actions {
     text-align: center;
     padding-top: 20px;
@@ -202,9 +234,30 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    box-shadow: 0 4px 8px rgba(243, 141, 104, 0.4);
     transition: background-color 0.3s;
 }
 
 .download-all-button:hover {
     background-color: #e5734f;
+}
+
+/* --- Responsive (Optionnel) --- */
+@media (max-width: 600px) {
+    .track-info-header {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+    .file-item {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .file-main-info {
+        width: 100%;
+    }
+    .file-actions {
+        justify-content: flex-end;
+        width: 100%;
+    }
 }

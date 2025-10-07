@@ -1,0 +1,207 @@
+/* Utilisation des mêmes variables et conteneurs de base */
+:root {
+    --primary-color: #f38d68; 
+    --dark-text: #333;
+    --light-text: #fff;
+    --background-light: #f9f9f9; 
+    --card-background: #ffffff;
+    --admin-color: #ffd700; /* Or */
+    --member-color: #5cb85c; /* Vert */
+    --delete-color: #dc3545; /* Rouge */
+}
+
+.members-list-container {
+    background-color: var(--background-light);
+    min-height: 100vh;
+}
+
+/* Le style de la bannière et du main peut hériter de EnsembleDetails.css ou être repris */
+.members-header-section.detail-header {
+    background-color: #f9f9f9; 
+    height: 100px; /* Plus petit que l'ensemble */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 0;
+    margin-bottom: 0; 
+}
+
+.fiche-title-box {
+    /* Reprise du style de base, ajusté si besoin */
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    background-color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+}
+
+.fiche-title {
+    color: var(--dark-text);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.details-main {
+    padding: 1rem;
+    max-width: 800px;
+    margin: auto;
+}
+
+.details-content-card.members-card {
+    background-color: var(--card-background);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+}
+
+/* --- Lien de retour --- */
+.back-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    transition: opacity 0.2s;
+}
+
+.back-link:hover {
+    opacity: 0.8;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    margin: 1.5rem 0 1rem 0;
+    border-bottom: 1px solid var(--background-light);
+    padding-bottom: 0.5rem;
+}
+
+/* --- Bouton d'invitation --- */
+.invite-member-section {
+    text-align: right;
+    margin-bottom: 2rem;
+}
+
+.invite-button-lg {
+    background-color: var(--primary-color);
+    color: var(--light-text);
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background-color 0.2s;
+}
+
+.invite-button-lg:hover {
+    background-color: #e07a5f;
+}
+
+
+/* --- Liste des Membres --- */
+.members-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.member-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--background-light);
+}
+
+.member-item:last-child {
+    border-bottom: none;
+}
+
+.member-info-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.member-profile-icon {
+    color: #ccc; /* Couleur de l'icône de profil par défaut */
+}
+
+.member-details-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.member-name {
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.member-email {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.member-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Rôles */
+.member-role-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--dark-text);
+}
+
+.member-role-tag.admin {
+    background-color: var(--admin-color);
+}
+
+.member-role-tag.member {
+    background-color: var(--member-color);
+    color: var(--light-text);
+}
+
+
+/* Boutons d'action */
+.action-button {
+    background: none;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.role-button {
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+.role-button:hover {
+    background-color: rgba(243, 141, 104, 0.1);
+}
+
+.remove-button {
+    color: var(--delete-color);
+    border: 1px solid var(--delete-color);
+}
+.remove-button:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
