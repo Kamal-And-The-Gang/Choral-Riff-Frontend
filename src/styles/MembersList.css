@@ -1,16 +1,3 @@
-/* Utilisation des mêmes variables et conteneurs de base */
-:root {
-    --primary-color: #f38d68; 
-    --dark-text: #333;
-    --light-text: #fff;
-    --background-light: #f9f9f9; 
-    --card-background: #ffffff;
-    --admin-color: #ffd700;
-    --moderator-color: #5bc0de;
-    --member-color: #5cb85c;
-    --delete-color: #dc3545;
-}
-
 .members-list-container {
     background-color: var(--background-light);
     min-height: 100vh;
@@ -19,7 +6,7 @@
 /* Le style de la bannière et du main peut hériter de EnsembleDetails.css ou être repris */
 .members-header-section.detail-header {
     background-color: #f9f9f9; 
-    height: 100px; /* Plus petit que l'ensemble */
+    height: 100px; 
     background-size: cover;
     background-position: center;
     position: relative;
@@ -28,7 +15,6 @@
 }
 
 .fiche-title-box {
-    /* Reprise du style de base, ajusté si besoin */
     position: absolute;
     top: 50%;
     left: 1rem;
@@ -132,7 +118,7 @@
 }
 
 .member-profile-icon {
-    color: #ccc; /* Couleur de l'icône de profil par défaut */
+    color: #ccc;
 }
 
 .member-details-text {

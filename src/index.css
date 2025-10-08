@@ -1,20 +1,27 @@
 :root {
-  --primary-color: #f38d68; 
+  --primary-color: #f38d68;
   --dark-text: #333;
   --light-text: #fff;
-  --background-light: #f9f9f9; 
+  --background-light: #f9f9f9;
   --border-color: #eee;
-  --partition-icon-color: #4CAF50; /* Vert */
-  --audio-icon-color: #007bff; /* Bleu */
-  --header-bg: #FFDDCC; /* Couleur de fond du header pour correspondre à la maquette */
+  --partition-icon-color: #4CAF50;
+  --audio-icon-color: #007bff;
+  --header-bg: #FFDDCC;
   --card-background: #ffffff;
+  --shadow-subtle: 0 4px 12px rgba(0,0,0,0.08);
+  --admin-color: #ffd700;
+  --moderator-color: #5bc0de;
+  --member-color: #5cb85c;
+  --delete-color: #dc3545;
 }
 
 a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
+  
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -24,6 +31,8 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: white;
 }
 
 h1 {
@@ -42,9 +51,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -55,9 +66,11 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }

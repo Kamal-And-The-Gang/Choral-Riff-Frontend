@@ -1,12 +1,3 @@
-/* --- Variables de couleur (réutilisées de HomePage.css) --- */
-:root {
-  --primary-color: #f38d68; 
-  --dark-text: #333;
-  --light-text: #fff;
-  --background-light: #f9f9f9; 
-  --card-background: #ffffff;
-}
-
 .ensembles-container {
     background-color: var(--background-light); /* Fond de la page gris clair */
     min-height: 100vh;

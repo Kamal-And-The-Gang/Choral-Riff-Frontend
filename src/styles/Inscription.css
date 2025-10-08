@@ -1,26 +1,6 @@
-/* Styles globaux */
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 .inscription-container {
   color: var(--dark-text);
   text-align: center;
-}
-
-/* Header (réutilisé de la page d'accueil) */
-.home-header {
-  background-color: var(--header-bg);
-  color: var(--dark-text);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
 .logo {
