@@ -21,8 +21,6 @@ export const Connexion = () => {
 
     return (
         <div className="inscription-container"> 
-            <Header />
-
             <main className="form-section">
                 <h1 className="form-title">Connexion</h1>
                 
@@ -78,8 +76,6 @@ export const Connexion = () => {
                     </p>
                 </div>
             </section>
-            
-            <Footer />
         </div>
     );
 };

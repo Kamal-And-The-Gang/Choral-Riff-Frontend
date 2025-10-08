@@ -1,0 +1,81 @@
+.fileItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    /* Utilisation de la variable */
+    transition: background-color 0.2s;
+}
+
+.fileItem:hover {
+    background-color: var(--background-light);
+}
+
+.fileMainInfo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1;
+}
+
+/* Utilisation des variables d'icône pour la cohérence */
+.fileIcon {
+    color: var(--partition-icon-color);
+}
+
+.audioItem .fileIcon {
+    color: var(--audio-icon-color);
+}
+
+.fileDetailsText {
+    display: flex;
+    flex-direction: column;
+}
+
+.fileName {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--dark-text);
+}
+
+.fileRole {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.fileActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.fileFormatSize {
+    font-size: 0.8rem;
+    color: #666;
+    margin-right: 10px;
+
+    /* Rendre invisible sur très petit écran pour prioriser les boutons */
+    @media (max-width: 450px) {
+        display: none;
+    }
+}
+
+/* Boutons d'action (Voir/Écouter et Télécharger) */
+.actionButton {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.actionButton:hover {
+    background-color: var(--dark-text);
+
+    /* background-color: rgba(243, 141, 104, 0.1); */
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transition: background-color 1s;
+}

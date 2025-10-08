@@ -1,8 +1,6 @@
 // src/pages/AddEnsemble.tsx
 
 import React, { useState } from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import '../styles/AuthForms.css'; 
 import '../styles/AddEnsemble.css';
 import { FaPlus } from 'react-icons/fa';
@@ -20,8 +18,6 @@ export const AddEnsemble = () => {
 
     return (
         <div className="add-ensemble-container">
-            <Header />
-
             <main className="auth-main"> 
                 <h1 className="form-title">Créer un nouvel ensemble</h1>
                 
@@ -73,8 +69,6 @@ export const AddEnsemble = () => {
                     </form>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

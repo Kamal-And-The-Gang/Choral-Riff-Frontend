@@ -1,13 +1,3 @@
-/* Variables de couleur pour une maintenance facile */
-:root {
-  --primary-color: #f38d68; /* Orange/Pêche du bouton */
-  --dark-text: #333;
-  --light-text: #fff;
-  --background-light: #f9f9f9; /* Gris très clair pour les sections */
-  --border-color: #eee;
-  --header-bg: #FFDDCC; /* Couleur de fond du header pour correspondre à la maquette */
-}
-
 /* Styles globaux */
 body {
   margin: 0;

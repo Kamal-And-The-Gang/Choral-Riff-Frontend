@@ -1,16 +1,9 @@
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import '../styles/Inscription.css';
 import registrationBanner from '../assets/registration-banner.jpg'; // Mettez votre image de bannière ici
-
-
 
 export const Inscription = () => {
   return (
     <div className="home-container">
-      {/* 1. Header  */}
-      <Header />
-
       <main>
         {/* 2. Formulaire*/}
         <section className="form-section">
@@ -33,9 +26,6 @@ export const Inscription = () => {
           </div>
         </section>
       </main>
-
-      {/* 3. Footer*/}
-      <Footer />
     </div>
   );
 };

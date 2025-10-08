@@ -1,12 +1,3 @@
-/* --- Variables de couleur (réutilisées) --- */
-:root {
-  --primary-color: #f38d68; 
-  --dark-text: #333;
-  --light-text: #fff;
-  --background-light: #f9f9f9; 
-  --card-background: #ffffff;
-}
-
 /* --- Styles de la Carte/Conteneur du Formulaire --- */
 .auth-container {
     background-color: var(--background-light);
@@ -83,6 +74,7 @@
     margin-top: -0.5rem;
     margin-bottom: 1.5rem;
 }
+
 .forgot-password a {
     color: var(--primary-color);
     text-decoration: none;

@@ -70,8 +70,6 @@ export const AddScore = () => {
 
     return (
         <div className="add-file-container">
-            <Header />
-
             <main className="auth-main">
                 <h1 className="form-title">Ajouter un fichier à "{ensembleName}"</h1>
                 
@@ -162,8 +160,6 @@ export const AddScore = () => {
                     </form>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

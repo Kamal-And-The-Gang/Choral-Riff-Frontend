@@ -1,62 +1,10 @@
 import { useParams } from 'react-router-dom';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
-import '../styles/TrackDetails.css';
+import { Header } from '../../components/Header';
+import { Footer } from '../../components/Footer';
+import '../../styles/TrackDetails.css';
 import { FaMusic, FaChevronLeft, FaFilePdf, FaHeadphones, FaDownload, FaPlayCircle } from 'react-icons/fa';
-
-// --- TYPESCRIPT TYPES ---
-type FileItem = {
-    id: number;
-    name: string;
-    type: 'partition' | 'audio';
-    format: string;
-    size: string;
-    role: string;
-};
-
-// --- COMPOSANTS INTERNES ---
-const FileItemComponent = ({ file }: { file: FileItem }) => {
-    const isPartition = file.type === 'partition';
-    const Icon = isPartition ? FaFilePdf : FaHeadphones;
-
-    const handleActionClick = () => {
-        alert(`Action lancée pour le fichier : "${file.name}"`);
-        // Ici, un visualiseur ou un lecteur audio
-    };
-
-    return (
-        <div className={`file-item ${file.type}-item`}>
-            <div className="file-main-info">
-                <Icon size={20} className="file-icon" />
-                <div className="file-details-text">
-                    <span className="file-name">{file.name}</span>
-                    <span className="file-role">Rôle : {file.role}</span>
-                </div>
-            </div>
-
-            <div className="file-actions">
-                <span className="file-format-size">{file.format} ({file.size})</span>
-
-                <button
-                    onClick={handleActionClick}
-                    className="action-button view-button"
-                    title={isPartition ? "Visualiser la partition" : "Écouter la piste"}
-                >
-                    <FaPlayCircle size={14} />
-                </button>
-
-                <button
-                    onClick={() => alert(`Téléchargement de ${file.name}`)}
-                    className="action-button download-button"
-                    title="Télécharger"
-                >
-                    <FaDownload size={14} />
-                </button>
-            </div>
-        </div>
-    );
-};
-
+import type { FileItem } from './components/FileItemComponent';
+import FileItemComponent from './components/FileItemComponent';
 
 // --- COMPOSANT PRINCIPAL ---
 export const TrackDetails = () => {
@@ -87,11 +35,8 @@ export const TrackDetails = () => {
         { id: 205, name: "Piste de travail : Ténor (Mix)", type: 'audio', format: "MP3", size: "6.0 MB", role: "Ténor" },
     ];
 
-
     return (
         <div className="track-details-container">
-            <Header />
-
             {/* Bannière "Fiche Morceau" */}
             <section className="track-header-section detail-header">
                 <div className="fiche-title-box">
@@ -141,8 +86,6 @@ export const TrackDetails = () => {
 
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

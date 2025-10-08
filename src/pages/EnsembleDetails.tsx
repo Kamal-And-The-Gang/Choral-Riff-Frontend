@@ -1,6 +1,4 @@
 import React from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import '../styles/EnsembleDetails.css';
 import { FaMusic, FaShareAlt, FaChevronRight, FaPlayCircle, FaFilePdf, FaDownload, FaPlus } from 'react-icons/fa';
 
@@ -77,10 +75,7 @@ export const EnsembleDetails = () => {
 
     return (
         <div className="details-container">
-            <Header />
-
             {/* Bannière "Fiche Ensemble" */}
-
             <main className="details-main">
                 <div className="details-content-card fiche-card">
 
@@ -156,8 +151,6 @@ export const EnsembleDetails = () => {
 
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

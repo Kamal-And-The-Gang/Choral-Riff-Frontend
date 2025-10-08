@@ -1,14 +1,3 @@
-/* --- Variables de couleur de base --- */
-:root {
-    --primary-color: #f38d68; 
-    --dark-text: #333;
-    --light-text: #fff;
-    --background-light: #f9f9f9; 
-    --border-color: #eee;
-    --partition-icon-color: #4CAF50; /* Vert */
-    --audio-icon-color: #007bff; /* Bleu */
-}
-
 /* --- Base de la page --- */
 .track-details-container {
     background-color: var(--background-light);
@@ -136,85 +125,6 @@
     margin-bottom: 2rem;
 }
 
-.file-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border-color); /* Utilisation de la variable */
-    transition: background-color 0.2s;
-}
-
-.file-item:hover {
-    background-color: var(--background-light);
-}
-
-.file-main-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-grow: 1;
-}
-
-/* Utilisation des variables d'icône pour la cohérence */
-.file-icon {
-    color: var(--partition-icon-color);
-}
-.audio-item .file-icon {
-    color: var(--audio-icon-color);
-}
-
-.file-details-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.file-name {
-    font-weight: 600;
-    font-size: 1rem;
-    color: var(--dark-text);
-}
-
-.file-role {
-    font-size: 0.8rem;
-    color: #999;
-}
-
-.file-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.file-format-size {
-    font-size: 0.8rem;
-    color: #666;
-    margin-right: 10px;
-    /* Rendre invisible sur très petit écran pour prioriser les boutons */
-    @media (max-width: 450px) {
-        display: none;
-    }
-}
-
-/* Boutons d'action (Voir/Écouter et Télécharger) */
-.action-button {
-    background: none;
-    border: 1px solid #ccc;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
-    color: var(--dark-text);
-}
-.action-button:hover {
-    background-color: rgba(243, 141, 104, 0.1);
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
 
 /* --- 5. Actions globales --- */
 .global-actions {

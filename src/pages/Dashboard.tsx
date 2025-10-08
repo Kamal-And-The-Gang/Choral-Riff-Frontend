@@ -48,8 +48,6 @@ export const Dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <Header />
-
             {/* Bannière de l'espace utilisateur (Mon espace) */}
             <section className="dashboard-header-section dashboard-banner">
                 <div className="dashboard-title-box">
@@ -87,8 +85,6 @@ export const Dashboard = () => {
 
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

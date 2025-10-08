@@ -91,8 +91,6 @@ export const MembersList = () => {
 
     return (
         <div className="members-list-container">
-            <Header />
-
             {/* Bannière simplifiée */}
             <section className="members-header-section detail-header">
                 <div className="fiche-title-box">
@@ -133,8 +131,6 @@ export const MembersList = () => {
 
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

@@ -1,6 +1,4 @@
 import React from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import '../styles/Ensembles.css';
 import { FaUsers, FaPlus } from 'react-icons/fa';
 
@@ -46,9 +44,6 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => (
 export const Ensembles = () => {
   return (
     <div className="ensembles-container">
-      {/* 1. Header  */}
-      <Header />
-
       <main className="ensembles-main">
         <section className="ensembles-header-section">
           <h2>Mes Ensembles Musicaux</h2>
@@ -67,9 +62,6 @@ export const Ensembles = () => {
           ))}
         </section>
       </main>
-
-      {/* 3. Footer*/}
-      <Footer />
     </div>
   );
 };

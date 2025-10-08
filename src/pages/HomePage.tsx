@@ -1,5 +1,3 @@
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import '../styles/HomePage.css';
 import { FaUsers, FaFileAlt, FaPlayCircle, FaHandshake } from 'react-icons/fa';
 
@@ -11,9 +9,6 @@ import avatarFlo from '../assets/avatar-flo.jpg';
 export const HomePage = () => {
   return (
     <div className="home-container">
-      {/* 1. Header */}
-      <Header />
-
       <main>
         {/* 2. Section "Hero" */}
         <section className="hero-section" style={{ backgroundImage: `url(${heroImage})` }}>
@@ -73,9 +68,6 @@ export const HomePage = () => {
           </div>
         </section>
       </main>
-
-      {/* 6. Footer*/}
-      <Footer />
     </div>
   );
 };
