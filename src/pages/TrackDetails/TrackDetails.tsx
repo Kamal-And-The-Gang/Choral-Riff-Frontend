@@ -1,8 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { Header } from '../../components/Header';
-import { Footer } from '../../components/Footer';
 import '../../styles/TrackDetails.css';
-import { FaMusic, FaChevronLeft, FaFilePdf, FaHeadphones, FaDownload, FaPlayCircle } from 'react-icons/fa';
+import { FaMusic, FaChevronLeft, FaDownload } from 'react-icons/fa';
 import type { FileItem } from './components/FileItemComponent';
 import FileItemComponent from './components/FileItemComponent';
 

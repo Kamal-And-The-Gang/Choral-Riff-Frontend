@@ -1,8 +1,6 @@
 // src/pages/Ensembles.tsx
 
 import React from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import '../styles/EnsemblesPages.css';
 import { FaPlus } from 'react-icons/fa';
 

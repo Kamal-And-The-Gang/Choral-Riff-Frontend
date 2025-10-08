@@ -1,6 +1,4 @@
 import React from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import { FaUserCircle, FaPlus } from 'react-icons/fa';
 import '../styles/Dashboard.css'; 
 
