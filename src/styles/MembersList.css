@@ -5,9 +5,10 @@
     --light-text: #fff;
     --background-light: #f9f9f9; 
     --card-background: #ffffff;
-    --admin-color: #ffd700; /* Or */
-    --member-color: #5cb85c; /* Vert */
-    --delete-color: #dc3545; /* Rouge */
+    --admin-color: #ffd700;
+    --moderator-color: #5bc0de;
+    --member-color: #5cb85c;
+    --delete-color: #dc3545;
 }
 
 .members-list-container {
@@ -170,6 +171,10 @@
 
 .member-role-tag.admin {
     background-color: var(--admin-color);
+}
+.member-role-tag.moderator {
+    background-color: var(--moderator-color);
+    color: var(--light-text);
 }
 
 .member-role-tag.member {

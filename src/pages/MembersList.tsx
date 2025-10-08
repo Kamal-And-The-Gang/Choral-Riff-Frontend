@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { FaUserCircle, FaCrown, FaUser, FaEnvelope, FaChevronLeft, FaPlus } from 'react-icons/fa';
+import { FaUserCircle, FaCrown, FaUser, FaEnvelope, FaChevronLeft, FaPlus, FaUserTie } from 'react-icons/fa';
 import '../styles/MembersList.css'; // Nouveau fichier de style
 
 // --- TYPESCRIPT TYPES ---
@@ -8,7 +8,7 @@ type Member = {
     id: number;
     name: string;
     email: string;
-    role: 'admin' | 'member'; // Rôle au sein de l'ensemble
+    role: 'admin' | 'moderator' | 'member';  // Rôle au sein de l'ensemble
     profilePic?: string;
 };
 
@@ -20,7 +20,7 @@ const mockEnsemble = {
 
 const mockMembers: Member[] = [
     { id: 101, name: "Michelle Leeb (Moi)", email: "michelle@example.com", role: 'admin' },
-    { id: 102, name: "Snoop Dogg", email: "snoop@example.com", role: 'member' },
+    { id: 102, name: "Snoop Dogg", email: "snoop@example.com", role: 'moderator' },
     { id: 103, name: "Dr. Dre", email: "dre@example.com", role: 'member' },
     { id: 104, name: "Eminem", email: "eminem@example.com", role: 'member' },
 ];
@@ -28,10 +28,18 @@ const mockMembers: Member[] = [
 // --- COMPOSANT Membre ---
 
 const MemberItem: React.FC<{ member: Member, isAdmin: boolean }> = ({ member, isAdmin }) => {
-    const RoleIcon = member.role === 'admin' ? FaCrown : FaUser;
-    
+
+    let RoleIcon: React.ElementType;
+    if (member.role === 'admin') {
+        RoleIcon = FaCrown;
+    } else if (member.role === 'moderator') {
+        RoleIcon = FaUserTie;
+    } else {
+        RoleIcon = FaUser;
+    }
+
     // Simuler le fait que l'utilisateur connecté est toujours l'admin dans ce scénario
-    const isCurrentUser = member.name.includes("Moi"); 
+    const isCurrentUser = member.name.includes("Moi");
 
     const handleRoleChange = () => {
         // Logique de changement de rôle
@@ -56,7 +64,7 @@ const MemberItem: React.FC<{ member: Member, isAdmin: boolean }> = ({ member, is
             <div className="member-actions">
                 {/* Affichage du rôle */}
                 <span className={`member-role-tag ${member.role}`}>
-                    <RoleIcon size={12} /> {member.role === 'admin' ? 'Admin' : 'Membre'}
+                    <RoleIcon size={12} /> {member.role.charAt(0).toUpperCase() + member.role.slice(1)} {/* Affiche Admin, Moderator, ou Member */}
                 </span>
 
                 {/* Actions de gestion, visibles uniquement par l'admin */}
@@ -85,7 +93,7 @@ export const MembersList = () => {
 
     // Simuler la vérification si l'utilisateur est admin
     // Pour cet exemple, nous supposons que l'utilisateur qui regarde est toujours l'admin
-    const userIsAdmin = true; 
+    const userIsAdmin = true;
 
     return (
         <div className="members-list-container">
@@ -98,17 +106,17 @@ export const MembersList = () => {
 
             <main className="details-main">
                 <div className="details-content-card members-card">
-                    
+
                     {/* Bouton de retour */}
                     <a href={`/ensembles/${ensembleId}`} className="back-link">
                         <FaChevronLeft size={12} /> Retour à la Fiche Ensemble
                     </a>
-                    
+
                     <h3 className="section-title">Gestion de l'équipe ({mockMembers.length} membres)</h3>
-                    
+
                     {/* Bouton Inviter un nouveau membre */}
                     <div className="invite-member-section">
-                        <button 
+                        <button
                             className="invite-button-lg"
                             onClick={() => alert(`Inviter un nouveau membre pour l'ensemble ID: ${ensembleId}`)}
                         >
@@ -119,10 +127,10 @@ export const MembersList = () => {
                     {/* Liste des membres */}
                     <div className="members-list">
                         {mockMembers.map(member => (
-                            <MemberItem 
-                                key={member.id} 
-                                member={member} 
-                                isAdmin={userIsAdmin} 
+                            <MemberItem
+                                key={member.id}
+                                member={member}
+                                isAdmin={userIsAdmin}
                             />
                         ))}
                     </div>
