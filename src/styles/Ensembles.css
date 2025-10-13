@@ -11,7 +11,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -21,7 +21,8 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: #fff;
-  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000,
+    -1px 1px 2px #000;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -30,55 +31,35 @@
 /* Section principale */
 .ensembles-main {
   padding: 2rem 1rem;
-  background-color: white; 
+  background-color: white;
 }
 
 .ensembles-header-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
 .ensembles-header-section h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-}
-
-/* Bouton Créer un nouvel ensemble */
-.new-ensemble-button {
-  background-color: var(--primary-color);
-  color: var(--light-text);
-  border: none;
-  border-radius: 50px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.3s ease;
-}
-
-.new-ensemble-button:hover {
-  background-color: #e5734f;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Liste des ensembles */
 .ensembles-list {
   display: grid;
-  grid-template-columns: 1fr; 
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   max-width: 900px;
   margin: 0 auto;
 }
 
 .ensemble-card {
-  background-color: var(--background-light); 
+  background-color: var(--background-light);
   padding: 1rem;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   text-align: left;
   display: flex;
   align-items: center;
@@ -86,26 +67,26 @@
 }
 
 .ensemble-icon {
-    color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .ensemble-details {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .ensemble-details h3 {
-    margin: 0 0 0.2rem 0;
-    font-size: 1.1rem;
+  margin: 0 0 0.2rem 0;
+  font-size: 1.1rem;
 }
 
 .ensemble-details p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .view-ensemble-button {
-  background-color: #555; 
+  background-color: #555;
   color: var(--light-text);
   border: none;
   border-radius: 5px;
@@ -137,7 +118,7 @@
 /* Media Queries pour la liste */
 @media (min-width: 768px) {
   .ensembles-list {
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(2, 1fr);
   }
   .home-footer {
     flex-direction: row;

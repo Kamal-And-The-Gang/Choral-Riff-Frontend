@@ -4,22 +4,22 @@
   --light-text: #fff;
   --background-light: #f9f9f9;
   --border-color: #eee;
-  --partition-icon-color: #4CAF50;
+  --partition-icon-color: #4caf50;
   --audio-icon-color: #007bff;
-  --header-bg: #FFDDCC;
+  --header-bg: #ffddcc;
   --card-background: #ffffff;
-  --shadow-subtle: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.08);
   --admin-color: #ffd700;
   --moderator-color: #5bc0de;
   --member-color: #5cb85c;
   --delete-color: #dc3545;
 }
 
+
 a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
-  
 }
 
 a:hover {
@@ -31,7 +31,7 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: white;
 }
 
@@ -40,7 +40,8 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+/* Style de bouton gris */
+/* button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -59,6 +60,61 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+} */
+
+/* Style de bouton orange */
+button {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #e5734f;
+}
+
+/* Style pour les "containers" */
+.container {
+  background-color: var(--card-background);
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  /* Ombre portée */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.1);
+  text-align: left; /* Aligner le titre à gauche */
+}
+
+/* Styles des Champs de Saisie */
+input {
+  background-color: #f5f5ff;
+  color: var(--dark-text);
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 1.5rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Style du placeholder (texte par défaut) */
+input::placeholder {
+  color: #999;
+}
+
+/* Style au focus (lorsque l'utilisateur clique) */
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(243, 141, 104, 0.2),
+    inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 @media (prefers-color-scheme: light) {
@@ -71,7 +127,18 @@ button:focus-visible {
     color: #747bff;
   }
 
-  button {
+  /* Aucun theme light/dark de prévu */
+  /* button {
     background-color: #f9f9f9;
-  }
+  } */
+
+
+  .form-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1), inset 0 0 20px rgba(0,0,0,0.1); 
+  width: 90%;
+  max-width: 400px;
+}
 }

@@ -196,3 +196,80 @@
 .remove-button:hover {
     background-color: rgba(220, 53, 69, 0.1);
 }
+
+/* --- Modale --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.modal-content {
+  background-color: var(--card-background);
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  color: var(--dark-text);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+.modal-content input[type="email"] {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  outline-offset: 2px;
+  transition: border-color 0.2s;
+}
+
+.modal-content input[type="email"]:focus {
+  border-color: var(--primary-color);
+}
+
+.modal-content button {
+  cursor: pointer;
+  border-radius: 50px;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.modal-content button:first-of-type {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+}
+
+.modal-content button:first-of-type:hover {
+  background-color: #e07a5f;
+}
+
+.modal-content button:last-of-type {
+  background-color: #eee;
+  color: #555;
+  margin-left: 1rem;
+}
+
+.modal-content button:last-of-type:hover {
+  background-color: #ddd;
+}
