@@ -1,4 +1,4 @@
-import '../styles/Inscription.css';
+import '../styles/AuthForms.css';
 import registrationBanner from '../assets/registration-banner.jpg'; // Mettez votre image de bannière ici
 
 export const Inscription = () => {

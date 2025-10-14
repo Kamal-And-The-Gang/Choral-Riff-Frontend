@@ -1,9 +1,9 @@
 import React from "react";
+import './index.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
 import { Inscription } from "./pages/Inscription";
 import { Connexion } from "./pages/Connexion";
-import { Ensembles } from "./pages/Ensembles";
 import { EnsemblesPage } from "./pages/EnsemblesPages";
 import { EnsembleDetails } from "./pages/EnsembleDetails";
 import { AddEnsemble } from "./pages/AddEnsemble";
@@ -18,15 +18,15 @@ import { Invitation } from "./pages/Invitation";
 
 export const App = () => {
   return (
-    <>
+    <div className="app-container">
       <Header />
+      <main className="app-content"> 
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/inscription" element={<Inscription />} />
           <Route path="/connexion" element={<Connexion />} />
-          <Route path="/ensembles" element={<Ensembles />} />
-          <Route path="/ensemblesPages" element={<EnsemblesPage />} />
+          <Route path="/ensembles" element={<EnsemblesPage />} />
           <Route path="/ensembleDetails" element={<EnsembleDetails />} />
           <Route path="/ensembles/:ensembleId" element={<EnsembleDetails />} />
           <Route path="/addEnsemble" element={<AddEnsemble />} />
@@ -48,8 +48,9 @@ export const App = () => {
           <Route path="/invitation" element={<Invitation />} />
         </Routes>
       </BrowserRouter>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

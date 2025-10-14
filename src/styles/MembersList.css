@@ -3,7 +3,6 @@
     min-height: 100vh;
 }
 
-/* Le style de la bannière et du main peut hériter de EnsembleDetails.css ou être repris */
 .members-header-section.detail-header {
     background-color: #f9f9f9; 
     height: 100px; 
@@ -97,49 +96,78 @@
 .members-list {
     display: flex;
     flex-direction: column;
+    gap: 10px; 
 }
 
+/* Base de l'élément de la liste */
 .member-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--background-light);
+    
+    background-color: white; 
+    padding: 1rem 1.2rem; 
+    border-radius: 10px;
+    
+    /* OMBRE DE CARTE */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    border-bottom: none; 
 }
 
-.member-item:last-child {
-    border-bottom: none;
-}
 
 .member-info-main {
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-grow: 1; 
+    min-width: 0;
+    margin-right: 2rem; 
 }
 
 .member-profile-icon {
     color: #ccc;
+    flex-shrink: 0; 
 }
 
 .member-details-text {
     display: flex;
     flex-direction: column;
+    min-width: 0; 
 }
 
 .member-name {
     font-weight: 600;
     color: var(--dark-text);
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 .member-email {
     font-size: 0.85rem;
     color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .member-actions {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    align-items: center; 
+    gap: 1rem; 
+    flex-shrink: 0; 
+}
+
+.action-separator {
+    width: 1px;
+    height: 30px; 
+    background-color: var(--border-color, #eee); 
+    margin: 0 0.5rem; 
+}
+
+.button-group {
+    display: flex;
+    gap: 10px; 
 }
 
 /* Rôles */
@@ -153,6 +181,7 @@
     font-weight: bold;
     text-transform: uppercase;
     color: var(--dark-text);
+    flex-shrink: 0;
 }
 
 .member-role-tag.admin {
@@ -169,7 +198,6 @@
 }
 
 
-/* Boutons d'action */
 .action-button {
     background: none;
     border: none;
@@ -179,6 +207,7 @@
     font-size: 0.85rem;
     font-weight: 500;
     transition: background-color 0.2s;
+    flex-shrink: 0;
 }
 
 .role-button {
@@ -195,6 +224,34 @@
 }
 .remove-button:hover {
     background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* --- Media Query pour les petits écrans --- */
+@media (max-width: 600px) {
+    .member-item {
+        flex-wrap: wrap; 
+        padding: 0.8rem 1rem;
+    }
+
+    .member-info-main {
+        width: 100%;
+        margin-bottom: 0.7rem; 
+    }
+
+    .member-actions {
+        width: 100%; 
+        justify-content: space-between; 
+        margin-left: 0;
+        gap: 0; 
+    }
+    
+    .action-separator {
+        display: none;
+    }
+
+    .member-role-tag {
+        margin-right: auto; 
+    }
 }
 
 /* --- Modale --- */

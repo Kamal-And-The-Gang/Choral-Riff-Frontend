@@ -1,43 +1,48 @@
-// src/pages/Ensembles.tsx
-
 import React from 'react';
-import '../styles/EnsemblesPages.css';
-import { FaPlus } from 'react-icons/fa';
+import '../styles/MonEspace.css';
+import { FaUsers, FaPlus } from 'react-icons/fa';
 
-// Importer les images que vous utiliserez ici
 import ensembleBanner from '../assets/banniere-mon-espace.jpg';
 import userProfilePic from '../assets/avatar-michelle.jpg';
 
-// ... (Définition de EnsembleCard et des types) ...
-type EnsembleCardProps = {
+
+// --- TYPAGES ET DONNÉES (Gardées) ---
+interface Ensemble {
     id: number;
     name: string;
-    image: string;
-};
+    members: number;
+    type: string;
+}
+interface EnsembleListItemProps {
+    ensemble: Ensemble;
+}
+const ensembleData: Ensemble[] = [
+    { id: 1, name: "Les enfants de Dr Dre", members: 11, type: "Chorale" },
+    { id: 2, name: "Red Hot Chili Peppers", members: 4, type: "Quatuor" },
+    { id: 3, name: "Orchestre Lyrique", members: 75, type: "Orchestre" },
+    { id: 4, name: "Harmonie Municipale", members: 42, type: "Orchestre d'Harmonie" },
+];
 
-const EnsembleCard: React.FC<EnsembleCardProps> = ({ id, name, image }) => (
-    <a href={`/ensembles/${id}`} className="ensemble-card-link">
-        <div className="ensemble-card-item">
-            <img src={image} alt={name} className="ensemble-image" />
-            <span className="ensemble-name">{name}</span>
+const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => (
+    <a href={`/ensembles/${ensemble.id}`} className="ensemble-list-item-link">
+        <div className="ensemble-card">
+            <FaUsers size={40} className="ensemble-icon" />
+            <div className="ensemble-details">
+                <h3>{ensemble.name}</h3>
+                <p>Type : {ensemble.type}</p>
+                <p>{ensemble.members} membres</p>
+            </div>
+            <button className="view-ensemble-button">Voir les partitions</button>
         </div>
     </a>
 );
-// ... (Fin de la définition de EnsembleCard) ...
 
 
 export const EnsemblesPage = () => {
-    // Données fictives
-    const ensembles = [
-        { id: 1, name: "Les enfants de Dr Dre", image: '../assets/ensemble-1.jpg' },
-        { id: 2, name: "Red Hot Chili Peppers", image: '../assets/ensemble-2.jpg' },
-        { id: 3, name: "Orchestre Lyrique", image: '../assets/ensemble-3.jpg' },
-    ];
-
     return (
         <div className="ensembles-container">
 
-            {/* ... (Code de la bannière et de la section profil) ... */}
+            {/* 1. Section Bannière (inchangé) */}
             <section className="ensembles-banner" style={{ backgroundImage: `url(${ensembleBanner})` }}>
                 <div className="banner-overlay">
                     <h2>Mon espace</h2>
@@ -45,6 +50,8 @@ export const EnsemblesPage = () => {
             </section>
 
             <main className="ensembles-main">
+
+                {/* 2. Section Profil (inchangé) */}
                 <div className="profile-section">
                     <img
                         src={userProfilePic}
@@ -56,33 +63,28 @@ export const EnsemblesPage = () => {
                     </div>
                 </div>
 
-                {/* Section Contenu Principal (Carte Mes ensembles) */}
-                <div className="ensembles-content-card">
-                    <h3 className="card-title">Mes ensembles</h3>
+                {/* 3. Liste des Ensembles : RETRAIT DU CONTENEUR ENGLOBANT */}
+                
+                    <section className="ensembles-list-section"> 
 
-                    <div className="ensembles-list-grid">
-                        {ensembles.map(ensemble => (
-                            <EnsembleCard
-                                key={ensemble.id}
-                                id={ensemble.id}
-                                name={ensemble.name}
-                                image={ensemble.image}
-                            />
-                        ))}
-                    </div>
+                        <div className="ensembles-header-section">
+                            <h2>Mes Ensembles Musicaux</h2>
+                        </div>
 
-                    {/* LIEN AJOUTÉ ICI pour lier le bouton à la nouvelle page */}
-                    <div className="add-ensemble-footer">
-                        {/* Utilisation de <a> autour du <button> */}
-                        <a href="/ajouter-ensemble">
-                            <button className="add-ensemble-button">
-                                <FaPlus /> Créer un nouvel ensemble
-                            </button>
-                        </a>
-                    </div>
-                    {/* FIN DU LIEN AJOUTÉ */}
+                        <div className="ensembles-list">
+                            {ensembleData.map(ensemble => (
+                                <EnsembleListItem key={ensemble.id} ensemble={ensemble} />
+                            ))}
+                        </div>
 
-                </div>
+                        <div className="add-ensemble-footer-button">
+                            <a href="/ajouter-ensemble">
+                                <button className="submit-button">
+                                    <FaPlus /> Créer un nouvel ensemble
+                                </button>
+                            </a>
+                        </div>
+                    </section>
 
             </main>
 

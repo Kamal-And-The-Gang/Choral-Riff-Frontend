@@ -1,9 +1,14 @@
-/* --- Styles de la Carte/Conteneur du Formulaire --- */
+/* --- 1. Conteneurs et Layouts --- */
+
+/* Conteneur principal englobant toute la page d'auth (fusion de .auth-container, .connexion-container, .inscription-container) */
 .auth-container {
   background-color: var(--background-light);
   min-height: 100vh;
+  color: var(--dark-text);
+  text-align: center;
 }
 
+/* Conteneur de la zone principale (limite la largeur du contenu) */
 .auth-main {
   padding: 1rem;
   max-width: 500px;
@@ -11,40 +16,162 @@
   text-align: center;
 }
 
+/* Section contenant le formulaire (centrage vertical) */
+.form-section {
+  padding: 2rem 1rem;
+  background-color: var(--background-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+/* Titre principal de la page */
 .form-title {
   font-size: 2rem;
   margin: 2rem 0 1.5rem 0;
   color: var(--dark-text);
 }
 
-/* --- Styles du Bouton de Validation/Connexion --- */
+.form-section h2 {
+  /* Utilisé par Inscription.tsx */
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* La carte qui encadre le formulaire */
+.form-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+  /* Largeur optimale pour les formulaires */
+  margin: 0 auto;
+}
+
+
+/* --- 2. Champs de saisie (Inputs) --- */
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: #F4F0FF;
+  color: var(--dark-text);
+}
+
+.form-input::placeholder {
+  color: #333;
+  opacity: 1;
+}
+
+
+/* --- 3. Boutons d'action --- */
+
+/* Unification des boutons Valider et Se Connecter */
+.validate-button,
 .submit-button {
   background-color: var(--primary-color);
   color: var(--light-text);
   border: none;
   border-radius: 50px;
-  padding: 0.75rem 2rem;
-  font-size: 1.1rem;
+  padding: 0.75rem 2.5rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  width: 100%;
-  margin-top: 1.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transition: background-color 0.2s;
-}
-.submit-button:hover {
-  background-color: #e5734f;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  display: block;
+  margin: 1rem auto;
 }
 
+.validate-button:hover,
+.submit-button:hover {
+  background-color: #e5734f;
+  transform: scale(1.05);
+}
+
+
+/* --- 4. Styles Spécifiques à la Page de Connexion --- */
+
 /* Style du lien "Mot de passe oublié" */
-.forgot-password {
+.forgot-password-link {
   text-align: right;
   margin-top: -0.5rem;
   margin-bottom: 1.5rem;
 }
 
-.forgot-password a {
-  color: var(--primary-color);
+.forgot-password-text {
+  color: var(--dark-text);
   text-decoration: none;
   font-size: 0.9rem;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.forgot-password-text:hover {
+  color: #e5734f;
+  text-decoration: underline;
+}
+
+/* Lien vers l'inscription/connexion (en bas de carte) */
+.link-to-register {
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.link-to-register a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.link-to-register a:hover {
+  color: #e5734f;
+  text-decoration: underline;
+}
+
+
+/* --- Bannière (Communs) --- */
+
+.banner-section {
+  position: relative;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.banner-overlay p {
+  color: var(--light-text);
+  font-size: 1rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  
 }

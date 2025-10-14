@@ -1,6 +1,6 @@
 /* --- Règle pour l'uniformité des labels --- */
 .form-label {
-    display: block; /* Prend toute la largeur */
+    display: block; 
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: var(--dark-text);

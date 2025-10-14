@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; 
 
-import '../styles/Connexion.css'; 
 import '../styles/AuthForms.css';
 
 // Importez l'image pour la section bannière
@@ -54,7 +53,7 @@ export const Connexion = () => {
                             </Link>
                         </div>
                         
-                        <button type="submit" className="submit-button validate-button">
+                        <button type="submit" className="validate-button submit-button ">
                             Se connecter
                         </button>
                     </form>
