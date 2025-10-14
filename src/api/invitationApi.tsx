@@ -7,7 +7,7 @@ export interface InvitationDTO {
   id: number;
   emailInvite: string;
   ensembleId: number;
-  // autres champs si besoin...
+
 }
 
 export async function creerInvitation(invitationDTO: CreateInvitationDTO): Promise<InvitationDTO> {
