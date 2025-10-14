@@ -43,7 +43,7 @@ export const Inscription = () => {
       <main>
         {/* --- Formulaire --- */}
         <section className="form-section">
-          <h2>Inscription</h2>
+          <h1 className="form-title">Inscription</h1>
           <div className="form-card">
             <form onSubmit={handleSubmit}>
               <input

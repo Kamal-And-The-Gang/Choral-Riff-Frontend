@@ -142,6 +142,7 @@
 
 /* --- Bannière (Communs) --- */
 
+/* Section de la bannière */
 .banner-section {
   position: relative;
   height: 150px;
@@ -150,6 +151,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 0; 
+  flex-shrink: 0;
 }
 
 .banner-overlay {
@@ -160,16 +163,18 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; 
+  justify-content: center; 
   padding: 1rem;
 }
 
 .banner-overlay p {
   color: var(--light-text);
-  font-size: 1rem;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-  padding: 0 1rem;
+  font-size: 1.1rem;
+  margin: 0;
+  max-width: 80%;
+  display: flex;
+  text-align: center;
 }
 
 @media (min-width: 768px) {
