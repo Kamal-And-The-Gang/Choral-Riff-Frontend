@@ -1,47 +1,52 @@
 import { useState } from 'react';
 import '../styles/AuthForms.css';
-import registrationBanner from '../assets/registration-banner.jpg'; // Mettez votre image de bannière ici
+import registrationBanner from '../assets/registration-banner.jpg';
 import { registerUser } from '../api/authApi';
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export const Inscription = () => {
+  const navigate = useNavigate();
 
-   const [nom, setNom] = useState("");
+  const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
   const [motDePasse, setMotDePasse] = useState("");
   const [confirmation, setConfirmation] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // --- Gestion du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (motDePasse !== confirmation) {
-      setMessage("⚠️ Les mots de passe ne correspondent pas.");
+      toast.error("⚠️ Les mots de passe ne correspondent pas.");
       return;
     }
 
     try {
-      const data = {
-        nom,
-        prenom,
-        email,
-        motDePasse,
-      };
-
+      setLoading(true);
+      const data = { nom, prenom, email, motDePasse };
       const utilisateur = await registerUser(data);
       console.log("Utilisateur créé :", utilisateur);
-      setMessage("✅ Inscription réussie !");
+
+      toast.success("✅ Inscription réussie !");
+      
+      // 🟢 Redirection douce après 1.5 secondes
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+
     } catch (err: any) {
       console.error(err);
-      setMessage(`❌ Erreur lors de l'inscription : ${err.message}`);
+      toast.error(`❌ Erreur lors de l'inscription : ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="home-container">
       <main>
-        {/* --- Formulaire --- */}
         <section className="form-section">
           <h1 className="form-title">Inscription</h1>
           <div className="form-card">
@@ -87,17 +92,17 @@ export const Inscription = () => {
                 required
               />
 
-              <button type="submit" className="validate-button">
-                Valider
+              <button
+                type="submit"
+                className="validate-button"
+                disabled={loading}
+              >
+                {loading ? "Inscription..." : "Valider"}
               </button>
             </form>
-
-            {/* Message d'état */}
-            {message && <p className="form-message">{message}</p>}
           </div>
         </section>
 
-        {/* --- Bannière à droite --- */}
         <section
           className="banner-section"
           style={{ backgroundImage: `url(${registrationBanner})` }}
