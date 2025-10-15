@@ -6,17 +6,16 @@ import {
   FaUser,
   FaEnvelope,
   FaChevronLeft,
-  FaPlus,
   FaUserTie,
 } from "react-icons/fa";
-import "../styles/MembersList.css"; // Nouveau fichier de style
+import "../styles/MembersList.css";
 
 // --- TYPESCRIPT TYPES ---
 type Member = {
   id: number;
   name: string;
   email: string;
-  role: "admin" | "moderator" | "member"; // Rôle au sein de l'ensemble
+  role: "admin" | "moderator" | "member";
   profilePic?: string;
 };
 
@@ -65,13 +64,11 @@ const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
   }
 
   // Simuler le fait que l'utilisateur connecté est toujours l'admin dans ce scénario
-  const isCurrentUser = member.name.includes("Moi");
 
   const handleRoleChange = () => {
     // Logique de changement de rôle
     alert(
-      `Changer le rôle de ${member.name} en ${
-        member.role === "admin" ? "membre" : "administrateur"
+      `Changer le rôle de ${member.name} en ${member.role === "admin" ? "membre" : "administrateur"
       } ?`
     );
   };
@@ -92,32 +89,24 @@ const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
       </div>
 
       <div className="member-actions">
-        {/* Affichage du rôle */}
-        <span className={`member-role-tag ${member.role}`}>
-          <RoleIcon size={12} />{" "}
-          {member.role.charAt(0).toUpperCase() + member.role.slice(1)}{" "}
-          {/* Affiche Admin, Moderator, ou Member */}
-        </span>
+        {/* BADGE DE RÔLE (Laissé tel quel) */}
+        <span className={`member-role-tag ${member.role}`}>{member.role}</span>
 
-        {/* Actions de gestion, visibles uniquement par l'admin */}
-        {isAdmin && !isCurrentUser && (
-          <>
-            <button
-              onClick={handleRoleChange}
-              className="action-button role-button"
-              title="Changer le rôle"
-            >
-              {member.role === "admin" ? "Rétrograder" : "Promouvoir"}
+        {/* NOUVEAU: SÉPARATEUR VISUEL */}
+        <div className="action-separator"></div>
+
+        <div className="button-group">
+          {isAdmin && member.role !== 'admin' && (
+            <button className="action-button role-button" onClick={handleRoleChange}>
+              {member.role === 'moderator' ? 'Rétrograder' : 'Promouvoir'}
             </button>
-            <button
-              onClick={handleRemoveMember}
-              className="action-button remove-button"
-              title="Retirer de l'ensemble"
-            >
+          )}
+          {isAdmin && member.role !== 'admin' && (
+            <button className="action-button remove-button" onClick={handleRemoveMember}>
               Retirer
             </button>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

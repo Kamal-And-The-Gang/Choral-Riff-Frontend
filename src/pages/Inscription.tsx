@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../styles/Inscription.css';
+import '../styles/AuthForms.css';
 import registrationBanner from '../assets/registration-banner.jpg'; // Mettez votre image de bannière ici
 import { registerUser } from '../api/authApi';
 
@@ -43,7 +43,7 @@ export const Inscription = () => {
       <main>
         {/* --- Formulaire --- */}
         <section className="form-section">
-          <h2>Inscription</h2>
+          <h1 className="form-title">Inscription</h1>
           <div className="form-card">
             <form onSubmit={handleSubmit}>
               <input

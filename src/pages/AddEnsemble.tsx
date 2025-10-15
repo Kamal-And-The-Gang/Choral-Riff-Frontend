@@ -21,8 +21,7 @@ export const AddEnsemble = () => {
             <main className="auth-main"> 
                 <h1 className="form-title">Créer un nouvel ensemble</h1>
                 
-                <div className="
-                ">
+                <div className="">
                     <form onSubmit={handleSubmit}>
                         
                         {/* Champ 1 : Nom de l'ensemble */}

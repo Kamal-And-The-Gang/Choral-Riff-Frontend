@@ -30,9 +30,7 @@ export const Header = () => {
         <nav className={`main-nav-links ${isMenuOpen ? "open" : ""}`}>
           <a href="/connexion">Connexion</a>
           <a href="/inscription">Inscription</a>
-          <a href="/ensembles">Mes Ensembles</a>
-          <a href="/ensemblesPages">Mes pages Ensembles</a>
-          <a href="/profil">Mon Profil</a>
+          <a href="/ensembles">Mon espace</a>
           <a href="/invitation">Invitation</a>
         </nav>
       </div>
