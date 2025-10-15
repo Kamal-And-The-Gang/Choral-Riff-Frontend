@@ -21,8 +21,8 @@ const mockVideos = [
   },
 ];
 
-// Ces éléments sont maintenant considérés comme des Morceaux (Tracks)
-const mockTracks = [
+// Ces éléments sont maintenant considérés comme des Morceaux (Morceaux)
+const mockMorceaux = [
   { id: 101, name: "Le Requiem de Riff (2024)", format: "PDF", size: "1.2 MB" },
   {
     id: 102,
@@ -34,37 +34,37 @@ const mockTracks = [
 ];
 
 /**
- * Type pour un Morceau (Track), qui mène à la page TrackDetails.
+ * Type pour un Morceau (Morceau), qui mène à la page MorceauDetails.
  */
-type Track = {
+type Morceau = {
   id: number;
   name: string;
   format: string;
   size: string;
 };
 
-type TrackItemProps = {
-  track: Track;
+type MorceauItemProps = {
+  morceau: Morceau;
   ensembleId: number;
 };
 
 // Composant renommé et transformé en lien
-const TrackItem: React.FC<TrackItemProps> = ({ track, ensembleId }) => {
-  // Le lien pointe vers /ensembles/:ensembleId/morceaux/:trackId
-  const trackLink = `/ensembles/${ensembleId}/morceaux/${track.id}`;
+const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
+  // Le lien pointe vers /ensembles/:ensembleId/morceaux/:morceauId
+  const morceauLink = `/ensembles/${ensembleId}/morceaux/${morceau.id}`;
 
   return (
     // Utilisation d'un lien (<a>) autour de l'élément visuel
     <a
-      href={trackLink}
-      className="track-item-link"
-      title={`Voir les fichiers de ${track.name}`}
+      href={morceauLink}
+      className="morceau-item-link"
+      title={`Voir les fichiers de ${morceau.name}`}
     >
       <div className="score-item">
         <div className="score-info">
           {/* Utiliser FaMusic pour représenter un Morceau (Conteneur de fichiers) */}
           <FaMusic size={20} className="score-icon" />
-          <span className="score-name">{track.name}</span>
+          <span className="score-name">{morceau.name}</span>
         </div>
         <div className="score-details">
           <span className="score-format">Voir les fichiers</span>
@@ -85,7 +85,7 @@ export const EnsembleDetails = () => {
     createdDate: "18/08/2025",
     membersCount: 58,
     profilePic: "../assets/ensemble-pic.jpg",
-    lastTrack: {
+    lastMorceau: {
       id: 10, // ID du morceau ajouté
       title: "What's My Name ?",
       ensemble: "Ensemble : Snoop Dogg",
@@ -98,6 +98,12 @@ export const EnsembleDetails = () => {
   const ensembleId = ensemble.id;
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // pour éviter le rechargement de la page
+
+    if (!email.trim()) {
+      alert("Veuillez saisir une adresse email.");
+      return; // stop la soumission si email vide ou que des espaces
+    }
+
     try {
       const data = await creerInvitation(email, ensembleId);
       console.log("Invitation réussie, réponse API :", data);
@@ -156,19 +162,23 @@ export const EnsembleDetails = () => {
             Liste des membres ({ensemble.membersCount}){" "}
             <FaChevronRight size={12} />
           </a>
-          {/* Dernière Track */}
-          <h3 className="section-title">Dernière Track :</h3>
+          {/* Dernier Morceau */}
+          <h3 className="section-title">Dernière Morceau :</h3>
           <a
-            href={`/ensembles/${ensembleId}/morceaux/${ensemble.lastTrack.id}`}
-            className="last-track-link"
-            title={`Voir les détails du morceau: ${ensemble.lastTrack.title}`}
+            href={`/ensembles/${ensembleId}/morceaux/${ensemble.lastMorceau.id}`}
+            className="last-morceau-link"
+            title={`Voir les détails du morceau: ${ensemble.lastMorceau.title}`}
           >
-            <div className="last-track-box">
-              <FaMusic size={40} className="track-icon" />
-              <div className="track-info">
-                <p className="track-title-name">{ensemble.lastTrack.title}</p>
-                <p className="track-subtitle">{ensemble.lastTrack.ensemble}</p>
-                <p className="track-subtitle">{ensemble.lastTrack.year}</p>
+            <div className="last-morceau-box">
+              <FaMusic size={40} className="morceau-icon" />
+              <div className="morceau-info">
+                <p className="morceau-title-name">
+                  {ensemble.lastMorceau.title}
+                </p>
+                <p className="morceau-subtitle">
+                  {ensemble.lastMorceau.ensemble}
+                </p>
+                <p className="morceau-subtitle">{ensemble.lastMorceau.year}</p>
               </div>
             </div>
           </a>
@@ -187,12 +197,16 @@ export const EnsembleDetails = () => {
               </button>
             </a>
           </div>
-          {/* LISTE DES MORCEAUX (Utilisation du composant TrackItem) */}
+          {/* LISTE DES MORCEAUX (Utilisation du composant MorceauItem) */}
           <h4 className="subsection-title">Liste des morceaux :</h4>{" "}
           {/* Titre mis à jour */}
           <div className="scores-list">
-            {mockTracks.map((track) => (
-              <TrackItem key={track.id} track={track} ensembleId={ensembleId} />
+            {mockMorceaux.map((morceau) => (
+              <MorceauItem
+                key={morceau.id}
+                morceau={morceau}
+                ensembleId={ensembleId}
+              />
             ))}
           </div>
           {/* Vidéos de lives */}
