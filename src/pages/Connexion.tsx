@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/AuthForms.css";
 import bannerImage from "../assets/registration-banner.jpg";
 import { loginUser } from "../api/authApi";
@@ -9,24 +9,18 @@ import { loginUser } from "../api/authApi";
 export const Connexion = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      // 🔹 Appel à ton API backend
-      const tokens = await loginUser({ email, password });
-
-      // 🔹 Sauvegarde des tokens JWT
-      localStorage.setItem("accessToken", tokens.accessToken);
-      localStorage.setItem("refreshToken", tokens.refreshToken);
-
-      // 🔹 Toast de succès
-      toast.success("Connexion réussie 🎶");
-
-      // 🔹 Redirection vers la page d’accueil
-      navigate("/");
+    const data = { email, password };
+      const tokens = await loginUser(data); // Appel API backend
+      login(tokens.accessToken); // On stocke le token via le contexte
+      toast.success("Connexion réussie !");
+      navigate("/"); // Redirection page d'accueil
     } catch (err: any) {
       console.error("Erreur lors de la connexion :", err);
       toast.error("Email ou mot de passe incorrect ❌");
