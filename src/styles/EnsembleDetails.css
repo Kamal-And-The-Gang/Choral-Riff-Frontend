@@ -329,3 +329,61 @@
 .add-file-button:hover {
     background-color: #4cae4c;
 }
+/*  Nouvelle carte d'en-tête de l'ensemble */
+.ensemble-header-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  padding: 1.5rem;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+/*  Photo de l'ensemble */
+.ensemble-photo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+}
+
+/* Infos texte de l'ensemble */
+.ensemble-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--dark-text);
+}
+
+.ensemble-info h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.ensemble-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+ /* Bouton de suppression (croix rouge)
+.delete-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 1rem;
+  line-height: 1;
+  
+} */
+
