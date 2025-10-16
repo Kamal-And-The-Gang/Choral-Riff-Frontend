@@ -35,6 +35,10 @@ export async function loginUser(data: LoginDTO): Promise<Record<string, string>>
     const errorText = await response.text();
     throw new Error(errorText || "Erreur de connexion");
   }
+  return response.json();
+}
 
+  export async function logoutUser() {
+  const response = await fetch(`${BASE_URL}/auth/logout`, { method: "POST" });
   return response.json();
 }
