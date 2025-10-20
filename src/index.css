@@ -124,3 +124,11 @@ input:focus {
   max-width: 400px;
 }
 }
+.delete-button {
+  background-color: #d9663b; /* couleur orange foncé pour supprimer */
+}
+
+.delete-button:hover {
+  background-color: #b3552e; /* hover un peu plus foncé */
+}
+
