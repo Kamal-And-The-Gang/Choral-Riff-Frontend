@@ -1,9 +1,11 @@
 import '../styles/HomePage.css';
 import { FaUsers, FaFileAlt, FaPlayCircle, FaHandshake } from 'react-icons/fa';
+import ellipseImage from '../assets/Ellipse_21.png';
 
 import heroImage from '../assets/hero-background.jpg'
-import avatarLucas from '../assets/avatar-lucas.jpg';
-import avatarFlo from '../assets/avatar-flo.jpg';
+import avatarLucas from '../assets/Lucas.png';
+import avatarFlo from '../assets/Flo.png';
+
 
 
 export const HomePage = () => {
@@ -62,7 +64,9 @@ export const HomePage = () => {
             <a href="/Inscription">
               <button className="cta-button">
                 S'inscrire
-                <span className="sound-wave">|||</span>
+                {/* <span className="sound-wave">|||</span> */}
+                <img src={ellipseImage} alt="onde sonore" className="sound-wave-img" />
+
               </button>
             </a>
           </div>

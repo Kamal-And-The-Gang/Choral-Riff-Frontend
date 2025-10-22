@@ -122,6 +122,7 @@ input:focus {
   box-shadow: 0 6px 15px rgba(0,0,0,0.1), inset 0 0 20px rgba(0,0,0,0.1); 
   width: 90%;
   max-width: 400px;
+  
 }
 }
 .delete-button {

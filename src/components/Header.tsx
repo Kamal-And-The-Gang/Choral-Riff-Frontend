@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { FaMusic, FaBars } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { useAuth } from "../contexts/AuthContext";
-import "../styles/HomePage.css";
 import { logoutUser } from "../api/authApi";
+import "../styles/HomePage.css";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -15,11 +18,15 @@ export const Header = () => {
   const handleLogout = async () => {
     try {
       await logoutUser();
-    } catch (e) {
-      console.error("Erreur lors de la déconnexion :", e);
+      logout(); // Nettoie le contexte et le localStorage
+      toast.success("Déconnexion réussie 👋");
+      navigate("/"); // ✅ Redirige vers la page d’accueil
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+      toast.error("Erreur lors de la déconnexion");
+    } finally {
+      setIsMenuOpen(false);
     }
-    logout();
-    setIsMenuOpen(false);
   };
 
   return (
@@ -46,10 +53,7 @@ export const Header = () => {
             <>
               <a href="/ensembles">Mon espace</a>
               <a href="/invitation">Invitation</a>
-              <button
-                onClick={handleLogout}
-                className="logout-button"
-              >
+              <button onClick={handleLogout} className="logout-button">
                 Déconnexion
               </button>
             </>

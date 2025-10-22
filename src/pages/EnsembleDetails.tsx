@@ -1,5 +1,9 @@
 import "../styles/EnsembleDetails.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import drDreKids2 from "../assets/dr_dre_kids_2.png";
+import sophie from "../assets/sophie.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -14,6 +18,10 @@ import {
 
 // 🚨 SIMULATION : Import des composants d'API et Modale
 import AjouterMorceauForm from './AjouterMorceauForm';
+import { useEffect, useState } from "react";
+
+// TODO: Kamal s'occupe de la gestion des morceaux (affichage, ajout, suppression)
+// À compléter dans la section des morceaux plus bas dans le composant
 
 // URL de base de votre API
 const API_BASE_URL = "http://localhost:8080/api";
@@ -41,6 +49,27 @@ type DernierMorceauAPI = {
 type MorceauItemProps = {
   morceau: MorceauListeDTO; // Utilise le type DTO
   ensembleId: number;
+};
+
+//21/10 DTO
+type Ensemble = {
+  id: number;
+  nom: string;
+  description: string;
+  dateCreation: string; // ← LocalDate devient string côté front
+};
+// Type pour le mock (avec infos en plus que le backend ne renvoie pas)
+type LastMorceauMock = {
+  id: number;
+  title: string;
+  ensemble: string;
+  year: number;
+};
+type EnsembleMockExtras = {
+  creator: string;
+  membersCount: number;
+  profilePic: string;
+  lastMorceau: LastMorceauMock;
 };
 
 const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
@@ -75,6 +104,8 @@ export const EnsembleDetails = () => {
   const { ensembleId } = useParams<{ ensembleId: string }>();
   const ensembleIdNumber = Number(ensembleId);
   const navigate = useNavigate();
+  const mockEnsembleExtras: { [id: number]: EnsembleMockExtras } = {
+    1: {
 
   // 🚨 AJOUT DE L'ÉTAT POUR LA LISTE COMPLÈTE
   const [listeMorceaux, setListeMorceaux] = useState<MorceauListeDTO[]>([]);
@@ -91,43 +122,65 @@ export const EnsembleDetails = () => {
       id: 1,
       name: "Les enfants de Dr Dre",
       creator: "Michelle Leeb",
-      createdDate: "18/08/2025",
       membersCount: 58,
       profilePic: drDreKids2,
     },
-    {
-      id: 2,
-      name: "Red Hot Chili Peppers",
+    2: {
       creator: "Anthony Kiedis",
-      createdDate: "01/02/2023",
       membersCount: 4,
       profilePic:
         "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
+      lastMorceau: {
+        id: 20,
+        title: "Californication",
+        ensemble: "Ensemble : RHCP",
+        year: 2006,
+      },
+        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
     },
+    3: {
     {
       id: 3,
       name: "Jazz à Paris",
       creator: "Sophie Marceau",
-      createdDate: "12/07/2024",
       membersCount: 15,
+      profilePic: sophie,
+      lastMorceau: {
+        id: 30,
+        title: "Certitude",
+        ensemble: "Ensemble : Jazz à Paris",
+        year: 1985,
+      },
       profilePic:
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80",
     },
-    {
-      id: 4,
-      name: "Orchestre Symphonique Lyon",
+    4: {
       creator: "Jean Dupont",
-      createdDate: "25/11/2022",
       membersCount: 120,
       profilePic:
         "https://images.unsplash.com/photo-1529101091764-c3526daf38fe?auto=format&fit=crop&w=400&q=80",
+      lastMorceau: {
+        id: 40,
+        title: "Symphonie n°5",
+        ensemble: "Ensemble : OS Lyon",
+        year: 2022,
+      },
+        "https://images.unsplash.com/photo-1529101091764-c3526daf38fe?auto=format&fit=crop&w=400&q=80",
     },
-    {
-      id: 5,
-      name: "Rock Rebels",
-      creator: "Léa Martin",
-      createdDate: "05/03/2025",
+    5: {
+      creator: "Kamal",
       membersCount: 8,
+      profilePic: drDreKids2,
+      lastMorceau: {
+        id: 50,
+        title: "The Chronic",
+        ensemble: "Ensemble : Gangsta rap",
+        year: 2025,
+      },
+    },
+  };
+
+  type EnsembleComplet = Ensemble & EnsembleMockExtras;
       profilePic:
         "https://images.unsplash.com/photo-1511376777868-611b54f68947?auto=format&fit=crop&w=400&q=80",
     },
@@ -141,12 +194,92 @@ export const EnsembleDetails = () => {
   ];
 
   const [email, setEmail] = useState("");
+  const [ensemble, setEnsemble] = useState<EnsembleComplet | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchEnsemble = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `http://localhost:8080/api/ensembles/${ensembleIdNumber}`
+        );
+        if (!response.ok) {
+          throw new Error(`Erreur serveur : ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const extras = mockEnsembleExtras[data.id] || {
+          creator: "Inconnu",
+          membersCount: 0,
+          profilePic: sophie,
+          lastMorceau: { id: 0, title: "", ensemble: "", year: 0 },
+        };
+        // Combine données API + extras
+        setEnsemble({ ...data, ...extras });
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!isNaN(ensembleIdNumber)) {
+      fetchEnsemble();
+    } else {
+      setError("Identifiant d'ensemble invalide");
+      setLoading(false);
+    }
+  }, [ensembleIdNumber]);
+
+  // Trouve l'ensemble correspondant à l'id
+  // const ensemble = mockEnsembles.find((e) => e.id === ensembleIdNumber);
+  // Si ensemble non trouvé (id incorrect)
   const ensemble = mockEnsembles.find((e) => e.id === ensembleIdNumber);
 
   if (!ensemble) {
     return <div>Ensemble non trouvé.</div>;
   }
+
+  // const ensembleId = ensemble.id;
+
+  /**
+   *
+   *
+   * @param {React.FormEvent} e
+   * @return {*}
+   */
+  const handleInviteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      toast.error("Veuillez saisir une adresse email.");
+
+      return;
+    }
+
+    try {
+      await creerInvitation(email, ensembleIdNumber);
+      console.log("Envoi invitation avec :", { email, ensembleId });
+
+      toast.success("Invitation envoyée !");
+      setEmail("");
+    } catch (error: any) {
+      toast.error("Erreur : " + error.message);
+    }
+  };
+
+  /**
+   *
+   *
+   * @param {string} emailInvite
+   * @param {number} ensembleId
+   * @return {*}
+   */
+
 
   // CHARGER TOUS LES MORCEAUX
   const fetchAllMorceaux = async () => {
@@ -213,6 +346,8 @@ export const EnsembleDetails = () => {
     return await response.json();
   };
 
+  
+
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
@@ -237,13 +372,18 @@ export const EnsembleDetails = () => {
       if (!response.ok) {
         throw new Error(`Erreur lors de la suppression : ${response.statusText}`);
       }
+
+      toast.success("Ensemble supprimé avec succès !");
+      navigate("/ensembles"); // redirection après suppression
       alert("Ensemble supprimé avec succès !");
       navigate("/ensembles");
     } catch (error: unknown) {
       if (error instanceof Error) {
-        alert("Erreur lors de la suppression de l'ensemble : " + error.message);
+        toast.error(
+          "Erreur lors de la suppression de l'ensemble : " + error.message
+        );
       } else {
-        alert("Erreur inconnue lors de la suppression de l'ensemble");
+        toast.error("Erreur inconnue lors de la suppression de l'ensemble");
       }
     }
   };
@@ -257,14 +397,14 @@ export const EnsembleDetails = () => {
           <div className="ensemble-header-card">
             <img
               src={ensemble.profilePic}
-              alt={`Photo de ${ensemble.name}`}
+              alt={`Photo de ${ensemble.nom}`}
               className="ensemble-photo"
             />
 
             <div className="ensemble-info">
-              <h2 className="ensemble-name">{ensemble.name}</h2>
+              <h2 className="ensemble-name">{ensemble.nom}</h2>
               <p>Créé par : {ensemble.creator}</p>
-              <p>Créé le : {ensemble.createdDate}</p>
+              <p>Créé le : {ensemble.dateCreation}</p>
               <p>Nombre de membres : {ensemble.membersCount}</p>
 
               <div className="ensemble-buttons">
@@ -282,6 +422,27 @@ export const EnsembleDetails = () => {
               </div>
             </div>
           </div>
+          {/*  DERNIER MORCEAU */}
+          <h3 className="section-title">Dernier Morceau :</h3>
+          <a
+            href={`/ensembles/${ensembleId}/morceaux/${ensemble.lastMorceau.id}`}
+            className="last-morceau-link"
+            title={`Voir les détails du morceau: ${ensemble.lastMorceau.title}`}
+          >
+            <div className="last-morceau-box">
+              <FaMusic size={40} className="morceau-icon" />
+              <div className="morceau-info">
+                <p className="morceau-title-name">
+                  {ensemble.lastMorceau.title}
+                </p>
+                <p className="morceau-subtitle">
+                  {ensemble.lastMorceau.ensemble}
+                </p>
+                <p className="morceau-subtitle">{ensemble.lastMorceau.year}</p>
+              </div>
+            </div>
+          </a>
+          {/*  FICHIERS */}
 
           {/* AFFICHAGE DU DERNIER MORCEAU DYNAMIQUE */}
           <h3 className="section-title">Dernier Morceau Ajouté :</h3>
@@ -317,9 +478,17 @@ export const EnsembleDetails = () => {
               <FaPlus size={14} /> Ajouter un Morceau
             </button>
           </div>
-
+      
           <h4 className="subsection-title">Liste des morceaux :</h4>
+              {/* TODO: Afficher la liste réelle des morceaux depuis l'API */}
           <div className="scores-list">
+            {mockMorceaux.map((morceau) => (
+              <MorceauItem
+                key={morceau.id}
+                morceau={morceau}
+                ensembleId={ensembleIdNumber}
+              />
+            ))}
             {/* Affichage de la liste */}
             {loadingListe ? (
               <p>Chargement de la liste des morceaux...</p>
@@ -335,6 +504,7 @@ export const EnsembleDetails = () => {
               ))
             )}
           </div>
+          {/*  VIDÉOS */}
 
           {/*  VIDÉOS  */}
           <h4 className="subsection-title">Vidéos de lives :</h4>
@@ -350,6 +520,7 @@ export const EnsembleDetails = () => {
               </div>
             ))}
           </div>
+          {/* INVITATION */}
 
           {/* INVITATION  */}
           <div className="form-card">
@@ -366,14 +537,11 @@ export const EnsembleDetails = () => {
               </button>
             </form>
 
-            <div className="action-buttons">
-              <button className="share-button">
-                <FaShareAlt size={18} />
-              </button>
-            </div>
+            <div className="action-buttons"></div>
           </div>
         </div>
       </main>
+      <ToastContainer position="top-right" autoClose={3000} />
 
       {/* MODALE D'AJOUT DE MORCEAU */}
       {isModalOpen && (
