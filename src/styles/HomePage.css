@@ -53,21 +53,20 @@
 }
 
 .main-nav-links.open {
-  display: flex; 
+  display: flex;
   flex-direction: column;
-  
   position: absolute;
-  top: 100%; 
-  right: 1.5rem; 
-  
-  background-color: white; 
+  top: 100%;
+  right: 1.5rem;
+  background-color: white;
   min-width: 180px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   border-radius: 5px;
-  padding: 0; 
+  padding: 0;
   z-index: 90;
   overflow: hidden;
 }
+
 .main-nav-links.open a {
   color: var(--dark-text);
   text-align: left; 

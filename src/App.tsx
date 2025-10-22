@@ -18,10 +18,10 @@ import { Invitation } from "./pages/Invitation";
 
 export const App = () => {
   return (
+    <BrowserRouter>
     <div className="app-container">
       <Header />
       <main className="app-content"> 
-      <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/inscription" element={<Inscription />} />
@@ -47,10 +47,10 @@ export const App = () => {
           />
           <Route path="/invitation" element={<Invitation />} />
         </Routes>
-      </BrowserRouter>
       </main>
       <Footer />
     </div>
+    </BrowserRouter>
   );
 };
 
