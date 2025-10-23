@@ -9,37 +9,23 @@ import sophie from "../assets/sophie.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-
-import {
-  FaMusic,
-  FaShareAlt,
-  FaChevronRight,
-  FaPlayCircle,
-  FaPlus,
-} from "react-icons/fa";
+import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 
 // Import du composant Modale
-import AjouterMorceauForm from './AjouterMorceauForm';
+import AjouterMorceauForm from "./AjouterMorceauForm";
 
 // URL de base de votre API
 const API_BASE_URL = "http://localhost:8080/api";
 
 // --- DTOs ---
 
-// Type du morceau récupéré pour l'affichage de la liste
-type MorceauListeDTO = {
-  morceauId: number;
+// Type du morceau récupéré pour le "Dernier Morceau"
+type DernierMorceauAPI = {
+  id: number;
   titre: string;
   compositeur: string;
   genre: string;
 };
-
-// Type du morceau récupéré pour le "Dernier Morceau"
-type DernierMorceauAPI = {
-  morceauId: number;
-  titre: string;
-  compositeur: string;
-  genre: string;
 
 // TODO: K s'occupe de la gestion des morceaux (affichage, ajout, suppression)
 // À compléter dans la section des morceaux plus bas dans le composant
@@ -56,21 +42,14 @@ const mockVideos = [
   },
 ];
 
-const mockMorceaux = [
-  { id: 101, name: "Le Requiem de Riff (2024)", format: "PDF", size: "1.2 MB" },
-  {
-    id: 102,
-    name: "Symphonie Dr Dre (Transcription)",
-    format: "MusicXML",
-    size: "500 KB",
-  },
-  { id: 103, name: "Partition test", format: "PDF", size: "800 KB" },
-];
-
+// Type du morceau récupéré pour l'affichage de la liste
 type Morceau = {
   id: number;
-  name: string;
+  titre: string;
   format: string;
+  genre: string;
+  descriptif: string;
+  compositeur: string;
   size: string;
 };
 
@@ -80,21 +59,12 @@ type MorceauItemProps = {
 };
 
 // DTO pour les données d'ensemble de l'API
-type EnsembleAPI = {
+type Ensemble = {
   id: number;
   nom: string;
   description: string;
   dateCreation: string;
 };
-
-// Types pour le mock (Données supplémentaires non fournies par l'API principale)
-type EnsembleMockExtras = {
-  creator: string;
-  membersCount: number;
-  profilePic: string;
-};
-// Type final combiné
-type EnsembleComplet = EnsembleAPI & EnsembleMockExtras;
 
 // --- Composant MorceauItem ---
 
@@ -110,7 +80,7 @@ type EnsembleComplet = EnsembleAPI & EnsembleMockExtras;
  * @return {*}
  */
 const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
-  const morceauLink = `/ensembles/${ensembleId}/morceaux/${morceau.morceauId}`;
+  const morceauLink = `/ensembles/${ensembleId}/morceaux/${morceau.id}`;
 
   return (
     <a
@@ -121,7 +91,9 @@ const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
       <div className="score-item">
         <div className="score-info">
           <FaMusic size={20} className="score-icon" />
-          <span className="score-name">{morceau.titre} ({morceau.compositeur})</span>
+          <span className="score-name">
+            {morceau.titre} ({morceau.compositeur})
+          </span>
         </div>
         <div className="score-details">
           <span className="score-format">Genre: {morceau.genre}</span>
@@ -132,55 +104,17 @@ const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
   );
 };
 
-// --- Début du Composant EnsembleDetails ---
-
-// Correction: Structure et contenu des mocks simplifiés pour éviter les erreurs de syntaxe
-const mockEnsembleExtras: { [id: number]: EnsembleMockExtras } = {
-  1: {
-    creator: "Michelle Leeb",
-    membersCount: 58,
-    profilePic: drDreKids2,
-  },
-  2: {
-    creator: "Anthony Kiedis",
-    membersCount: 4,
-    profilePic: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80",
-  },
-  3: {
-    creator: "Sophie Marceau",
-    membersCount: 15,
-    profilePic: sophie, // Utilisation de l'import 'sophie'
-  },
-  4: {
-    creator: "Jean Dupont",
-    membersCount: 120,
-    profilePic: "https://images.unsplash.com/photo-1529101091764-c3526daf38fe?auto=format&fit=crop&w=400&q=80",
-  },
-  5: {
-    creator: "Kamal",
-    membersCount: 8,
-    profilePic: "https://images.unsplash.com/photo-1511376777868-611b54f68947?auto=format&fit=crop&w=400&q=80",
-  },
-};
-
-// Mock de vidéos utilisé (id, title, date)
-const mockVideos = [
-  { id: 1, title: "Concert Live - 2025", date: "12/06/2025" },
-  { id: 2, title: "Répétition générale", date: "05/04/2025" },
-  { id: 3, title: "Masterclass: Direction", date: "20/02/2025" },
-];
-
-
 export const EnsembleDetails = () => {
   const { ensembleId } = useParams<{ ensembleId: string }>();
   const ensembleIdNumber = Number(ensembleId);
   const navigate = useNavigate();
 
   // --- États ---
-  const [listeMorceaux, setListeMorceaux] = useState<MorceauListeDTO[]>([]);
+  const [listeMorceaux, setListeMorceaux] = useState<Morceau[]>([]);
   const [loadingListe, setLoadingListe] = useState(true);
 
-  const [dernierMorceau, setDernierMorceau] = useState<DernierMorceauAPI | null>(null);
+  const [dernierMorceau, setDernierMorceau] =
+    useState<DernierMorceauAPI | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingMorceau, setLoadingMorceau] = useState(true);
 
@@ -188,12 +122,11 @@ export const EnsembleDetails = () => {
   const [name, setName] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  const [ensemble, setEnsemble] = useState<EnsembleComplet | null>(null);
+  const [ensemble, setEnsemble] = useState<Ensemble | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Correction: La variable 'mockMorceaux' était définie globalement mais non utilisée, on la supprime.
 
+  // Correction: La variable 'mockMorceaux' était définie globalement mais non utilisée, on la supprime.
 
   // --- Fonctions d'appel API ---
 
@@ -201,12 +134,15 @@ export const EnsembleDetails = () => {
   const fetchAllMorceaux = async () => {
     setLoadingListe(true);
     try {
-      const response = await axios.get<MorceauListeDTO[]>(
-        `${API_BASE_URL}/ensembles/${ensembleIdNumber}/morceaux`
+      const response = await axios.get<Morceau[]>(
+        `${API_BASE_URL}/morceaux/ensemble/${ensembleIdNumber}`
       );
       setListeMorceaux(response.data);
     } catch (error) {
-      console.error("Erreur lors du chargement de la liste des morceaux:", error);
+      console.error(
+        "Erreur lors du chargement de la liste des morceaux:",
+        error
+      );
       // Correction: Afficher une erreur utilisateur si la liste ne charge pas
       toast.error("Impossible de charger la liste des morceaux.");
       setListeMorceaux([]);
@@ -248,17 +184,10 @@ export const EnsembleDetails = () => {
           throw new Error(`Erreur serveur : ${response.status}`);
         }
 
-        const data: EnsembleAPI = await response.json();
+        const data: Ensemble = await response.json();
 
-        // Ajout des données mockées (extras)
-        const extras = mockEnsembleExtras[data.id] || {
-          creator: "Inconnu",
-          membersCount: 0,
-          profilePic: sophie,
-        };
         // Combine données API + extras
-        setEnsemble({ ...data, ...extras });
-
+        setEnsemble(data);
       } catch (error: any) {
         setError(error.message);
         toast.error(`Erreur : ${error.message}`);
@@ -269,8 +198,8 @@ export const EnsembleDetails = () => {
 
     if (!isNaN(ensembleIdNumber)) {
       fetchEnsemble();
-      fetchLastMorceau(); 
-      fetchAllMorceaux(); 
+      fetchLastMorceau();
+      fetchAllMorceaux();
     } else {
       setError("Identifiant d'ensemble invalide");
       setLoading(false);
@@ -283,10 +212,8 @@ export const EnsembleDetails = () => {
     fetchLastMorceau();
     fetchAllMorceaux();
   };
-  
+
   // --- Fonctions d'Action (Invitation/Suppression) ---
-
-
 
   if (!ensemble) {
     return <div>Ensemble non trouvé.</div>;
@@ -320,12 +247,10 @@ export const EnsembleDetails = () => {
 
   /**
    *
-   *
    * @param {string} emailInvite
    * @param {number} ensembleId
    * @return {*}
    */
-
   const creerInvitation = async (emailInvite: string, ensembleId: number) => {
     const body = JSON.stringify({ emailInvite, ensembleId });
     const response = await fetch(`${API_BASE_URL}/invitations`, {
@@ -340,25 +265,13 @@ export const EnsembleDetails = () => {
     }
     return await response.json();
   };
-  
-  const handleInviteSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) {
-      toast.error("Veuillez saisir une adresse email.");
-      return;
-    }
-
-    try {
-      await creerInvitation(email, ensembleIdNumber);
-      toast.success("Invitation envoyée !");
-      setEmail("");
-    } catch (error: any) {
-      toast.error("Erreur : " + error.message);
-    }
-  };
 
   const supprimerEnsemble = async () => {
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet ensemble ? Cette action est irréversible.")) {
+    if (
+      !window.confirm(
+        "Êtes-vous sûr de vouloir supprimer cet ensemble ? Cette action est irréversible."
+      )
+    ) {
       return;
     }
     try {
@@ -367,7 +280,9 @@ export const EnsembleDetails = () => {
         { method: "DELETE" }
       );
       if (!response.ok) {
-        throw new Error(`Erreur lors de la suppression : ${response.statusText}`);
+        throw new Error(
+          `Erreur lors de la suppression : ${response.statusText}`
+        );
       }
 
       toast.success("Ensemble supprimé avec succès !");
@@ -390,7 +305,11 @@ export const EnsembleDetails = () => {
   }
 
   if (error || !ensemble) {
-    return <div className="details-container">Erreur : {error || "Ensemble non trouvé."}</div>;
+    return (
+      <div className="details-container">
+        Erreur : {error || "Ensemble non trouvé."}
+      </div>
+    );
   }
 
   // --- Rendu ---
@@ -398,20 +317,19 @@ export const EnsembleDetails = () => {
     <div className="details-container">
       <main className="details-main">
         <div className="details-content-card fiche-card">
-
           {/* ENSEMBLE HEADER */}
           <div className="ensemble-header-card">
-            <img
+            {/* <img
               src={ensemble.profilePic}
               alt={`Photo de ${ensemble.nom}`}
               className="ensemble-photo"
-            />
+            /> */}
 
             <div className="ensemble-info">
               <h2 className="ensemble-name">{ensemble.nom}</h2>
-              <p>Créé par : {ensemble.creator}</p>
+              {/* <p>Créé par : {ensemble.creator}</p> */}
               <p>Créé le : {ensemble.dateCreation}</p>
-              <p>Nombre de membres : {ensemble.membersCount}</p>
+              {/* <p>Nombre de membres : {ensemble.membersCount}</p> */}
 
               <div className="ensemble-buttons">
                 <button
@@ -427,27 +345,27 @@ export const EnsembleDetails = () => {
               </div>
             </div>
           </div>
-          
+
           {/* DERNIER MORCEAU DYNAMIQUE */}
           <h3 className="section-title">Dernier Morceau Ajouté :</h3>
           {loadingMorceau ? (
             <p>Chargement du dernier morceau...</p>
           ) : dernierMorceau ? (
             <a
-              href={`/ensembles/${ensembleIdNumber}/morceaux/${dernierMorceau.morceauId}`}
+              href={`/ensembles/${ensembleIdNumber}/morceaux/${dernierMorceau.id}`}
               className="last-morceau-link"
               title={`Voir les détails du morceau: ${dernierMorceau.titre}`}
             >
               <div className="last-morceau-box">
                 <FaMusic size={40} className="morceau-icon" />
                 <div className="morceau-info">
-                  <p className="morceau-title-name">
-                    {dernierMorceau.titre}
-                  </p>
+                  <p className="morceau-title-name">{dernierMorceau.titre}</p>
                   <p className="morceau-subtitle">
                     Compositeur: {dernierMorceau.compositeur}
                   </p>
-                  <p className="morceau-subtitle">Genre: {dernierMorceau.genre}</p>
+                  <p className="morceau-subtitle">
+                    Genre: {dernierMorceau.genre}
+                  </p>
                 </div>
               </div>
             </a>
@@ -458,7 +376,10 @@ export const EnsembleDetails = () => {
           {/* FICHIERS / LISTE DES MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
           <div className="add-file-section">
-            <button className="add-file-button" onClick={() => setIsModalOpen(true)}>
+            <button
+              className="add-file-button"
+              onClick={() => setIsModalOpen(true)}
+            >
               <FaPlus size={14} /> Ajouter un Morceau
             </button>
           </div>
@@ -473,14 +394,14 @@ export const EnsembleDetails = () => {
               // Utilisation de la liste des morceaux dynamique
               listeMorceaux.map((morceau) => (
                 <MorceauItem
-                  key={morceau.morceauId}
+                  key={morceau.id}
                   morceau={morceau}
                   ensembleId={ensembleIdNumber}
                 />
               ))
             )}
           </div>
-          
+
           {/* VIDÉOS */}
           <h4 className="subsection-title">Vidéos de lives :</h4>
           <div className="video-grid">
@@ -498,7 +419,6 @@ export const EnsembleDetails = () => {
 
           {/* INVITATION */}
           <div className="form-card">
-            
             <button onClick={() => setShowModal(true)} type="button">
               Envoyer invitation
             </button>
@@ -520,7 +440,10 @@ export const EnsembleDetails = () => {
                     &times;
                   </span>
                   <h2>Invitation</h2>
-                  <p>Veuillez renseigner les informations de la personne que vous souhaitez inviter :</p>
+                  <p>
+                    Veuillez renseigner les informations de la personne que vous
+                    souhaitez inviter :
+                  </p>
                   <form onSubmit={handleInviteSubmit}>
                     <div className="form-group">
                       <label>Nom :</label>
