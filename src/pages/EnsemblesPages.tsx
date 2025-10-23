@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import "../styles/MonEspace.css";
 import { FaUsers, FaPlus } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import ensembleBanner from "../assets/banniere-mon-espace.jpg";
 import userProfilePic from "../assets/avatar-michelle.jpg";
@@ -21,6 +21,11 @@ interface EnsembleListItemProps {
   ensemble: Ensemble;
 }
 
+/**
+ *
+ *
+ * @param {*} { ensemble }
+ */
 const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => (
   <Link to={`/ensembles/${ensemble.id}`} className="ensemble-list-item-link">
     <div className="ensemble-card">
@@ -37,30 +42,34 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => (
   </Link>
 );
 
-
 export const EnsemblesPage = () => {
   const location = useLocation(); // <-- ici, au début de la fonction
-
+  const navigate = useNavigate();
+  const toastShown = useRef(false);
   const [ensembles, setEnsembles] = useState<Ensemble[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  if (location.state?.successMessage) {
-    toast.success(location.state.successMessage);
-  }
+    if (location.state?.successMessage && !toastShown.current) {
+      toast.success(location.state.successMessage);
+      toastShown.current = true;
 
-  fetch("http://localhost:8080/api/ensembles")
-    .then((res) => res.json())
-    .then((data) => {
-      setEnsembles(data);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error("Erreur lors du chargement des ensembles :", error);
-      setLoading(false);
-    });
-}, [location.state?.refresh, location.state?.successMessage]);
+      setTimeout(() => {
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 100);
+    }
 
+    fetch("http://localhost:8080/api/ensembles")
+      .then((res) => res.json())
+      .then((data) => {
+        setEnsembles(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement des ensembles :", error);
+        setLoading(false);
+      });
+  }, [location.state?.refresh, location.state?.successMessage]);
 
   if (loading) return <p>Chargement...</p>;
 
@@ -77,7 +86,11 @@ export const EnsemblesPage = () => {
 
       <main className="ensembles-main">
         <div className="profile-section">
-          <img src={userProfilePic} alt="Photo de profil" className="profile-pic" />
+          <img
+            src={userProfilePic}
+            alt="Photo de profil"
+            className="profile-pic"
+          />
           <div className="profile-info">
             <p className="profile-name">Michelle Leeb</p>
           </div>

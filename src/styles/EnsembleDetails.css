@@ -400,7 +400,7 @@
   align-items: center;
 }
 .edit-button {
-   background-color: var(--primary-color);
+  background-color: var(--primary-color);
   color: var(--light-text);
 }
 
@@ -415,4 +415,128 @@
 .delete-button:hover {
   background-color: #c9302c;
 }
+
+/* modal */
+
+/* ============================= */
+/* 📨 STYLE DE LA MODALE INVITATION */
+/* ============================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-content {
+  background-color: var(--card-background);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: var(--shadow-subtle);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.close-modal {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.6rem;
+  color: var(--dark-text);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+  color: var(--primary-color);
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+/* Champs du formulaire */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--dark-text);
+}
+
+.form-group input {
+  width: 100%;
+  border-radius: 50px;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  background-color: #f5f5ff;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(243, 141, 104, 0.25),
+    inset 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+
+
+.modal-content button {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content.my-modal {
+  width: 95%;
+  max-width: 600px; /* Agrandi de 420px à 600px */
+  padding: 3rem; /* au lieu de 2rem */
+}
+
+.modal-content.my-modal button:last-of-type {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  display: block;
+  margin: 3rem auto 0; /* centre horizontalement avec marge en haut */
+}
+
+.modal-content.my-modal button:last-of-type:hover {
+  background-color: #e07a5f;
+}
+
 

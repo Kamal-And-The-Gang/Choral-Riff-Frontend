@@ -68,7 +68,8 @@ const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
   const handleRoleChange = () => {
     // Logique de changement de rôle
     alert(
-      `Changer le rôle de ${member.name} en ${member.role === "admin" ? "membre" : "administrateur"
+      `Changer le rôle de ${member.name} en ${
+        member.role === "admin" ? "membre" : "administrateur"
       } ?`
     );
   };
@@ -96,13 +97,19 @@ const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
         <div className="action-separator"></div>
 
         <div className="button-group">
-          {isAdmin && member.role !== 'admin' && (
-            <button className="action-button role-button" onClick={handleRoleChange}>
-              {member.role === 'moderator' ? 'Rétrograder' : 'Promouvoir'}
+          {isAdmin && member.role !== "admin" && (
+            <button
+              className="action-button role-button"
+              onClick={handleRoleChange}
+            >
+              {member.role === "moderator" ? "Rétrograder" : "Promouvoir"}
             </button>
           )}
-          {isAdmin && member.role !== 'admin' && (
-            <button className="action-button remove-button" onClick={handleRemoveMember}>
+          {isAdmin && member.role !== "admin" && (
+            <button
+              className="action-button remove-button"
+              onClick={handleRemoveMember}
+            >
               Retirer
             </button>
           )}

@@ -1,6 +1,7 @@
 import "../styles/EnsembleDetails.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect } from "react";
 
 import drDreKids2 from "../assets/dr_dre_kids_2.png";
 import sophie from "../assets/sophie.jpg";
@@ -14,12 +15,12 @@ import {
   FaPlayCircle,
   FaPlus,
 } from "react-icons/fa";
-import { useEffect, useState } from "react";
 
-// TODO: Kamal s'occupe de la gestion des morceaux (affichage, ajout, suppression)
+// TODO: K s'occupe de la gestion des morceaux (affichage, ajout, suppression)
 // À compléter dans la section des morceaux plus bas dans le composant
 
 // Fichiers de données fictives
+
 const mockVideos = [
   { id: 1, title: "Chorale Snoop et ses amis", date: "06/04/2024", link: "#" },
   {
@@ -74,6 +75,12 @@ type EnsembleMockExtras = {
   lastMorceau: LastMorceauMock;
 };
 
+/**
+ *
+ *
+ * @param {*} { morceau, ensembleId }
+ * @return {*}
+ */
 const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
   const morceauLink = `/ensembles/${ensembleId}/morceaux/${morceau.id}`;
 
@@ -164,6 +171,9 @@ export const EnsembleDetails = () => {
   type EnsembleComplet = Ensemble & EnsembleMockExtras;
 
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
   const [ensemble, setEnsemble] = useState<EnsembleComplet | null>(null);
   const [, setLoading] = useState(true);
   const [, setError] = useState<string | null>(null);
@@ -206,14 +216,9 @@ export const EnsembleDetails = () => {
     }
   }, [ensembleIdNumber]);
 
-  // Trouve l'ensemble correspondant à l'id
-  // const ensemble = mockEnsembles.find((e) => e.id === ensembleIdNumber);
-  // Si ensemble non trouvé (id incorrect)
   if (!ensemble) {
     return <div>Ensemble non trouvé.</div>;
   }
-
-  // const ensembleId = ensemble.id;
 
   /**
    *
@@ -228,13 +233,14 @@ export const EnsembleDetails = () => {
 
       return;
     }
-
     try {
       await creerInvitation(email, ensembleIdNumber);
-      console.log("Envoi invitation avec :", { email, ensembleId });
+      console.log("Invitation envoyée avec :", { name, email, ensembleId });
 
       toast.success("Invitation envoyée !");
       setEmail("");
+      setName("");
+      setShowModal(false); // Ferme la modale
     } catch (error: any) {
       toast.error("Erreur : " + error.message);
     }
@@ -247,7 +253,6 @@ export const EnsembleDetails = () => {
    * @param {number} ensembleId
    * @return {*}
    */
-
 
   const creerInvitation = async (emailInvite: string, ensembleId: number) => {
     const body = JSON.stringify({ emailInvite, ensembleId });
@@ -265,7 +270,6 @@ export const EnsembleDetails = () => {
     return await response.json();
   };
 
-  
   const supprimerEnsemble = async () => {
     try {
       const response = await fetch(
@@ -312,13 +316,12 @@ export const EnsembleDetails = () => {
               <p>Nombre de membres : {ensemble.membersCount}</p>
 
               <div className="ensemble-buttons">
-                <a
-                  href={`/ensembles/${ensembleId}/modifier`}
-                  className="edit-link"
-                  title="Modifier cet ensemble"
+                <button
+                  className="edit-button"
+                  onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
                 >
-                  <button className="edit-button">Modifier</button>
-                </a>
+                  Modifier
+                </button>
 
                 <button className="delete-button" onClick={supprimerEnsemble}>
                   Supprimer
@@ -355,9 +358,9 @@ export const EnsembleDetails = () => {
               </button>
             </a>
           </div>
-      
+
           <h4 className="subsection-title">Liste des morceaux :</h4>
-              {/* TODO: Afficher la liste réelle des morceaux depuis l'API */}
+          {/* TODO: Afficher la liste réelle des morceaux depuis l'API */}
           <div className="scores-list">
             {mockMorceaux.map((morceau) => (
               <MorceauItem
@@ -381,23 +384,61 @@ export const EnsembleDetails = () => {
               </div>
             ))}
           </div>
-          {/* INVITATION */}
-          <div className="form-card">
-            <form onSubmit={handleInviteSubmit}>
-              <input
-                type="email"
-                placeholder="Email"
-                className="form-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button type="submit" className="invite-button">
-                Inviter
-              </button>
-            </form>
 
-            <div className="action-buttons"></div>
+          <div className="form-card">
+            
+            <button onClick={() => setShowModal(true)} type="button">
+              Envoyer invitation
+            </button>
+
+            {/* MODALE */}
+            {showModal && (
+              <div
+                className="modal-overlay"
+                onClick={() => setShowModal(false)}
+              >
+                <div
+                  className="modal-content my-modal"
+                  onClick={(e) => e.stopPropagation()} // empêche la fermeture si clic dans la modale
+                >
+                  <span
+                    className="close-modal"
+                    onClick={() => setShowModal(false)}
+                  >
+                    &times;
+                  </span>
+                  <h2>Invitation</h2>
+                  <p>Veuillez renseigner les informations de la personne que vous souhaitez inviter :</p>
+                  <form onSubmit={handleInviteSubmit}>
+                    <div className="form-group">
+                      <label>Nom :</label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Nom"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Email :</label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        required
+                      />
+                    </div>
+                    <button type="submit">Envoyer</button>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* <div className="action-buttons"></div>
+          </div> */}
         </div>
       </main>
       <ToastContainer position="top-right" autoClose={3000} />
