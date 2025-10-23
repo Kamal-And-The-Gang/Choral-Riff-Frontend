@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 
 import "../styles/MonEspace.css";
 import { FaUsers, FaPlus } from "react-icons/fa";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext"; // ✅ IMPORT DU CONTEXTE D'AUTH
 
 import ensembleBanner from "../assets/banniere-mon-espace.jpg";
 import userProfilePic from "../assets/avatar-michelle.jpg";
@@ -43,7 +44,8 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => (
 );
 
 export const EnsemblesPage = () => {
-  const location = useLocation(); // <-- ici, au début de la fonction
+  const location = useLocation();
+  const { user } = useAuth(); 
   const navigate = useNavigate();
   const toastShown = useRef(false);
   const [ensembles, setEnsembles] = useState<Ensemble[]>([]);
@@ -59,6 +61,17 @@ export const EnsemblesPage = () => {
       }, 100);
     }
 
+    fetch("http://localhost:8080/api/ensembles")
+      .then((res) => res.json())
+      .then((data) => {
+        setEnsembles(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement des ensembles :", error);
+        setLoading(false);
+      });
+  }, [location.state?.refresh, location.state?.successMessage]);
     fetch("http://localhost:8080/api/ensembles")
       .then((res) => res.json())
       .then((data) => {
@@ -92,7 +105,9 @@ export const EnsemblesPage = () => {
             className="profile-pic"
           />
           <div className="profile-info">
-            <p className="profile-name">Michelle Leeb</p>
+            <p className="profile-name">
+              {user ? `${user.prenom ?? ""} ${user.nom ?? ""}` : "Utilisateur inconnu"}
+            </p>
           </div>
         </div>
 

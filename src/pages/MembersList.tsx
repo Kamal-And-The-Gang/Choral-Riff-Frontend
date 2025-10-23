@@ -90,8 +90,11 @@ const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
       </div>
 
       <div className="member-actions">
-        {/* BADGE DE RÔLE (Laissé tel quel) */}
-        <span className={`member-role-tag ${member.role}`}>{member.role}</span>
+        {/* BADGE DE RÔLE  */}
+        <span className={`member-role-tag ${member.role}`}>
+          <RoleIcon size={14} className="role-icon" />
+          {member.role}
+        </span>
 
         {/* NOUVEAU: SÉPARATEUR VISUEL */}
         <div className="action-separator"></div>
