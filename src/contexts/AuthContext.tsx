@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -31,6 +31,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   user: DecodedUser | null;
+  loading: boolean;
   login: (token: string) => void;
   logout: () => void;
   updateUserRole: (
@@ -44,6 +45,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<DecodedUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const updateUserRoleForEnsemble = (
     ensembleId: string,
@@ -89,6 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         );
         setUser(null);
         setToken(null);
+        setLoading(false);
         return;
       }
 
@@ -102,6 +105,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
     } catch (err) {
       console.error("Erreur de décodage du token :", err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -153,6 +158,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         token,
         isAuthenticated: !!token,
         user,
+        loading,
         login,
         logout,
         updateUserRole: updateUserRoleForEnsemble, // <-- correspond au type

@@ -255,8 +255,7 @@ export const EnsemblesPage = () => {
         const userEnsembles = data.filter((e) =>
           user.ensembleRoles?.some((r) => r.ensembleId === e.id.toString())
         );
-        // setEnsembles(userEnsembles);28/10
-        setEnsembles(data);
+        setEnsembles(userEnsembles);
 
         setLoading(false);
       })
