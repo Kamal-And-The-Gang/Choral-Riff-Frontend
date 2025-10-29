@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import '../styles/AuthForms.css';
-import registrationBanner from '../assets/registration-banner.jpg';
-import { registerUser } from '../api/authApi';
+import { useEffect, useState } from "react";
+import "../styles/AuthForms.css";
+import registrationBanner from "../assets/registration-banner.jpg";
+import { registerUser } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -15,11 +15,25 @@ export const Inscription = () => {
   const [confirmation, setConfirmation] = useState("");
   const [loading, setLoading] = useState(false);
 
+
+
+
+  const resetForm = () => {
+  setNom("");
+  setPrenom("");
+  setEmail("");
+  setMotDePasse("");
+  setConfirmation("");
+};
+  useEffect(() => {
+    resetForm();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (motDePasse !== confirmation) {
-      toast.error("⚠️ Les mots de passe ne correspondent pas.");
+      toast.error(" Les mots de passe ne correspondent pas.");
       return;
     }
 
@@ -29,16 +43,17 @@ export const Inscription = () => {
       const utilisateur = await registerUser(data);
       console.log("Utilisateur créé :", utilisateur);
 
-      toast.success("✅ Inscription réussie !");
-      
-      // 🟢 Redirection douce après 1.5 secondes
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
+      toast.success(" Inscription réussie !");
+      resetForm(); 
+     
 
+      //  Redirection douce après 1.5 secondes
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (err: any) {
       console.error(err);
-      toast.error(`❌ Erreur lors de l'inscription : ${err.message}`);
+      toast.error(` Erreur lors de l'inscription : ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -109,7 +124,8 @@ export const Inscription = () => {
         >
           <div className="banner-overlay">
             <p>
-              "Simplifiez le partage, l'écoute et l'organisation de vos partitions et fichiers audios"
+              "Simplifiez le partage, l'écoute et l'organisation de vos
+              partitions et fichiers audios"
             </p>
           </div>
         </section>

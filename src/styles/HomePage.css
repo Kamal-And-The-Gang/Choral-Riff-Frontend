@@ -22,7 +22,7 @@
   font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.13rem;
   color: var(--light-text);
   text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
 }
@@ -198,6 +198,7 @@
 
 /* Ajustement du bouton : Fond ORANGE F58159, Texte BLANC */
 .cta-button {
+
   background-color: #F58159; 
   color: var(--light-text);
   border: none;

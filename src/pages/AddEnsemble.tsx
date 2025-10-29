@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export const AddEnsemble = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ export const AddEnsemble = () => {
 
   const [searchParams] = useSearchParams();
   const ensembleId = searchParams.get("id");
+  const { user, token } = useAuth();
 
   /**
    *
@@ -25,6 +27,8 @@ export const AddEnsemble = () => {
 
   useEffect(() => {
     if (ensembleId) {
+      console.log("User connecté :", user);
+
       fetch(`http://localhost:8080/api/ensembles/${ensembleId}`)
         .then((res) => res.json())
         .then((data) => {
@@ -41,23 +45,36 @@ export const AddEnsemble = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Vérifier que l'utilisateur est connecté et que son id est valide
+    if (!user?.id) {
+      toast.error(
+        "Impossible de récupérer un userId valide. Veuillez vous reconnecter."
+      );
+      return;
+    }
+
+    // création du corps de message
     const payload = {
       nom: name,
       type: ensembleType,
       description,
+      createdBy: user?.id,
     };
 
     try {
-      const response = await fetch(
-        ensembleId
-          ? `http://localhost:8080/api/ensembles/${ensembleId}`
-          : "http://localhost:8080/api/ensembles",
-        {
-          method: ensembleId ? "PUT" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      // Construire l'URL selon création ou modification
+      const url = ensembleId
+        ? `http://localhost:8080/api/ensembles/${ensembleId}`
+        : `http://localhost:8080/api/ensembles?userId=${user.id}`;
+
+      const response = await fetch(url, {
+        method: ensembleId ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (!response.ok) {
         throw new Error(
@@ -67,14 +84,17 @@ export const AddEnsemble = () => {
         );
       }
 
-      navigate("/ensembles", {
-        state: {
-          refresh: true,
-          successMessage: ensembleId
-            ? "Ensemble modifié avec succès !"
-            : "Ensemble créé avec succès !",
-        },
-      });
+      const data = await response.json();
+      const newEnsembleId = data.id;
+
+      toast.success(
+        ensembleId
+          ? "Ensemble modifié avec succès !"
+          : "Ensemble créé avec succès !"
+      );
+
+      // Redirection vers la page du nouvel ensemble ou des détails
+      navigate(`/ensembles/${newEnsembleId}`);
     } catch (error: any) {
       toast.error("Erreur : " + error.message);
     }

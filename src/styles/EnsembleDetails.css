@@ -243,8 +243,11 @@
   padding: 0.75rem 1.5rem;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
 }
+
 
 .scores-list {
   margin-bottom: 2rem;
@@ -533,6 +536,7 @@
   color: var(--light-text);
   display: block;
   margin: 3rem auto 0; /* centre horizontalement avec marge en haut */
+
 }
 
 .modal-content.my-modal button:last-of-type:hover {

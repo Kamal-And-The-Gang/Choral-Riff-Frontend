@@ -2,10 +2,12 @@ import "../styles/EnsembleDetails.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
+import Spinner from "./Spinner";
+import { useAuth } from "../contexts/AuthContext";
 
 import drDreKids2 from "../assets/dr_dre_kids_2.png";
 import sophie from "../assets/sophie.jpg";
-// Correction: Supprimer l'import redondant de useState et useEffect ici
+
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -64,7 +66,14 @@ type Ensemble = {
   nom: string;
   description: string;
   dateCreation: string;
+  createdBy: number; // id de l'utilisateur qui a créé l'ensemble
 };
+
+interface EnsembleListItemProps {
+  ensemble: Ensemble;
+  canEdit: boolean;
+  onDelete?: (id: number) => void;
+}
 
 // --- Composant MorceauItem ---
 
@@ -96,13 +105,47 @@ const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
           </span>
         </div>
         <div className="score-details">
-          <span className="score-format">Genre: {morceau.genre}</span>
+          <span className="score-format">Consulter </span>
           <FaChevronRight size={14} className="details-arrow" />
         </div>
       </div>
     </a>
   );
 };
+const toastConfirmDelete = () =>
+  new Promise<boolean>((resolve) => {
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p>Êtes-vous sûr de vouloir supprimer cet ensemble ?</p>
+          <div
+            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+          >
+            <button
+              onClick={() => {
+                resolve(true);
+                closeToast();
+              }}
+            >
+              Oui
+            </button>
+            <button
+              onClick={() => {
+                resolve(false);
+                closeToast();
+              }}
+            >
+              Non
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+      }
+    );
+  });
 
 export const EnsembleDetails = () => {
   const { ensembleId } = useParams<{ ensembleId: string }>();
@@ -125,6 +168,8 @@ export const EnsembleDetails = () => {
   const [ensemble, setEnsemble] = useState<Ensemble | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // --- Ajout du hook auth ---
+  const { user } = useAuth();
 
   // Correction: La variable 'mockMorceaux' était définie globalement mais non utilisée, on la supprime.
 
@@ -169,6 +214,10 @@ export const EnsembleDetails = () => {
       setLoadingMorceau(false);
     }
   };
+  // --- LOG pour vérifier le user ---
+  useEffect(() => {
+    console.log("User actuel :", user);
+  }, [user]);
 
   // CHARGER L'ENSEMBLE
   useEffect(() => {
@@ -267,13 +316,9 @@ export const EnsembleDetails = () => {
   };
 
   const supprimerEnsemble = async () => {
-    if (
-      !window.confirm(
-        "Êtes-vous sûr de vouloir supprimer cet ensemble ? Cette action est irréversible."
-      )
-    ) {
-      return;
-    }
+    const confirmed = await toastConfirmDelete();
+    if (!confirmed) return;
+
     try {
       const response = await fetch(
         `${API_BASE_URL}/ensembles/${ensembleIdNumber}`,
@@ -327,11 +372,15 @@ export const EnsembleDetails = () => {
 
             <div className="ensemble-info">
               <h2 className="ensemble-name">{ensemble.nom}</h2>
-              {/* <p>Créé par : {ensemble.creator}</p> */}
-              <p>Créé le : {ensemble.dateCreation}</p>
+              <p>
+                Créé par : {user?.prenom} {user?.nom}
+              </p>
+
+              {/* <p>Créé le : {ensemble.dateCreation}</p> */}
               {/* <p>Nombre de membres : {ensemble.membersCount}</p> */}
 
-              <div className="ensemble-buttons">
+              {/* <div className="ensemble-buttons">
+                
                 <button
                   className="edit-button"
                   onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
@@ -342,14 +391,66 @@ export const EnsembleDetails = () => {
                 <button className="delete-button" onClick={supprimerEnsemble}>
                   Supprimer
                 </button>
+              </div> */}
+              {/* <div className="ensemble-buttons">
+                {(user?.role === "admin" || user?.role === "moderator") && (
+                  <button
+                    className="edit-button"
+                    onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
+                  >
+                    Modifier
+                  </button>
+                )}
+
+                {user?.role === "admin" && (
+                  <button className="delete-button" onClick={supprimerEnsemble}>
+                    Supprimer
+                  </button>
+                )}
+              </div> */}
+
+              <div className="ensemble-buttons">
+                {/* {(user?.id && Number(user.id) === ensemble.createdBy) && ( */}
+
+                {user?.id != null && +user.id === ensemble.createdBy}
+
+                <>
+                  <button
+                    className="edit-button"
+                    onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
+                  >
+                    Modifier
+                  </button>
+
+                  <button className="delete-button" onClick={supprimerEnsemble}>
+                    Supprimer
+                  </button>
+                </>
               </div>
+
+              {/* <div className="ensemble-buttons">
+  {user?.id != null && +user.id === ensemble.createdBy && (
+    
+      <button
+        className="edit-button"
+        onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
+      >
+        Modifier
+      </button>
+
+      <button className="delete-button" onClick={supprimerEnsemble}>
+        Supprimer
+      </button>
+ 
+  )}
+</div> */}
             </div>
           </div>
 
           {/* DERNIER MORCEAU DYNAMIQUE */}
           <h3 className="section-title">Dernier Morceau Ajouté :</h3>
           {loadingMorceau ? (
-            <p>Chargement du dernier morceau...</p>
+            <Spinner message="Chargement du dernier morceau..." />
           ) : dernierMorceau ? (
             <a
               href={`/ensembles/${ensembleIdNumber}/morceaux/${dernierMorceau.id}`}
@@ -387,7 +488,7 @@ export const EnsembleDetails = () => {
           <h4 className="subsection-title">Liste des morceaux :</h4>
           <div className="scores-list">
             {loadingListe ? (
-              <p>Chargement de la liste des morceaux...</p>
+              <Spinner message="Chargement de la liste des morceaux..." />
             ) : listeMorceaux.length === 0 ? (
               <p>Aucun morceau n'est encore disponible pour cet ensemble.</p>
             ) : (
@@ -418,11 +519,11 @@ export const EnsembleDetails = () => {
           </div>
 
           {/* INVITATION */}
-          <div className="form-card">
-            <button onClick={() => setShowModal(true)} type="button">
-              Envoyer invitation
-            </button>
 
+          <button onClick={() => setShowModal(true)} type="button">
+            Envoyer invitation
+          </button>
+          <div className="form-card">
             {/* MODALE */}
             {showModal && (
               <div
