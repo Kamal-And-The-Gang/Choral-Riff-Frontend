@@ -248,7 +248,7 @@ export const EnsemblesPage = () => {
   useEffect(() => {
     if (!user) return; // attendre que user soit chargé depuis le token
     // fetch(`http://localhost:8080/api/ensembles/user/${user.id}`)
-    fetch("http://localhost:8080/api/ensembles")
+    fetch("https://localhost/api/ensembles")
       .then((res) => res.json())
       .then((data: Ensemble[]) => {
         // 🔹 filtrer uniquement les ensembles où l'utilisateur a un rôle

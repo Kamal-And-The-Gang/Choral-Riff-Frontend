@@ -14,7 +14,7 @@ import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 import AjouterMorceauForm from "./AjouterMorceauForm";
 
 // URL de base de votre API
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "https://localhost/api";
 
 // --- DTOs ---
 
@@ -218,7 +218,7 @@ export const EnsembleDetails = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:8080/api/ensembles/${ensembleIdNumber}`
+          `https://localhost/api/ensembles/${ensembleIdNumber}`
         );
         if (!response.ok) {
           throw new Error(`Erreur serveur : ${response.status}`);
