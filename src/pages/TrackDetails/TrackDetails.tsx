@@ -1,89 +1,291 @@
-import { useParams } from 'react-router-dom';
-import '../../styles/TrackDetails.css';
-import { FaMusic, FaChevronLeft, FaDownload } from 'react-icons/fa';
-import type { FileItem } from './components/FileItemComponent';
-import FileItemComponent from './components/FileItemComponent';
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import "../../styles/TrackDetails.css";
+import { FaMusic, FaChevronLeft, FaDownload, FaTrash } from "react-icons/fa";
+import type { FileItem } from "./components/FileItemComponent";
+import axios from "axios";
 
-// --- COMPOSANT PRINCIPAL ---
-export const TrackDetails = () => {
-    // 1. UTILISATION DE useParms() POUR RÉCUPÉRER LES IDS DANS L'URL
-    const { ensembleId: routeEnsembleId, trackId: routeTrackId } = useParams<{ ensembleId: string, trackId: string }>();
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-    // CONVERSION DES IDS EN NOMBRES (si nécessaire pour l'API)
-    const currentEnsembleId = Number(routeEnsembleId);
-    const currentTrackId = Number(routeTrackId);
+import { useLocation } from "react-router-dom";
 
-    // 2. SIMULATION DE DONNÉES EN UTILISANT LES IDS DYNAMIQUES
-    // NOTE : En production, vous feriez ici un appel API (useEffect)
-    const trackData = {
-        id: currentTrackId,
-        title: "What's My Name ?",
-        ensemble: "Les enfants de Dr Dre",
-        ensembleId: currentEnsembleId,
-        composer: "Snoop Dogg / Dr. Dre",
-        year: 2025,
-        lastUpdate: "01/10/2025",
-    };
+type TrackState = {
+  morceauTitre?: string;
+  ensembleNom?: string;
+};
 
-    const mockFiles: FileItem[] = [
-        { id: 201, name: "Partition Complète (Conducteur)", type: 'partition', format: "PDF", size: "3.5 MB", role: "Conducteur" },
-        { id: 202, name: "Partition : Soprano", type: 'partition', format: "MusicXML", size: "500 KB", role: "Soprano" },
-        { id: 203, name: "Partition : Basse", type: 'partition', format: "PDF", size: "450 KB", role: "Basse" },
-        { id: 204, name: "Piste de référence Audio", type: 'audio', format: "MP3", size: "6.2 MB", role: "Audio Général" },
-        { id: 205, name: "Piste de travail : Ténor (Mix)", type: 'audio', format: "MP3", size: "6.0 MB", role: "Ténor" },
-    ];
+// --- Toast personnalisé de confirmation ---
+const toastConfirmDeleteDocument = () =>
+  new Promise<boolean>((resolve) => {
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p>Voulez-vous vraiment supprimer ce document ?</p>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "8px",
+              marginTop: "10px",
+            }}
+          >
+            <button
+              className="delete-button"
+              onClick={() => {
+                resolve(true);
+                closeToast();
+              }}
+            >
+              Oui
+            </button>
 
-    return (
-        <div className="track-details-container">
-            {/* Bannière "Fiche Morceau" */}
-            <section className="track-header-section detail-header">
-                <div className="fiche-title-box">
-                    <h1 className="fiche-title">Fiche Morceau (ID: {currentTrackId})</h1> {/* ID ajouté pour vérification */}
-                </div>
-            </section>
-
-            <main className="details-main">
-                <div className="details-content-card track-card">
-
-                    {/* Infos du Morceau */}
-                    <div className="track-info-header">
-                        <FaMusic size={60} className="big-track-icon" />
-                        <div className="track-info-details">
-                            <h2>{trackData.title}</h2>
-                            {/* Lien de retour dynamique vers l'ensemble parent */}
-                            <p>Ensemble : <a href={`/ensembles/${trackData.ensembleId}`}>{trackData.ensemble}</a></p>
-                            <p>Compositeur : {trackData.composer}</p>
-                            <p>Année : {trackData.year}</p>
-                            <p>Dernière maj : {trackData.lastUpdate}</p>
-                        </div>
-                    </div>
-
-                    {/* Bouton de retour dynamique */}
-                    <a href={`/ensembles/${trackData.ensembleId}`} className="back-link">
-                        <FaChevronLeft size={12} /> Retour à l'ensemble
-                    </a>
-
-                    {/* Fichiers disponibles */}
-                    <h3 className="section-title files-section-title">Fichiers disponibles :</h3>
-
-                    <div className="files-list">
-                        {mockFiles.map(file => (
-                            <FileItemComponent key={file.id} file={file} />
-                        ))}
-                    </div>
-
-                    {/* Actions globales */}
-                    <div className="global-actions">
-                        <button
-                            className="download-all-button"
-                            onClick={() => alert('Téléchargement de tous les fichiers...')}
-                        >
-                            <FaDownload size={18} /> Télécharger tous les fichiers
-                        </button>
-                    </div>
-
-                </div>
-            </main>
+            <button
+              className="delete-button"
+              onClick={() => {
+                resolve(false);
+                closeToast();
+              }}
+              style={{
+                background: "#6c757d",
+              }}
+            >
+              Non
+            </button>
+          </div>
         </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+      }
     );
+  });
+
+// --- Composant pour un fichier individuel ---
+type Props = {
+  file: FileItem;
+  onDelete?: (id: number) => void;
+};
+
+const FileItemComponent: React.FC<Props> = ({ file, onDelete }) => {
+  return (
+    <div className="file-item">
+      <span className="file-name">
+        <FaMusic style={{ marginRight: "6px" }} size={16} />
+        {file.name} ({file.format})
+      </span>
+      {onDelete && (
+        <button
+          className="delete-button compact"
+          onClick={() => onDelete(file.id)}
+        >
+          <FaTrash size={12} />
+        </button>
+      )}
+    </div>
+  );
+};
+
+// --- Composant principal ---
+export const TrackDetails = () => {
+  const { ensembleId: routeEnsembleId, trackId: routeTrackId } = useParams<{
+    ensembleId: string;
+    trackId: string;
+  }>();
+
+  const currentEnsembleId = Number(routeEnsembleId);
+  const currentTrackId = Number(routeTrackId);
+
+  const [files, setFiles] = useState<FileItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const location = useLocation();
+  const state = location.state as TrackState | undefined;
+
+  const [ensembleNom, setEnsembleNom] = useState<string>("Chargement…");
+
+  const trackData = {
+    id: currentTrackId,
+    title: state?.morceauTitre ?? "Titre par défaut",
+    ensemble: ensembleNom,
+    ensembleId: currentEnsembleId,
+  };
+
+  useEffect(() => {
+    if (state?.ensembleNom) {
+      setEnsembleNom(state.ensembleNom);
+    } else {
+      axios
+        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
+        .then((res) => setEnsembleNom(res.data.nom))
+        .catch((err) => {
+          console.error(err);
+          setEnsembleNom("Nom inconnu");
+        });
+    }
+  }, [currentEnsembleId, state?.ensembleNom]);
+
+  // --- Récupération des documents du morceau ---
+  useEffect(() => {
+    if (!currentTrackId) return;
+
+    setLoading(true);
+    setError(null);
+
+    axios
+      .get(`http://localhost:8080/api/documents/morceau/${currentTrackId}`)
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          const filesFromApi: FileItem[] = res.data.map((doc: any) => ({
+            id: doc.id_document,
+            name: doc.urlFichier.split("/").pop(),
+            type: doc.type,
+            format: doc.format,
+            size: "-",
+            role: doc.type,
+          }));
+          setFiles(filesFromApi);
+        } else {
+          setError("Réponse API inattendue");
+          console.error(res.data);
+        }
+      })
+      .catch((err) => {
+        console.error("Erreur API :", err);
+        setError("Impossible de récupérer les fichiers");
+      })
+      .finally(() => setLoading(false));
+  }, [currentTrackId]);
+
+  // --- Suppression d'un document ---
+  const handleDelete = async (id: number) => {
+    const confirmed = await toastConfirmDeleteDocument();
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(`http://localhost:8080/api/documents/${id}`);
+      setFiles((prev) => prev.filter((file) => file.id !== id));
+      toast.success("Fichier supprimé avec succès !");
+    } catch (err) {
+      console.error("Erreur lors de la suppression :", err);
+      toast.error("Impossible de supprimer le fichier.");
+    }
+  };
+
+  // --- Ajout d'un document ---
+  const handleAddDocument = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", "partition"); // ou "audio" selon besoin
+    formData.append("format", file.name.split(".").pop() || "PDF");
+    formData.append("morceauId", currentTrackId.toString());
+    formData.append("utilisateurId", "1"); // ID de l'utilisateur courant
+
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/api/documents/upload",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setFiles((prev) => [
+        ...prev,
+        {
+          id: res.data.id_document,
+          name: res.data.urlFichier.split("/").pop(),
+          type: res.data.type,
+          format: res.data.format,
+          size: "-",
+          role: res.data.type,
+        },
+      ]);
+
+      toast.success("Document ajouté !");
+    } catch (err) {
+      console.error(err);
+      toast.error("Erreur lors de l'ajout du document");
+    }
+  };
+
+  return (
+    <div className="track-details-container">
+      <section className="track-header-section detail-header">
+        <div className="fiche-title-box">
+          <h1 className="fiche-title">Fiche Morceau (ID: {currentTrackId})</h1>
+        </div>
+      </section>
+
+      <main className="details-main">
+        <div className="details-content-card track-card">
+          <div className="track-info-header">
+            <FaMusic size={60} className="big-track-icon" />
+            <div className="track-info-details">
+              <h2>{trackData.title}</h2>
+              <p>
+                Ensemble :{" "}
+                <a href={`/ensembles/${trackData.ensembleId}`}>
+                  {trackData.ensemble}
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <a href={`/ensembles/${trackData.ensembleId}`} className="back-link">
+            <FaChevronLeft size={12} /> Retour à l'ensemble
+          </a>
+
+          <h3 className="section-title files-section-title">
+            Fichiers disponibles :
+          </h3>
+
+          <div className="files-list">
+            {loading && <p>Chargement des fichiers...</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {!loading && files.length === 0 && (
+              <p>Aucun fichier disponible pour ce morceau.</p>
+            )}
+            {files.map((file) => (
+              <FileItemComponent
+                key={file.id}
+                file={file}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+
+          {/* --- Bouton Ajouter un document --- */}
+          <div style={{ margin: "16px 0" }}>
+            <button
+              className="add-document-button"
+              onClick={() => document.getElementById("fileInput")?.click()}
+            >
+              Ajouter un document
+            </button>
+            <input
+              type="file"
+              id="fileInput"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleAddDocument(file);
+              }}
+            />
+          </div>
+
+          {/* <div className="global-actions">
+            <button
+              className="download-all-button"
+              onClick={() => alert("Téléchargement de tous les fichiers...")}
+            >
+              <FaDownload size={18} /> Télécharger tous les fichiers
+            </button>
+          </div> */}
+        </div>
+      </main>
+
+      <ToastContainer position="top-right" autoClose={3000} />
+    </div>
+  );
 };

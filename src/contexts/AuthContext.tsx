@@ -31,6 +31,7 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   user: DecodedUser | null;
+  loading: boolean; 
   login: (token: string) => void;
   logout: () => void;
   updateUserRole: (

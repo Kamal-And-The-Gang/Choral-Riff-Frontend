@@ -45,7 +45,7 @@ export const App = () => {
             path="/ensembles/:ensembleId/membres"
             element={<MembersList />}
           />
-          <Route path="/invitation" element={<Invitation />} />
+          {/* <Route path="/invitation" element={<Invitation />} /> */}
         </Routes>
       </main>
       <Footer />

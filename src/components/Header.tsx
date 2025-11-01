@@ -52,7 +52,7 @@ export const Header = () => {
           ) : (
             <>
               <a href="/ensembles">Mon espace</a>
-              <a href="/invitation">Invitation</a>
+              {/* <a href="/invitation">Invitation</a> */}
               <button onClick={handleLogout} className="logout-button">
                 Déconnexion
               </button>
