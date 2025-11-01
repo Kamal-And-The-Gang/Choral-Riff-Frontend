@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
 import '../styles/AuthForms.css'; 
 import '../styles/AddEnsemble.css'; 
 import { FaUpload, FaFileAlt } from 'react-icons/fa';

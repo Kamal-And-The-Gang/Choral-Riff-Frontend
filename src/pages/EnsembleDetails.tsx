@@ -5,9 +5,6 @@ import { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { useAuth } from "../contexts/AuthContext";
 
-import drDreKids2 from "../assets/dr_dre_kids_2.png";
-import sophie from "../assets/sophie.jpg";
-
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -68,12 +65,6 @@ type Ensemble = {
   dateCreation: string;
   createdBy: number; // id de l'utilisateur qui a créé l'ensemble
 };
-
-interface EnsembleListItemProps {
-  ensemble: Ensemble;
-  canEdit: boolean;
-  onDelete?: (id: number) => void;
-}
 
 // --- Composant MorceauItem ---
 
