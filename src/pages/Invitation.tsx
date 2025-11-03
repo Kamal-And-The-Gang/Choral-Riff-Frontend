@@ -9,8 +9,8 @@ export const Invitation: React.FC = () => {
       <div className="container">
         <h2>Membres</h2>
         <input type="text" id="search" placeholder="Recherche" />
-        <button>Filtrer</button>
-        <button>Ajouter</button>
+        <button type="button">Filtrer</button>
+        <button type="button">Ajouter</button>
         <div className="form-card">
           <form>
             <input type="text" placeholder="Nom" className="form-input" />

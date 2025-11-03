@@ -1,172 +1,205 @@
 /* --- Base de la page --- */
 .track-details-container {
-    background-color: var(--background-light);
-    min-height: 100vh;
+  background-color: var(--background-light);
+  min-height: 100vh;
 }
 
 /* --- 1. Bannière de l'en-tête --- */
 .track-header-section {
-    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../assets/hero-background.jpg'); 
-    background-size: cover;
-    background-position: center;
-    height: 150px;
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    position: relative; 
-    z-index: 1; 
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../assets/hero-background.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* Encadré du titre sur la bannière */
 .fiche-title-box {
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.2); 
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    backdrop-filter: blur(4px);
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
 }
 
 .fiche-title {
-    color: var(--light-text);
-    font-size: 2rem;
-    margin: 0;
+  color: var(--light-text);
+  font-size: 2rem;
+  margin: 0;
 }
 
 /* --- 2. Contenu principal et carte --- */
 .details-main {
-    padding: 20px 0;
-    display: flex;
-    justify-content: center;
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
 }
 
 .track-card {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    padding: 25px;
-    width: 95%;
-    max-width: 800px;
-    margin-top: -40px; 
-    position: relative;
-    z-index: 2; 
-    text-align: left;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  width: 95%;
+  max-width: 800px;
+  margin-top: -40px;
+  position: relative;
+  z-index: 2;
+  text-align: left;
 }
 
 /* --- 3. Infos du Morceau (Header) --- */
 .track-info-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
 }
 
 .big-track-icon {
-    color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .track-info-details h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.8rem;
-    color: var(--dark-text);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+  color: var(--dark-text);
 }
 
 .track-info-details p {
-    margin: 0.2rem 0;
-    font-size: 0.95rem;
-    color: #666;
+  margin: 0.2rem 0;
+  font-size: 0.95rem;
+  color: #666;
 }
 
 .track-info-details a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 .track-info-details a:hover {
-    color: #e5734f;
+  color: #e5734f;
 }
 
 /* Lien de retour */
 .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    color: var(--primary-color);
-    text-decoration: none;
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--primary-color);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: opacity 0.2s;
 }
 
 .back-link:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 /* --- 4. Section Fichiers --- */
 .section-title {
-    font-size: 1.3rem;
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    color: var(--dark-text);
-    /* Amélioration : ligne plus simple sous le titre */
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 5px;
+  font-size: 1.3rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--dark-text);
+  /* Amélioration : ligne plus simple sous le titre */
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 5px;
 }
 .files-section-title {
-     border-bottom: 2px solid var(--primary-color); /* Ligne plus accentuée pour les fichiers */
+  border-bottom: 2px solid var(--primary-color); /* Ligne plus accentuée pour les fichiers */
 }
-
 
 .files-list {
-    margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
-
 
 /* --- 5. Actions globales --- */
 .global-actions {
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
 }
 
 .download-all-button {
-    background-color: var(--primary-color);
-    color: var(--light-text);
-    border: none;
-    border-radius: 50px;
-    padding: 0.8rem 1.5rem;
-    font-weight: bold;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 4px 8px rgba(243, 141, 104, 0.4);
-    transition: background-color 0.3s;
+  background-color: var(--primary-color);
+  color: var(--light-text);
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 8px rgba(243, 141, 104, 0.4);
+  transition: background-color 0.3s;
 }
 
 .download-all-button:hover {
-    background-color: #e5734f;
+  background-color: #e5734f;
 }
 
 /* --- Responsive (Optionnel) --- */
 @media (max-width: 600px) {
-    .track-info-header {
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-    }
-    .file-item {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    .file-main-info {
-        width: 100%;
-    }
-    .file-actions {
-        justify-content: flex-end;
-        width: 100%;
-    }
+  .track-info-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .file-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .file-main-info {
+    width: 100%;
+  }
+  .file-actions {
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
+
+/* container flex pour aligner texte et bouton */
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* texte à gauche, bouton à droite */
+  margin-bottom: 8px;
+}
+
+/* style texte du fichier pour ne pas gêner le bouton */
+.file-item .file-name {
+  display: flex;
+  align-items: center;
+}
+
+/* bouton compact pour les fichiers */
+.file-item .delete-button.compact {
+  padding: 2px 4px;
+  font-size: 0.7rem;
+  background: #dc3545;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.file-item .delete-button.compact:hover {
+  background: #c82333;
 }

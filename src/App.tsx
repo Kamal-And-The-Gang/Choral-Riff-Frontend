@@ -13,7 +13,7 @@ import { MembersList } from "./pages/MembersList";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 
-import { Invitation } from "./pages/Invitation";
+// import { Invitation } from "./pages/Invitation";
 
 export const App = () => {
   return (
@@ -44,7 +44,7 @@ export const App = () => {
             path="/ensembles/:ensembleId/membres"
             element={<MembersList />}
           />
-          <Route path="/invitation" element={<Invitation />} />
+          {/* <Route path="/invitation" element={<Invitation />} /> */}
         </Routes>
       </main>
       <Footer />

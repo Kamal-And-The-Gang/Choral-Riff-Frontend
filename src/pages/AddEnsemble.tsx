@@ -8,6 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
+
+/**
+ * 
+ * @returns 
+ */
+
+
+
 export const AddEnsemble = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -16,13 +24,10 @@ export const AddEnsemble = () => {
 
   const [searchParams] = useSearchParams();
   const ensembleId = searchParams.get("id");
-  const { user, token } = useAuth();
+  const { user, token, updateUserRole } = useAuth();
 
   /**
-   *
-   *
-   * @param {React.FormEvent<HTMLFormElement>} e
-   *
+   * Charge les informations de l'ensemble si un ID est fourni.
    */
 
   useEffect(() => {
@@ -87,6 +92,11 @@ export const AddEnsemble = () => {
       const data = await response.json();
       const newEnsembleId = data.id;
 
+      //  Mise à jour du contexte pour que l'utilisateur devienne admin
+      if (!ensembleId) {
+        updateUserRole(newEnsembleId.toString(), "admin");
+      }
+
       toast.success(
         ensembleId
           ? "Ensemble modifié avec succès !"
@@ -94,7 +104,10 @@ export const AddEnsemble = () => {
       );
 
       // Redirection vers la page du nouvel ensemble ou des détails
-      navigate(`/ensembles/${newEnsembleId}`);
+      // navigate(`/ensembles/${newEnsembleId}`);
+      navigate("/ensembles", {
+        state: { refresh: true, successMessage: "Ensemble créé !" },
+      });
     } catch (error: any) {
       toast.error("Erreur : " + error.message);
     }
