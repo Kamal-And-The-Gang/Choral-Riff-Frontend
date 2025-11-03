@@ -170,21 +170,31 @@
   }
 }
 
-/* container flex pour aligner texte et bouton */
+/* Container flex pour aligner texte et bouton */
 .file-item {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* texte à gauche, bouton à droite */
+  justify-content: space-between;
   margin-bottom: 8px;
+  flex-wrap: wrap; /* Permet au texte de passer à la ligne si nécessaire */
+  gap: 10px;
 }
 
-/* style texte du fichier pour ne pas gêner le bouton */
+/* Texte du fichier */
 .file-item .file-name {
   display: flex;
   align-items: center;
+  flex: 1; /* Prend tout l'espace restant */
+  min-width: 0; /* Permet au texte de rétrécir avec overflow */
+  word-break: break-word; /* Si le nom est trop long */
 }
 
-/* bouton compact pour les fichiers */
+/* Actions du fichier (bouton supprimer) */
+.file-item .file-actions {
+  flex-shrink: 0; /* Empêche le bouton de rétrécir */
+}
+
+/* Bouton compact */
 .file-item .delete-button.compact {
   padding: 2px 4px;
   font-size: 0.7rem;
