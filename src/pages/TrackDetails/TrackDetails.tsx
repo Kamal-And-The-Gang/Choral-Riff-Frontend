@@ -219,6 +219,7 @@ export const TrackDetails = () => {
       </section>
 
       <main className="details-main">
+        
         <div className="details-content-card track-card">
           <div className="track-info-header">
             <FaMusic size={60} className="big-track-icon" arria-hidden="true" />
@@ -260,7 +261,7 @@ export const TrackDetails = () => {
             ))}
           </div>
 
-          {/* --- Bouton Ajouter un document --- */}
+          {/* --- Bouton Ajouter un document ---
           <div style={{ margin: "16px 0" }}>
             <button
               className="add-document-button"
@@ -272,6 +273,7 @@ export const TrackDetails = () => {
             <label htmlFor="fileInput" className="sr-only">
               Sélectionner un fichier à ajouter
             </label>
+
             <input
               type="file"
               id="fileInput"
@@ -281,7 +283,37 @@ export const TrackDetails = () => {
                 if (file) handleAddDocument(file);
               }}
             />
-          </div>
+          </div> */}
+
+
+          {/* --- Champ fichier + bouton alignés --- */}
+<div style={{ display: "flex", alignItems: "center", gap: "8px", margin: "16px 0" }}>
+  <label htmlFor="fileInput">
+    Sélectionner un fichier à ajouter
+  </label>
+
+  <button
+    className="add-document-button"
+    onClick={() => {
+      const fileInput = document.getElementById("fileInput") as HTMLInputElement;
+      fileInput?.click();
+    }}
+    aria-label="Ajouter un document pour ce morceau"
+  >
+    Ajouter un document
+  </button>
+
+  <input
+    type="file"
+    id="fileInput"
+    style={{ display: "none" }}
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (file) handleAddDocument(file);
+    }}
+  />
+</div>
+
 
           {/* <div className="global-actions">
             <button
