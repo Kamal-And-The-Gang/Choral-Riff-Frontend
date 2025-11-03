@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../../styles/TrackDetails.css";
-import { FaMusic, FaChevronLeft, FaDownload, FaTrash } from "react-icons/fa";
+import { FaMusic, FaChevronLeft, FaTrash } from "react-icons/fa";
 import type { FileItem } from "./components/FileItemComponent";
 import axios from "axios";
 
@@ -79,6 +79,7 @@ const FileItemComponent: React.FC<Props> = ({ file, onDelete }) => {
         <button
           className="delete-button compact"
           onClick={() => onDelete(file.id)}
+          aria-label={`Supprimer le fichier ${file.name}`}
         >
           <FaTrash size={12} />
         </button>
@@ -220,7 +221,7 @@ export const TrackDetails = () => {
       <main className="details-main">
         <div className="details-content-card track-card">
           <div className="track-info-header">
-            <FaMusic size={60} className="big-track-icon" />
+            <FaMusic size={60} className="big-track-icon" arria-hidden="true" />
             <div className="track-info-details">
               <h2>{trackData.title}</h2>
               <p>
@@ -240,7 +241,11 @@ export const TrackDetails = () => {
             Fichiers disponibles :
           </h3>
 
-          <div className="files-list">
+          <div
+            className="files-list"
+            role="region"
+            aria-label="Liste des fichiers du morceau"
+          >
             {loading && <p>Chargement des fichiers...</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}
             {!loading && files.length === 0 && (
@@ -260,9 +265,13 @@ export const TrackDetails = () => {
             <button
               className="add-document-button"
               onClick={() => document.getElementById("fileInput")?.click()}
+              aria-label="Ajouter un document pour ce morceau"
             >
               Ajouter un document
             </button>
+            <label htmlFor="fileInput" className="sr-only">
+              Sélectionner un fichier à ajouter
+            </label>
             <input
               type="file"
               id="fileInput"

@@ -13,7 +13,7 @@ import { MembersList } from "./pages/MembersList";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 
-import { Invitation } from "./pages/Invitation";
+// import { Invitation } from "./pages/Invitation";
 
 export const App = () => {
   return (

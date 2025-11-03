@@ -27,7 +27,7 @@ interface EnsembleListItemProps {
 const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
   return (
     <div className="ensemble-card">
-      <FaUsers size={40} className="ensemble-icon" />
+      <FaUsers size={40} className="ensemble-icon" aria-hidden="true" />
       <div className="ensemble-details">
         <h3>{ensemble.nom}</h3>
         <p>Description : {ensemble.description}</p>
@@ -40,7 +40,12 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
 
       <div className="ensemble-actions">
         <Link to={`/ensembles/${ensemble.id}`}>
-          <button className="view-ensemble-button">Voir les partitions</button>
+          <button
+            className="view-ensemble-button"
+            aria-label={`Voir les partitions de ${ensemble.nom}`}
+          >
+            Voir les partitions
+          </button>
         </Link>
       </div>
     </div>
@@ -124,7 +129,15 @@ export const EnsemblesPage = () => {
             className="profile-pic"
           />
           <div className="profile-info">
-            <p className="profile-name">
+            {/* <p className="profile-name">
+              {user
+                ? `${user.prenom ?? ""} ${user.nom ?? ""}`
+                : "Utilisateur inconnu"}
+            </p> */}
+            <p
+              className="profile-name"
+              aria-label={`Profil de ${user.prenom} ${user.nom}`}
+            >
               {user
                 ? `${user.prenom ?? ""} ${user.nom ?? ""}`
                 : "Utilisateur inconnu"}
@@ -139,7 +152,7 @@ export const EnsemblesPage = () => {
 
           <div className="ensembles-list">
             {ensembles.length === 0 ? (
-              <p>Vous n’avez aucun ensemble pour le moment.</p>
+              <p role="status">Vous n’avez aucun ensemble pour le moment.</p>
             ) : (
               ensembles.map((ensemble) => (
                 <EnsembleListItem key={ensemble.id} ensemble={ensemble} />

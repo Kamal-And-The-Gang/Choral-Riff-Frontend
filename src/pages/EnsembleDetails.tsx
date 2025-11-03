@@ -169,14 +169,14 @@ export const EnsembleDetails = () => {
   // --- Ajout du hook auth ---
   const { user } = useAuth();
   // Fonction pour aller sur TrackDetail
-  const goToTrackDetail = (morceau: Morceau) => {
-    navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
-      state: {
-        ensembleNom: ensemble?.nom,
-        morceauTitre: morceau.titre,
-      },
-    });
-  };
+  // const goToTrackDetail = (morceau: Morceau) => {
+  //   navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
+  //     state: {
+  //       ensembleNom: ensemble?.nom,
+  //       morceauTitre: morceau.titre,
+  //     },
+  //   });
+  // };
 
   // --- Fonctions d'appel API ---
 
