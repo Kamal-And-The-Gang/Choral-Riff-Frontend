@@ -1,7 +1,7 @@
 import type { components } from "./types.generated";
 
 // src/api/authApi.ts
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://localhost/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://51.210.7.37/api';
 
 export type RegisterDto = components['schemas']['RegisterDto'];
 export type LoginDTO = components['schemas']['LoginDTO'];

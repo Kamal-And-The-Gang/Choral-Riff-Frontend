@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-const BASE_URL = "https://localhost/api/ensembles";
+const BASE_URL = "https://51.210.7.37/api/ensembles";
 
 /**
  * Récupère un ensemble par son ID

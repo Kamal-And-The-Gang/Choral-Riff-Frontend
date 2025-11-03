@@ -4,7 +4,7 @@ import { FaTimes, FaSave } from "react-icons/fa";
 // 🚨 Assurez-vous que le chemin est correct pour votre CSS
 import "../styles/modal-simplifie.css";
 
-const API_URL = "https://localhost/api/morceaux";
+const API_URL = "https://51.210.7.37/api/morceaux";
 
 // --- DÉFINITIONS DES TYPES DTO ---
 

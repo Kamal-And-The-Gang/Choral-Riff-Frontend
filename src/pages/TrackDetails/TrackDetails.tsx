@@ -119,7 +119,7 @@ export const TrackDetails = () => {
       setEnsembleNom(state.ensembleNom);
     } else {
       axios
-        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
+        .get(`https://51.210.7.37/api/ensembles/${currentEnsembleId}`)
         .then((res) => setEnsembleNom(res.data.nom))
         .catch((err) => {
           console.error(err);
@@ -136,7 +136,7 @@ export const TrackDetails = () => {
     setError(null);
 
     axios
-      .get(`http://localhost:8080/api/documents/morceau/${currentTrackId}`)
+      .get(`https://51.210.7.37/api/documents/morceau/${currentTrackId}`)
       .then((res) => {
         if (Array.isArray(res.data)) {
           const filesFromApi: FileItem[] = res.data.map((doc: any) => ({
@@ -166,7 +166,7 @@ export const TrackDetails = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:8080/api/documents/${id}`);
+      await axios.delete(`https://51.210.7.37/api/documents/${id}`);
       setFiles((prev) => prev.filter((file) => file.id !== id));
       toast.success("Fichier supprimé avec succès !");
     } catch (err) {
@@ -186,7 +186,7 @@ export const TrackDetails = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/documents/upload",
+        "https://51.210.7.37/api/documents/upload",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

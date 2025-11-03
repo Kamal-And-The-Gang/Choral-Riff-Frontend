@@ -80,7 +80,7 @@ export const EnsemblesPage = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://localhost/api/ensembles/user/${user.id}`
+          `https://51.210.7.37/api/ensembles/user/${user.id}`
         );
         if (!res.ok) throw new Error("Erreur de chargement");
         const data: Ensemble[] = await res.json();

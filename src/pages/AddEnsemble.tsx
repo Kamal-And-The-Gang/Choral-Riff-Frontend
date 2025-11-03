@@ -34,7 +34,7 @@ export const AddEnsemble = () => {
     if (ensembleId) {
       console.log("User connecté :", user);
 
-      fetch(`https://localhost/api/ensembles/${ensembleId}`)
+      fetch(`https://51.210.7.37/api/ensembles/${ensembleId}`)
         .then((res) => res.json())
         .then((data) => {
           setName(data.nom);
@@ -69,8 +69,8 @@ export const AddEnsemble = () => {
     try {
       // Construire l'URL selon création ou modification
       const url = ensembleId
-        ? `https://localhost/api/ensembles/${ensembleId}`
-        : `https://localhost/api/ensembles?userId=${user.id}`;
+        ? `https://51.210.7.37/api/ensembles/${ensembleId}`
+        : `https://51.210.7.37/api/ensembles?userId=${user.id}`;
 
       const response = await fetch(url, {
         method: ensembleId ? "PUT" : "POST",
