@@ -16,14 +16,14 @@ export const Connexion = () => {
     e.preventDefault();
 
     try {
-    const data = { email, password };
+      const data = { email, password };
       const tokens = await loginUser(data); // Appel API backend
       login(tokens.accessToken); // On stocke le token via le contexte
       toast.success("Connexion réussie !");
       navigate("/"); // Redirection page d'accueil
     } catch (err: any) {
       console.error("Erreur lors de la connexion :", err);
-      toast.error("Email ou mot de passe incorrect ❌");
+      toast.error("Email ou mot de passe incorrect ");
     }
   };
 

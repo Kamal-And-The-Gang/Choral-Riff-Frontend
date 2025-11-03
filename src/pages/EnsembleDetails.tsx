@@ -79,30 +79,37 @@ type Ensemble = {
  * @param {*} { morceau, ensembleId }
  * @return {*}
  */
+
 const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
-  const morceauLink = `/ensembles/${ensembleId}/morceaux/${morceau.id}`;
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
+      state: { morceauTitre: morceau.titre },
+    });
+  };
 
   return (
-    <a
-      href={morceauLink}
-      className="morceau-item-link"
+    <div
+      className="score-item"
+      onClick={handleClick}
+      style={{ cursor: "pointer" }}
       title={`Voir les fichiers de ${morceau.titre}`}
     >
-      <div className="score-item">
-        <div className="score-info">
-          <FaMusic size={20} className="score-icon" />
-          <span className="score-name">
-            {morceau.titre} ({morceau.compositeur})
-          </span>
-        </div>
-        <div className="score-details">
-          <span className="score-format">Consulter </span>
-          <FaChevronRight size={14} className="details-arrow" />
-        </div>
+      <div className="score-info">
+        <FaMusic size={20} className="score-icon" />
+        <span className="score-name">
+          {morceau.titre} ({morceau.compositeur})
+        </span>
       </div>
-    </a>
+      <div className="score-details">
+        <span className="score-format">Consulter </span>
+        <FaChevronRight size={14} className="details-arrow" />
+      </div>
+    </div>
   );
 };
+
 const toastConfirmDelete = () =>
   new Promise<boolean>((resolve) => {
     toast(
@@ -161,8 +168,15 @@ export const EnsembleDetails = () => {
   const [error, setError] = useState<string | null>(null);
   // --- Ajout du hook auth ---
   const { user } = useAuth();
-
-  // Correction: La variable 'mockMorceaux' était définie globalement mais non utilisée, on la supprime.
+  // Fonction pour aller sur TrackDetail
+  // const goToTrackDetail = (morceau: Morceau) => {
+  //   navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
+  //     state: {
+  //       ensembleNom: ensemble?.nom,
+  //       morceauTitre: morceau.titre,
+  //     },
+  //   });
+  // };
 
   // --- Fonctions d'appel API ---
 
@@ -180,7 +194,9 @@ export const EnsembleDetails = () => {
         error
       );
       // Correction: Afficher une erreur utilisateur si la liste ne charge pas
-      toast.error("Impossible de charger la liste des morceaux.");
+      toast.error(
+        "Impossible de charger la liste des morceaux. Veuillez rééssayer plus tard."
+      );
       setListeMorceaux([]);
     } finally {
       setLoadingListe(false);
@@ -230,7 +246,10 @@ export const EnsembleDetails = () => {
         setEnsemble(data);
       } catch (error: any) {
         setError(error.message);
-        toast.error(`Erreur : ${error.message}`);
+
+        toast.error(
+          "Erreur : impossible de charger les informations de l'ensemble."
+        );
       } finally {
         setLoading(false);
       }
@@ -268,13 +287,17 @@ export const EnsembleDetails = () => {
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      toast.error("Veuillez saisir une adresse email.");
+      toast.error("Veuillez saisir une adresse email valide");
 
       return;
     }
     try {
       await creerInvitation(email, ensembleIdNumber);
-      console.log("Invitation envoyée avec :", { name, email, ensembleId });
+      console.log("Invitation envoyée avec succès !", {
+        name,
+        email,
+        ensembleId,
+      });
 
       toast.success("Invitation envoyée !");
       setEmail("");
@@ -367,39 +390,6 @@ export const EnsembleDetails = () => {
                 Créé par : {user?.prenom} {user?.nom}
               </p>
 
-              {/* <p>Créé le : {ensemble.dateCreation}</p> */}
-              {/* <p>Nombre de membres : {ensemble.membersCount}</p> */}
-
-              {/* <div className="ensemble-buttons">
-                
-                <button
-                  className="edit-button"
-                  onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
-                >
-                  Modifier
-                </button>
-
-                <button className="delete-button" onClick={supprimerEnsemble}>
-                  Supprimer
-                </button>
-              </div> */}
-              {/* <div className="ensemble-buttons">
-                {(user?.role === "admin" || user?.role === "moderator") && (
-                  <button
-                    className="edit-button"
-                    onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
-                  >
-                    Modifier
-                  </button>
-                )}
-
-                {user?.role === "admin" && (
-                  <button className="delete-button" onClick={supprimerEnsemble}>
-                    Supprimer
-                  </button>
-                )}
-              </div> */}
-
               <div className="ensemble-buttons">
                 {/* {(user?.id && Number(user.id) === ensemble.createdBy) && ( */}
 
@@ -418,23 +408,6 @@ export const EnsembleDetails = () => {
                   </button>
                 </>
               </div>
-
-              {/* <div className="ensemble-buttons">
-  {user?.id != null && +user.id === ensemble.createdBy && (
-    
-      <button
-        className="edit-button"
-        onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
-      >
-        Modifier
-      </button>
-
-      <button className="delete-button" onClick={supprimerEnsemble}>
-        Supprimer
-      </button>
- 
-  )}
-</div> */}
             </div>
           </div>
 
