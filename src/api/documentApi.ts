@@ -2,7 +2,7 @@ import type { components } from "./types.generated";
 
 export type DocumentDto = components["schemas"]["DocumentDto"];
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 // --- GET ---
 export async function getAllDocuments(): Promise<DocumentDto[]> {

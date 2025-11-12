@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://localhost/api/morceaux";
+const API_BASE_URL = "http://localhost:8080/api/morceaux";
 
 
 export type MorceauCreationDto = {
