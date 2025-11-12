@@ -10,6 +10,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { useLocation } from "react-router-dom";
 
+// Ajout du champ URL pour permettre un aperçu du document
+export type ExtendedFileItem = FileItem & {
+  url?: string;
+};
+
 type TrackState = {
   morceauTitre?: string;
   ensembleNom?: string;
@@ -146,6 +151,8 @@ export const TrackDetails = () => {
             format: doc.format,
             size: "-",
             role: doc.type,
+            
+            
           }));
           setFiles(filesFromApi);
         } else {
@@ -261,7 +268,7 @@ export const TrackDetails = () => {
             ))}
           </div>
 
-          {/* --- Bouton Ajouter un document ---
+      
           <div style={{ margin: "16px 0" }}>
             <button
               className="add-document-button"
@@ -283,37 +290,7 @@ export const TrackDetails = () => {
                 if (file) handleAddDocument(file);
               }}
             />
-          </div> */}
-
-
-          {/* --- Champ fichier + bouton alignés --- */}
-<div style={{ display: "flex", alignItems: "center", gap: "8px", margin: "16px 0" }}>
-  <label htmlFor="fileInput">
-    Sélectionner un fichier à ajouter
-  </label>
-
-  <button
-    className="add-document-button"
-    onClick={() => {
-      const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-      fileInput?.click();
-    }}
-    aria-label="Ajouter un document pour ce morceau"
-  >
-    Ajouter un document
-  </button>
-
-  <input
-    type="file"
-    id="fileInput"
-    style={{ display: "none" }}
-    onChange={(e) => {
-      const file = e.target.files?.[0];
-      if (file) handleAddDocument(file);
-    }}
-  />
-</div>
-
+          </div>
 
           {/* <div className="global-actions">
             <button

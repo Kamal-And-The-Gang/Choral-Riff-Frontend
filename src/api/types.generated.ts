@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/utilisateurs/{id}": {
+    "/api/utilisateur/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -68,7 +68,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/utilisateurs": {
+    "/api/utilisateur": {
         parameters: {
             query?: never;
             header?: never;

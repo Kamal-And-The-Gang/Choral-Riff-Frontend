@@ -61,9 +61,9 @@ export const AddEnsemble = () => {
     // création du corps de message
     const payload = {
       nom: name,
-      type: ensembleType,
+      // type: ensembleType,
       description,
-      createdBy: user?.id,
+      // createdBy: user?.id,
     };
 
     try {

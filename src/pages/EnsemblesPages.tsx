@@ -35,7 +35,7 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
         {/* <p>Créé par : {ensemble.createdByName}</p> */}
 
         <p>Type : {ensemble.type}</p>
-        <p>{ensemble.members} membres :</p>
+        <p>{ensemble.members} Membres :</p>
       </div>
 
       <div className="ensemble-actions">
