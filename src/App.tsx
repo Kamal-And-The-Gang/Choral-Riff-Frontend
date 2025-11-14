@@ -12,6 +12,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { MembersList } from "./pages/MembersList";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
+import { InvitationAcceptPage } from './pages/InvitationAcceptPage';
 
 // import { Invitation } from "./pages/Invitation";
 
@@ -45,6 +46,8 @@ export const App = () => {
             element={<MembersList />}
           />
           {/* <Route path="/invitation" element={<Invitation />} /> */}
+          <Route path="/invitations/accept" element={<InvitationAcceptPage />} />
+           <Route path="/ensembles/:ensembleId/members" element={<MembersList />} />
         </Routes>
       </main>
       <Footer />

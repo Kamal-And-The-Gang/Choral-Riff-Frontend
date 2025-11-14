@@ -42,3 +42,15 @@ export async function loginUser(data: LoginDTO): Promise<Record<string, string>>
   const response = await fetch(`${BASE_URL}/auth/logout`, { method: "POST" });
   return response.json();
 }
+
+import axios from "axios";
+
+// Fonction pour accepter une invitation via le token
+export const acceptInvitation = async (token: string) => {
+  if (!token) throw new Error("Token manquant");
+
+  const response = await axios.post(`/invitations/accept?token=${token}`);
+  
+  // On retourne l'ensemble reçu depuis le backend
+  return response.data;
+};

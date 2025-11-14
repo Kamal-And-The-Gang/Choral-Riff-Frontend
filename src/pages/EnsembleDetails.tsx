@@ -284,29 +284,33 @@ export const EnsembleDetails = () => {
    * @param {React.FormEvent} e
    * @return {*}
    */
-  const handleInviteSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) {
-      toast.error("Veuillez saisir une adresse email valide");
 
-      return;
-    }
-    try {
-      await creerInvitation(email, ensembleIdNumber);
-      console.log("Invitation envoyée avec succès !", {
-        name,
-        email,
-        ensembleId,
-      });
 
-      toast.success("Invitation envoyée !");
-      setEmail("");
-      setName("");
-      setShowModal(false); // Ferme la modale
-    } catch (error: any) {
-      toast.error("Erreur : " + error.message);
+const handleInviteSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!email.trim()) {
+    toast.error("Veuillez saisir une adresse email valide");
+    return;
+  }
+
+  try {
+    await creerInvitation(email, ensembleIdNumber);
+    toast.success("Invitation envoyée !");
+    setEmail("");
+    setName("");
+    setShowModal(false);
+  } catch (error: any) {
+    // Gestion des doublons selon le backend
+    if (error.response?.status === 400) {
+      // Ici le backend renvoie 400 si l'email existe déjà
+      toast.warn("Une invitation existe déjà pour cet email !");
+    } else {
+      toast.error("Erreur : " + (error.message || "Erreur inconnue"));
     }
-  };
+  }
+};
+
 
   /**
    *
@@ -314,20 +318,48 @@ export const EnsembleDetails = () => {
    * @param {number} ensembleId
    * @return {*}
    */
-  const creerInvitation = async (emailInvite: string, ensembleId: number) => {
-    const body = JSON.stringify({ emailInvite, ensembleId });
-    const response = await fetch(`${API_BASE_URL}/invitations`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body,
-    });
+//  const creerInvitation = async (emailInvite: string, ensembleId: number) => {
+//   const body = JSON.stringify({ emailInvite, ensembleId });
+//   const response = await fetch(`${API_BASE_URL}/invitations`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body,
+//   });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erreur serveur : ${response.status} - ${errorText}`);
-    }
-    return await response.json();
-  };
+//   if (response.status === 409) {
+//     // Utilisateur déjà invité
+//     const error = new Error("Utilisateur déjà invité ou rattaché à cet ensemble");
+//     (error as any).response = response; 
+//     throw error;
+//   }
+
+//   if (!response.ok) {
+//     const errorText = await response.text();
+//     throw new Error(`Erreur serveur : ${response.status} - ${errorText}`);
+//   }
+
+//   return await response.json();
+// };
+
+const creerInvitation = async (emailInvite: string, ensembleId: number) => {
+  const body = JSON.stringify({ emailInvite, ensembleId });
+  const response = await fetch(`${API_BASE_URL}/invitations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    // Création d'une erreur avec status pour le front
+    const err: any = new Error(errorText || "Erreur serveur");
+    err.response = { status: response.status };
+    throw err;
+  }
+
+  return await response.json();
+};
+
 
   const supprimerEnsemble = async () => {
     const confirmed = await toastConfirmDelete();
@@ -393,7 +425,7 @@ export const EnsembleDetails = () => {
               <div className="ensemble-buttons">
                 {/* {(user?.id && Number(user.id) === ensemble.createdBy) && ( */}
 
-                {user?.id != null && +user.id === ensemble.createdBy}
+                {/* {user?.id != null && +user.id === ensemble.createdBy}
 
                 <>
                   <button
@@ -406,7 +438,22 @@ export const EnsembleDetails = () => {
                   <button className="delete-button" onClick={supprimerEnsemble}>
                     Supprimer
                   </button>
-                </>
+                </> */}
+                {user?.id != null && +user.id === ensemble.createdBy && (
+  <>
+    <button
+      className="edit-button"
+      onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
+    >
+      Modifier
+    </button>
+
+    <button className="delete-button" onClick={supprimerEnsemble}>
+      Supprimer
+    </button>
+  </>
+)}
+
               </div>
             </div>
           </div>
