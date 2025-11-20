@@ -277,9 +277,9 @@ export const TrackDetails = () => {
             >
               Ajouter un document
             </button>
-            <label htmlFor="fileInput" className="sr-only">
+            {/* <label htmlFor="fileInput" className="sr-only">
               Sélectionner un fichier à ajouter
-            </label>
+            </label> */}
 
             <input
               type="file"

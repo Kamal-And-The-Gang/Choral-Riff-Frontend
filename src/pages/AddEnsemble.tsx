@@ -8,18 +8,35 @@ import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
+type TypeEnsemble =
+  | "Chorale"
+  | "Orchestre"
+  | "Quatuor"
+  | "Groupe de Rock"
+  | "Autre";
+type EnsemblePayload = {
+  nom: string;
+  typeEnsemble: TypeEnsemble;
+  description: string;
+};
 
+const ensembleTypes: TypeEnsemble[] = [
+  "Chorale",
+  "Orchestre",
+  "Quatuor",
+  "Groupe de Rock",
+  "Autre",
+];
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
-
-
 
 export const AddEnsemble = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [ensembleType, setEnsembleType] = useState("Chorale");
+  const [ensembleType, setEnsembleType] = useState<TypeEnsemble>("Chorale");
+
   const [description, setDescription] = useState("");
 
   const [searchParams] = useSearchParams();
@@ -39,7 +56,7 @@ export const AddEnsemble = () => {
         .then((data) => {
           setName(data.nom);
           setDescription(data.description);
-          setEnsembleType(data.type);
+          setEnsembleType(data.typeEnsemble);
         })
         .catch((err) => {
           toast.error("Erreur chargement de l'ensemble : " + err.message);
@@ -57,11 +74,17 @@ export const AddEnsemble = () => {
       );
       return;
     }
+    //  Vérification du rôle pour modification
+    if (ensembleId && user.role !== "ADMIN") {
+      // attention à la casse : "ADMIN"
+      toast.error("Vous n'avez pas les droits pour modifier cet ensemble.");
+      return;
+    }
 
     // création du corps de message
     const payload = {
       nom: name,
-      // type: ensembleType,
+      typeEnsemble: ensembleType,
       description,
       // createdBy: user?.id,
     };
@@ -141,14 +164,14 @@ export const AddEnsemble = () => {
             id="type"
             className="form-input select-input"
             value={ensembleType}
-            onChange={(e) => setEnsembleType(e.target.value)}
+            onChange={(e) => setEnsembleType(e.target.value as TypeEnsemble)}
             required
           >
-            <option value="Chorale">Chorale</option>
-            <option value="Orchestre">Orchestre</option>
-            <option value="Quatuor">Quatuor</option>
-            <option value="Groupe de Rock">Groupe de Rock</option>
-            <option value="Autre">Autre</option>
+            {ensembleTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
           </select>
 
           <label htmlFor="description" className="form-label">

@@ -14,7 +14,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { InvitationAcceptPage } from './pages/InvitationAcceptPage';
 
-// import { Invitation } from "./pages/Invitation";
+import { Invitation } from "./pages/Invitation";
 
 export const App = () => {
   return (
@@ -31,6 +31,8 @@ export const App = () => {
           <Route path="/ensembles/:ensembleId" element={<EnsembleDetails />} />
           <Route path="/addEnsemble" element={<AddEnsemble />} />
           <Route path="/ajouter-ensemble" element={<AddEnsemble />} />
+          <Route path="/ensembles/:ensembleId/invitations" element={<Invitation />} />
+
           <Route
             path="/ensembles/:ensembleId/ajouter-fichier"
             element={<AddScore />}

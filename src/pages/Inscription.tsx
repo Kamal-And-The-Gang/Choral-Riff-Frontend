@@ -64,7 +64,9 @@ setTimeout(() => {
     (utilisateur as any).ensembleId;     // si backend renvoie juste l'id
 
   if (ensembleId) {
-    navigate(`/ensembles/${ensembleId}/members`);
+    // navigate(`/ensembles/${ensembleId}/members`);
+    navigate(`/ensembles/${ensembleId}/invitations`);
+
   } else {
     navigate("/"); // fallback
   }

@@ -3,8 +3,8 @@ import { FaUsers, FaFileAlt, FaPlayCircle, FaHandshake } from 'react-icons/fa';
 import ellipseImage from '../assets/Ellipse_21.png';
 
 import heroImage from '../assets/hero-background.jpg'
-import avatarLucas from '../assets/Lucas.png';
-import avatarFlo from '../assets/Flo.png';
+import avatarLucas from '../assets/simon-lohmann-0KAEhUHvcmQ-unsplash.jpg';
+import avatarFlo from '../assets/femme-5222890_1920.jpg';
 
 
 
