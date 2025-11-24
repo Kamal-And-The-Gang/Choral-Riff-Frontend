@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import "../styles/AuthForms.css";
 import registrationBanner from "../assets/registration-banner.jpg";
@@ -42,12 +41,12 @@ export const Inscription = () => {
       setLoading(true);
 
       // Inclut le token si présent
-      const data = { 
-        nom, 
-        prenom, 
-        email, 
-        motDePasse, 
-        token: token || undefined // <-- ici on envoie le token au back
+      const data = {
+        nom,
+        prenom,
+        email,
+        motDePasse,
+        token: token || undefined, // <-- ici on envoie le token au back
       };
 
       const utilisateur = await registerUser(data);
@@ -56,23 +55,20 @@ export const Inscription = () => {
       toast.success("Inscription réussie !");
       resetForm();
 
- // Redirection douce après 1.5 secondes
-setTimeout(() => {
-  // On tente de récupérer l'ensembleId de plusieurs façons
-  const ensembleId =
-    (utilisateur as any).ensemble?.id || // si backend renvoie un objet ensemble
-    (utilisateur as any).ensembleId;     // si backend renvoie juste l'id
+      // Redirection douce après 1.5 secondes
+      setTimeout(() => {
+        // On tente de récupérer l'ensembleId de plusieurs façons
+        const ensembleId =
+          (utilisateur as any).ensemble?.id || // si backend renvoie un objet ensemble
+          (utilisateur as any).ensembleId; // si backend renvoie juste l'id
 
-  if (ensembleId) {
-    // navigate(`/ensembles/${ensembleId}/members`);
-    navigate(`/ensembles/${ensembleId}/invitations`);
-
-  } else {
-    navigate("/"); // fallback
-  }
-}, 1500);
-
-
+        if (ensembleId) {
+          // navigate(`/ensembles/${ensembleId}/members`);
+          navigate(`/ensembles/${ensembleId}/invitations`);
+        } else {
+          navigate("/"); // fallback
+        }
+      }, 1500);
     } catch (err: any) {
       console.error(err);
       toast.error(`Erreur lors de l'inscription : ${err.message}`);
