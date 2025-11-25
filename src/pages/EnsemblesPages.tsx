@@ -158,7 +158,7 @@ export const EnsemblesPage = () => {
             )}
           </div>
 
-          {ensembles.some((e) => e.userRole === "ADMIN") && (
+          {/* {ensembles.some((e) => e.userRole === "ADMIN") && (
             <div className="add-ensemble-footer-button">
               <Link to="/ajouter-ensemble">
                 <button className="submit-button">
@@ -166,7 +166,19 @@ export const EnsemblesPage = () => {
                 </button>
               </Link>
             </div>
-          )}
+          )} */}
+
+
+          {user && (
+  <div className="add-ensemble-footer-button">
+    <Link to="/ajouter-ensemble">
+      <button className="submit-button">
+        <FaPlus /> Créer un nouvel ensemble
+      </button>
+    </Link>
+  </div>
+)}
+
         </section>
       </main>
     </div>
