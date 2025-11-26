@@ -12,14 +12,14 @@ const mockMorceaux = [
   { id: 2, title: "Nuthin' but a 'G' Thang" },
 ];
 
-export const AddScore = () => {
-  const [file, setFile] = useState<File | null>(null);
-  // Remplacer 'title' par la logique de morcea
-  const [existingMorceauId, setExistingMorceauId] = useState<string>(""); // Utilise 'string' pour 'new' ou l'ID numérique
-  const [newMorceauTitle, setNewMorceauTitle] = useState<string>("");
-
-  const [instrument, setInstrument] = useState<string>("");
-  const [isUploading, setIsUploading] = useState<boolean>(false);
+export const AddMorceau = () => {
+    const [file, setFile] = useState<File | null>(null);
+    // Remplacer 'title' par la logique de morcea
+    const [existingMorceauId, setExistingMorceauId] = useState<string>(''); // Utilise 'string' pour 'new' ou l'ID numérique
+    const [newMorceauTitle, setNewMorceauTitle] = useState<string>('');
+    
+    const [instrument, setInstrument] = useState<string>('');
+    const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // Logique de l'UI
   const isNewMorceau = existingMorceauId === "new";
