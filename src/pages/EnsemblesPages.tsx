@@ -168,17 +168,15 @@ export const EnsemblesPage = () => {
             </div>
           )} */}
 
-
           {user && (
-  <div className="add-ensemble-footer-button">
-    <Link to="/ajouter-ensemble">
-      <button className="submit-button">
-        <FaPlus /> Créer un nouvel ensemble
-      </button>
-    </Link>
-  </div>
-)}
-
+            <div className="add-ensemble-footer-button">
+              <Link to="/ajouter-ensemble">
+                <button className="submit-button">
+                  <FaPlus /> Créer un nouvel ensemble
+                </button>
+              </Link>
+            </div>
+          )}
         </section>
       </main>
     </div>

@@ -14,6 +14,8 @@ type TypeEnsemble =
   | "Quatuor"
   | "Groupe de Rock"
   | "Autre";
+
+  
 type EnsemblePayload = {
   nom: string;
   typeEnsemble: TypeEnsemble;
