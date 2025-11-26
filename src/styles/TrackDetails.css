@@ -213,3 +213,22 @@
 .file-item .delete-button.compact:hover {
   background: #c82333;
 }
+.file-with-instrument {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* le bouton ira à l'extrémité droite */
+  padding: 8px 0;
+  border-bottom: 1px solid #eee; /* optionnel, pour séparer les lignes */
+}
+
+.add-instrument-button {
+
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+
+
