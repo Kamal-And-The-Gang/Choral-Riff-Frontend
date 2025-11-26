@@ -6,7 +6,7 @@ import { Connexion } from "./pages/Connexion";
 import { EnsemblesPage } from "./pages/EnsemblesPages";
 import { EnsembleDetails } from "./pages/EnsembleDetails";
 import { AddEnsemble } from "./pages/AddEnsemble";
-import { AddScore } from "./pages/AddScore";
+import { AddMorceau } from "./pages/AddMorceau";
 import { TrackDetails } from "./pages/TrackDetails/TrackDetails";
 import { Dashboard } from "./pages/Dashboard";
 import { MembersList } from "./pages/MembersList";
@@ -35,7 +35,7 @@ export const App = () => {
 
           <Route
             path="/ensembles/:ensembleId/ajouter-fichier"
-            element={<AddScore />}
+            element={<AddMorceau />}
           />
           <Route
             path="/ensembles/:ensembleId/morceaux/:trackId"
