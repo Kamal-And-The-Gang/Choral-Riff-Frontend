@@ -1,20 +1,23 @@
-export const addInstrumentToDocument = async (documentId: number, instrumentId: number) => {
-  try {
-    const res = await fetch(
-      `http://localhost:8080/api/document-instruments/add?documentId=${documentId}&instrumentId=${instrumentId}`,
-      {
-        method: "POST",
-      }
-    );
+// src/api/documentInstruments.ts
+import axios from "axios";
 
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Erreur API: ${text}`);
-    }
+export const handleAddInstrumentSubmit = async (
+  documentId: number,
+  instrument: { id?: number; nom: string }
+) => {
+  let instrumentId = instrument.id;
 
-    return await res.json(); // renvoie le document mis à jour
-  } catch (error) {
-    console.error("Erreur dans addInstrumentToDocument:", error);
-    throw error;
+  if (!instrumentId) {
+    const res = await axios.post("http://localhost:8080/api/instruments", {
+      nom: instrument.nom,
+    });
+    instrumentId = res.data.id;
   }
+
+  await axios.post(
+    `http://localhost:8080/api/documents/${documentId}/instruments`,
+    null,
+    { params: { instrumentId } }
+  );
 };
+

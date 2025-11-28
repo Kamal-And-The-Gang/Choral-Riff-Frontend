@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 import AddInstrumentForm from "../AddInstrumentForm";
+import { handleAddInstrumentSubmit } from "../../api/documentInstruments";
 
 // Ajout du champ URL pour permettre un aperçu du document
 export type ExtendedFileItem = FileItem & {
@@ -119,40 +120,6 @@ export const TrackDetails = () => {
   const handleCloseAddInstrument = () => {
     setSelectedDocumentId(null);
     setIsModalOpen(false);
-  };
-
-  const handleAddInstrumentSubmit = async (instrument: {
-    id?: number;
-    nom: string;
-    ensembleId?: number;
-  }) => {
-    if (!selectedDocumentId) return;
-
-    try {
-      let instrumentId = instrument.id;
-
-      if (!instrumentId) {
-        // Créer l'instrument et récupérer son ID
-        const res = await axios.post(`http://localhost:8080/api/instruments`, {
-          nom: instrument.nom,
-          ensembleId: instrument.ensembleId,
-        });
-        instrumentId = res.data.id; // <-- l'ID renvoyé par ton backend
-      }
-
-      // Ajouter l'instrument au document
-      await axios.post(
-        `http://localhost:8080/api/documents/${selectedDocumentId}/instruments`,
-        null,
-        { params: { instrumentId } }
-      );
-
-      toast.success("Instrument ajouté !");
-      handleCloseAddInstrument();
-    } catch (err) {
-      console.error(err);
-      toast.error("Erreur lors de l'ajout de l'instrument");
-    }
   };
 
   const location = useLocation();
@@ -341,8 +308,20 @@ export const TrackDetails = () => {
           {/* --- Modal pour ajouter un instrument --- */}
           {isModalOpen && selectedDocumentId && (
             <AddInstrumentForm
-              ensembleId={currentEnsembleId}
-              onSubmit={handleAddInstrumentSubmit}
+              onSubmit={async (instrument) => {
+                if (!selectedDocumentId) return;
+                try {
+                  await handleAddInstrumentSubmit(
+                    selectedDocumentId,
+                    instrument
+                  );
+                  toast.success("Instrument ajouté !");
+                  handleCloseAddInstrument();
+                } catch (err) {
+                  console.error(err);
+                  toast.error("Erreur lors de l'ajout de l'instrument");
+                }
+              }}
               onClose={handleCloseAddInstrument}
             />
           )}

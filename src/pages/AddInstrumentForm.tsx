@@ -8,7 +8,7 @@ interface Instrument {
 }
 
 interface AddInstrumentFormProps {
-  ensembleId?: number;
+  // ensembleId?: number;
   onSubmit: (instrument: {
     id?: number;
     nom: string;
@@ -18,7 +18,7 @@ interface AddInstrumentFormProps {
 }
 
 const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
-  ensembleId,
+  // ensembleId,
   onSubmit,
   onClose,
 }) => {
@@ -37,11 +37,11 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
     e.preventDefault();
 
     if (selectedId === "new" && newNom.trim()) {
-      onSubmit({ nom: newNom, ensembleId });
+      onSubmit({ nom: newNom });
     } else if (typeof selectedId === "number") {
       const instrument = instruments.find((i) => i.id === selectedId);
       if (instrument) {
-        onSubmit({ id: instrument.id, nom: instrument.nom, ensembleId });
+        onSubmit({ id: instrument.id, nom: instrument.nom });
       }
     }
 

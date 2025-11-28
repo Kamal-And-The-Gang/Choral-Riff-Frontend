@@ -1,44 +1,3 @@
-// export interface CreateInvitationDTO {
-//   emailInvite: string;
-//   ensembleId: number;
-// }
-
-// export interface InvitationDTO {
-//   id: number;
-//   emailInvite: string;
-//   ensembleId: number;
-// }
-
-// export async function creerInvitation(
-//   invitationDTO: CreateInvitationDTO
-// ): Promise<InvitationDTO> {
-//   try {
-//     const payload = {
-//       emailInvite: invitationDTO.emailInvite,
-//       ensembleId: invitationDTO.ensembleId,
-//     };
-
-//     const response = await fetch("/api/invitations", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(payload),
-//     });
-
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       throw new Error(
-//         errorData.message || "Erreur lors de la création de l’invitation"
-//       );
-//     }
-
-//     const data: InvitationDTO = await response.json();
-//     return data;
-//   } catch (error) {
-//     console.error("Erreur dans creerInvitation :", error);
-//     throw error;
-//   }
-// }
-
 export interface CreateInvitationDTO {
   emailInvite: string;
   ensembleId: number;
@@ -56,38 +15,6 @@ export interface InvitationDTO {
   token: string;
 }
 
-// Création d'une invitation
-// export async function creerInvitation(
-//   invitationDTO: CreateInvitationDTO
-// ): Promise<InvitationDTO> {
-//   try {
-//     const payload = {
-//       emailInvite: invitationDTO.emailInvite,
-//       ensembleId: invitationDTO.ensembleId,
-//     };
-
-//     const response = await fetch("/api/invitations", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(payload),
-//     });
-
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       throw new Error(
-//         errorData.message || "Erreur lors de la création de l’invitation"
-//       );
-//     }
-
-//     const data: InvitationDTO = await response.json();
-//     return data;
-//   } catch (error) {
-//     console.error("Erreur dans creerInvitation :", error);
-//     throw error;
-//   }
-// }
-// Création d'une invitation conforme au backend
-// src/api/invitationApi.ts
 export const API_BASE_URL = "http://localhost:8080/api";
 
 /**
@@ -98,7 +25,10 @@ export const API_BASE_URL = "http://localhost:8080/api";
  * @param ensembleId L'ID de l'ensemble
  * @throws Erreur si la requête échoue
  */
-export const creerInvitation = async (emailInvite: string, ensembleId: number) => {
+export const creerInvitation = async (
+  emailInvite: string,
+  ensembleId: number
+) => {
   const body = JSON.stringify({ emailInvite, ensembleId });
 
   const response = await fetch(`${API_BASE_URL}/invitations`, {
@@ -117,16 +47,6 @@ export const creerInvitation = async (emailInvite: string, ensembleId: number) =
 
   return await response.json(); // InvitationDTO
 };
-
-
-
-
-
-
-
-
-
-
 
 // Récupération des invitations pour un ensemble
 export async function getInvitations(
