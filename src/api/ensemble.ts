@@ -42,3 +42,25 @@ export const saveEnsemble = async (payload: any, id: string | null, token: strin
 
   return res.json();
 };
+
+// src/api/ensembleApi.ts
+export const API_BASE_URL = "http://localhost:8080/api";
+
+/**
+ * Supprime un ensemble par son ID.
+ *
+ * @param ensembleId L'ID de l'ensemble à supprimer
+ * @throws Erreur si la suppression échoue
+ */
+export const supprimerEnsemble = async (ensembleId: number) => {
+  const response = await fetch(`${API_BASE_URL}/ensembles/${ensembleId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erreur lors de la suppression : ${response.statusText}`);
+  }
+
+  return true; // succès
+};
+

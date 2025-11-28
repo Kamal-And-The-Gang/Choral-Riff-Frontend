@@ -4,6 +4,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { useAuth } from "../contexts/AuthContext";
+import { creerInvitation } from "../api/invitationApi";
+import { supprimerEnsemble as apiSupprimerEnsemble } from "../api/ensemble";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -12,7 +14,6 @@ import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 
 // Import du composant Modale
 import AjouterMorceauForm from "./AjouterMorceauForm";
-
 
 // URL de base de votre API
 const API_BASE_URL = "http://localhost:8080/api";
@@ -80,9 +81,6 @@ type Ensemble = {
  * @param {*} { morceau, ensembleId }
  * @return {*}
  */
-
-
-
 
 const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
   const navigate = useNavigate();
@@ -304,10 +302,10 @@ export const EnsembleDetails = () => {
       setName("");
       setShowModal(false);
     } catch (error: any) {
-      // Gestion des doublons selon le backend
       if (error.response?.status === 400) {
-        // Ici le backend renvoie 400 si l'email existe déjà
-        toast.warn("Une invitation existe déjà pour cet email !");
+        toast.warn(error.message); // message exact du backend (ex: "Email déjà invité")
+      } else if (error.response?.status === 404) {
+        toast.error(error.message); // exemple: ensemble non trouvé
       } else {
         toast.error("Erreur : " + (error.message || "Erreur inconnue"));
       }
@@ -320,73 +318,20 @@ export const EnsembleDetails = () => {
    * @param {number} ensembleId
    * @return {*}
    */
-  //  const creerInvitation = async (emailInvite: string, ensembleId: number) => {
-  //   const body = JSON.stringify({ emailInvite, ensembleId });
-  //   const response = await fetch(`${API_BASE_URL}/invitations`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body,
-  //   });
 
-  //   if (response.status === 409) {
-  //     // Utilisateur déjà invité
-  //     const error = new Error("Utilisateur déjà invité ou rattaché à cet ensemble");
-  //     (error as any).response = response;
-  //     throw error;
-  //   }
-
-  //   if (!response.ok) {
-  //     const errorText = await response.text();
-  //     throw new Error(`Erreur serveur : ${response.status} - ${errorText}`);
-  //   }
-
-  //   return await response.json();
-  // };
-
-  const creerInvitation = async (emailInvite: string, ensembleId: number) => {
-    const body = JSON.stringify({ emailInvite, ensembleId });
-    const response = await fetch(`${API_BASE_URL}/invitations`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      // Création d'une erreur avec status pour le front
-      const err: any = new Error(errorText || "Erreur serveur");
-      err.response = { status: response.status };
-      throw err;
-    }
-
-    return await response.json();
-  };
-
-  const supprimerEnsemble = async () => {
+  const handleSupprimerEnsemble = async () => {
     const confirmed = await toastConfirmDelete();
     if (!confirmed) return;
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/ensembles/${ensembleIdNumber}`,
-        { method: "DELETE" }
-      );
-      if (!response.ok) {
-        throw new Error(
-          `Erreur lors de la suppression : ${response.statusText}`
-        );
-      }
-
+      await apiSupprimerEnsemble(ensembleIdNumber); // <-- ici l'appel correct à l'API
       toast.success("Ensemble supprimé avec succès !");
-      navigate("/ensembles"); // redirection après suppression
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(
-          "Erreur lors de la suppression de l'ensemble : " + error.message
-        );
-      } else {
-        toast.error("Erreur inconnue lors de la suppression de l'ensemble");
-      }
+      navigate("/ensembles");
+    } catch (error: any) {
+      toast.error(
+        "Erreur lors de la suppression de l'ensemble : " +
+          (error.message || "Erreur inconnue")
+      );
     }
   };
 
@@ -424,22 +369,6 @@ export const EnsembleDetails = () => {
               </p>
 
               <div className="ensemble-buttons">
-                {/* {(user?.id && Number(user.id) === ensemble.createdBy) && ( */}
-
-                {/* {user?.id != null && +user.id === ensemble.createdBy}
-
-                <>
-                  <button
-                    className="edit-button"
-                    onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
-                  >
-                    Modifier
-                  </button>
-
-                  <button className="delete-button" onClick={supprimerEnsemble}>
-                    Supprimer
-                  </button>
-                </> */}
                 {user?.id != null && +user.id === ensemble.createdBy && (
                   <>
                     <button
@@ -451,7 +380,7 @@ export const EnsembleDetails = () => {
 
                     <button
                       className="delete-button"
-                      onClick={supprimerEnsemble}
+                      onClick={handleSupprimerEnsemble} // <-- utiliser le nouveau handler
                     >
                       Supprimer
                     </button>
@@ -605,9 +534,6 @@ export const EnsembleDetails = () => {
                 )}
               </>
             )}
-
-          {/* <div className="action-buttons"></div>
-          </div> */}
         </div>
       </main>
       <ToastContainer position="top-right" autoClose={3000} />

@@ -14,7 +14,7 @@ const mockMorceaux = [
 
 export const AddMorceau = () => {
     const [file, setFile] = useState<File | null>(null);
-    // Remplacer 'title' par la logique de morcea
+    // Remplacer 'title' par la logique de morceau
     const [existingMorceauId, setExistingMorceauId] = useState<string>(''); // Utilise 'string' pour 'new' ou l'ID numérique
     const [newMorceauTitle, setNewMorceauTitle] = useState<string>('');
     
