@@ -4,16 +4,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import Spinner from "./Spinner";
 import { useAuth } from "../contexts/AuthContext";
-import { creerInvitation } from "../api/invitationApi";
+import { creerInvitation, type InvitationDTO } from "../api/invitationApi";
 import { supprimerEnsemble as apiSupprimerEnsemble } from "../api/ensemble";
-
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-
 import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
-
 // Import du composant Modale
 import AjouterMorceauForm from "./AjouterMorceauForm";
+
+
+
 
 // URL de base de votre API
 const API_BASE_URL = "http://localhost:8080/api";
@@ -170,6 +170,9 @@ export const EnsembleDetails = () => {
   const [error, setError] = useState<string | null>(null);
   // --- Ajout du hook auth ---
   const { user } = useAuth();
+  const [invitationResponse, setInvitationResponse] =
+    useState<InvitationDTO | null>(null);
+
   // Fonction pour aller sur TrackDetail
   // const goToTrackDetail = (morceau: Morceau) => {
   //   navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
@@ -287,6 +290,31 @@ export const EnsembleDetails = () => {
    * @return {*}
    */
 
+  // const handleInviteSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   if (!email.trim()) {
+  //     toast.error("Veuillez saisir une adresse email valide");
+  //     return;
+  //   }
+
+  //   try {
+  //     await creerInvitation(email, ensembleIdNumber);
+  //     toast.success("Invitation envoyée !");
+  //     setEmail("");
+  //     setName("");
+  //     setShowModal(false);
+  //   } catch (error: any) {
+  //     if (error.response?.status === 400) {
+  //       toast.warn(error.message); // message exact du backend (ex: "Email déjà invité")
+  //     } else if (error.response?.status === 404) {
+  //       toast.error(error.message); // exemple: ensemble non trouvé
+  //     } else {
+  //       toast.error("Erreur : " + (error.message || "Erreur inconnue"));
+  //     }
+  //   }
+  // };
+
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -296,16 +324,32 @@ export const EnsembleDetails = () => {
     }
 
     try {
-      await creerInvitation(email, ensembleIdNumber);
-      toast.success("Invitation envoyée !");
+      // Appel API pour vérifier l'utilisateur / invitation
+      const response = await creerInvitation(email, ensembleIdNumber);
+
+      setInvitationResponse(response);
+
+      if (response.existant && !response.invitationDejaEnvoyee) {
+        // Utilisateur existant mais pas encore invité → juste afficher le bouton "Rattacher"
+        toast.info(
+          "Cet utilisateur est déjà inscrit. Vous pouvez le rattacher à l'ensemble."
+        );
+      } else if (response.invitationDejaEnvoyee) {
+        toast.warn(
+          "Une invitation a déjà été envoyée à cet email pour cet ensemble."
+        );
+      } else {
+        // Utilisateur nouveau → invitation envoyée
+        toast.success("Invitation envoyée !");
+      }
+
       setEmail("");
       setName("");
-      setShowModal(false);
     } catch (error: any) {
       if (error.response?.status === 400) {
-        toast.warn(error.message); // message exact du backend (ex: "Email déjà invité")
+        toast.warn(error.response.data?.error || "Une erreur est survenue");
       } else if (error.response?.status === 404) {
-        toast.error(error.message); // exemple: ensemble non trouvé
+        toast.error(error.response.data?.error || "Ressource introuvable");
       } else {
         toast.error("Erreur : " + (error.message || "Erreur inconnue"));
       }
@@ -347,6 +391,37 @@ export const EnsembleDetails = () => {
         Erreur : {error || "Ensemble non trouvé."}
       </div>
     );
+  }
+
+  // Nouvelle fonction
+  async function rattacherUtilisateur(
+    utilisateurId: number | undefined,
+    ensembleId: number
+  ) {
+    if (!utilisateurId) {
+      toast.error("Impossible de rattacher : utilisateur inconnu.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/invitations/rattacher`,
+        null,
+        { params: { utilisateurId, ensembleId } }
+      );
+
+      toast.success(
+        response.data?.message || "Utilisateur rattaché avec succès !"
+      );
+
+      // Fermer la modale
+      setShowModal(false);
+    } catch (error: any) {
+      console.error("Erreur lors du rattachement :", error);
+      toast.error(
+        error.response?.data?.error || "Impossible de rattacher l'utilisateur"
+      );
+    }
   }
 
   // --- Rendu ---
@@ -481,7 +556,16 @@ export const EnsembleDetails = () => {
             (user.globalRole === "ADMIN" ||
               +user.id === ensemble.createdBy) && (
               <>
-                <button onClick={() => setShowModal(true)} type="button">
+                {/* <button onClick={() => setShowModal(true)} type="button">
+                  Envoyer invitation
+                </button> */}
+                <button
+                  onClick={() => {
+                    setShowModal(true);
+                    setInvitationResponse(null); // <-- réinitialisation
+                  }}
+                  type="button"
+                >
                   Envoyer invitation
                 </button>
 
@@ -528,6 +612,38 @@ export const EnsembleDetails = () => {
                           />
                         </div>
                         <button type="submit">Envoyer</button>
+
+                        {/* {(invitationResponse?.existant ||
+                          invitationResponse?.utilisateurId) && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              rattacherUtilisateur(
+                                invitationResponse.utilisateurId,
+                                ensembleIdNumber
+                              )
+                            }
+                          >
+                            Rattacher cet utilisateur à l'ensemble
+                          </button>
+                        )} */}
+
+                        {/* Bouton visible seulement pour les admins */}
+                        {+user.id === ensemble.createdBy &&
+                          invitationResponse?.existant &&
+                          !invitationResponse?.invitationDejaEnvoyee && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                rattacherUtilisateur(
+                                  invitationResponse.utilisateurId,
+                                  ensembleIdNumber
+                                )
+                              }
+                            >
+                              Rattacher cet utilisateur à l'ensemble
+                            </button>
+                          )}
                       </form>
                     </div>
                   </div>
