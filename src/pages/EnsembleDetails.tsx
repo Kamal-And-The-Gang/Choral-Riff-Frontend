@@ -290,30 +290,7 @@ export const EnsembleDetails = () => {
    * @return {*}
    */
 
-  // const handleInviteSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (!email.trim()) {
-  //     toast.error("Veuillez saisir une adresse email valide");
-  //     return;
-  //   }
-
-  //   try {
-  //     await creerInvitation(email, ensembleIdNumber);
-  //     toast.success("Invitation envoyée !");
-  //     setEmail("");
-  //     setName("");
-  //     setShowModal(false);
-  //   } catch (error: any) {
-  //     if (error.response?.status === 400) {
-  //       toast.warn(error.message); // message exact du backend (ex: "Email déjà invité")
-  //     } else if (error.response?.status === 404) {
-  //       toast.error(error.message); // exemple: ensemble non trouvé
-  //     } else {
-  //       toast.error("Erreur : " + (error.message || "Erreur inconnue"));
-  //     }
-  //   }
-  // };
+  
 
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -329,12 +306,12 @@ export const EnsembleDetails = () => {
 
       setInvitationResponse(response);
 
-      if (response.existant && !response.invitationDejaEnvoyee) {
+      if (response.existant && !response.dejaMembre) {
         // Utilisateur existant mais pas encore invité → juste afficher le bouton "Rattacher"
         toast.info(
           "Cet utilisateur est déjà inscrit. Vous pouvez le rattacher à l'ensemble."
         );
-      } else if (response.invitationDejaEnvoyee) {
+      } else if (response.dejaMembre) {
         toast.warn(
           "Une invitation a déjà été envoyée à cet email pour cet ensemble."
         );
@@ -631,7 +608,7 @@ export const EnsembleDetails = () => {
                         {/* Bouton visible seulement pour les admins */}
                         {+user.id === ensemble.createdBy &&
                           invitationResponse?.existant &&
-                          !invitationResponse?.invitationDejaEnvoyee && (
+                          !invitationResponse?.dejaMembre && (
                             <button
                               type="button"
                               onClick={() =>

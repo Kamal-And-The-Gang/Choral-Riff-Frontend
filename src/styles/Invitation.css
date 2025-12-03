@@ -1,31 +1,64 @@
-/* Styles généraux pour le tableau responsive */
-@media (max-width: 768px) {
-  .invitation-container .table-wrapper {
-    overflow-x: auto;
-    width: 100%;
-  }
+/* Div qui enveloppe le contenu de chaque td */
+.cell-content {
+  flex: 2; /* plus large que les autres cellules */
+  display: flex;
+  align-items: center; /* centre verticalement tout le contenu */
+  justify-content: flex-start; /* aligne le contenu à gauche */
+  gap: 8px; /* espace entre texte, input, bouton */
+  width: 100%;
+}
 
-  .invitation-container .invitation-table,
-  .invitation-container .invitation-table thead,
-  .invitation-container .invitation-table tbody,
-  .invitation-container .invitation-table th,
-  .invitation-container .invitation-table td,
-  .invitation-container .invitation-table tr {
+/* Flex pour la ligne entière sur desktop */
+.table-row {
+  display: flex;
+  width: 100%;
+}
+
+/* Input et bouton pour ne pas dépasser */
+/* Option pour ajuster individuellement les inputs et boutons */
+.table-input {
+  flex: 1;
+  box-sizing: border-box;
+
+  margin-top: 20px; /* descend légèrement l'input */
+}
+
+/* Styles généraux du tableau */
+.invitation-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.invitation-table th,
+.invitation-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+  vertical-align: middle; /* centre le texte et inputs verticalement */
+}
+
+.invitation-table th {
+  background: linear-gradient(to top, #ffd4b3, #ffddcc);
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .invitation-table,
+  .invitation-table thead,
+  .invitation-table tbody,
+  .invitation-table th,
+  .invitation-table td,
+  .invitation-table tr {
     display: block;
   }
 
-  .invitation-container .invitation-table thead tr {
-    display: none; /* Masque l'entête */
+  .invitation-table thead tr {
+    display: none;
   }
 
-  .invitation-container .invitation-table tr {
-    margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 0.5rem;
-  }
-
-  .invitation-container .invitation-table td {
+  .invitation-table td {
     text-align: right;
     padding-left: 50%;
     position: relative;
@@ -33,30 +66,16 @@
     border-bottom: 1px solid var(--border-color);
   }
 
-  .invitation-container .invitation-table td::before {
+  .invitation-table td::before {
     content: attr(data-label);
     position: absolute;
     left: 1rem;
     width: 45%;
-    padding-right: 10px;
-    white-space: nowrap;
     font-weight: bold;
     text-align: left;
   }
 
-  /* Faire que les inputs ressemblent à du texte */
-  .invitation-container .table-input {
-    border: none;
-    background: transparent;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    font-size: 1rem;
-    text-align: right;
-  }
-
-  /* Bouton pleine largeur */
-  .invitation-container .validate-button {
+  .validate-button {
     width: 100%;
     margin-top: 0.5rem;
   }
