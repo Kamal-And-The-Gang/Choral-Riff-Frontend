@@ -17,6 +17,17 @@ export interface InvitationDTO {
   existant?: boolean; // ← ajouté
   dejaMembre?: boolean; // optionnel si ton backend le renvoie
 }
+interface Invitation {
+  id: number;
+  utilisateurNom?: string;
+  emailInvite: string;
+  etat?: string;
+  role?: string;
+  message?: string;
+  photoUrl?: string;
+  instrument?: string;
+}
+
 
 export const API_BASE_URL = "http://localhost:8080/api";
 

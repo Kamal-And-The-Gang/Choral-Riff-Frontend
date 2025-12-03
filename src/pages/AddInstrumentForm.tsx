@@ -105,7 +105,7 @@ const AddInstrumentForm: React.FC<AddInstrumentFormProps> = ({
                 {inst.nom}
               </option>
             ))}
-            <option value="new">Autre...</option>
+            {/* <option value="new">Autre...</option> */}
           </select>
         </label>
 
