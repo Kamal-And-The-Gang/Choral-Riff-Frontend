@@ -28,10 +28,10 @@
   top: 50%;
   left: 1rem;
   transform: translateY(-50%);
-  background-color: white;
+  background-color: var(--card-background);
   padding: 0.5rem 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(243, 141, 104, 0.4);
+  box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.4);
 }
 
 .fiche-title {
@@ -100,57 +100,54 @@
   margin: 0.5rem 0;
 }
 
-.last-track-box {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background-color: var(--background-light);
-  padding: 1rem;
-  border-radius: 8px;
-}
-.track-icon {
-  color: var(--primary-color);
-}
-.track-info p {
-  margin: 0;
-  line-height: 1.2;
-}
-.track-title-name {
-  font-weight: bold;
-  color: var(--dark-text);
-}
-.track-subtitle {
-  font-size: 0.8rem;
-  color: #666;
+
+/* --- Bloc du Dernier Morceau --- */
+
+.last-morceau-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    margin-bottom: 25px;
+    transition: opacity 0.2s, transform 0.2s;
 }
 
-/* --- Nouveaux styles pour la liaison des Morceaux (Tracks) --- */
-
-.last-track-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  transition: opacity 0.2s, transform 0.2s;
+.last-morceau-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    /* Utilisation des variables pour l'apparence */
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--primary-color); /* Bande d'accentuation Orange */
+    border-radius: 12px;
+    background-color: var(--card-background);
+    box-shadow: var(--shadow-subtle);
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.last-track-link:hover {
-  opacity: 0.95;
-  transform: translateY(-2px);
+/* Effet de survol */
+.last-morceau-link:hover .last-morceau-box {
+    /* Utilisation de l'ombre plus marquée et d'un fond clair */
+    background-color: var(--background-light);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
-.track-item-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
+.morceau-icon { /* Renommage de .track-icon en .morceau-icon si vous utilisez FaMusic */
+    color: var(--primary-color); /* L'icône est orange */
+}
+.morceau-title-name { /* Renommage de .track-title-name */
+    font-weight: bold;
+    color: var(--dark-text);
+}
+.morceau-subtitle { /* Renommage de .track-subtitle */
+    font-size: 0.8rem;
+    color: #666;
 }
 
-.track-item-link .score-item {
-  transition: background-color 0.2s;
-}
 
-.track-item-link:hover .score-item {
-  background-color: #f0f0f0;
-}
+
 
 .score-details {
   display: flex;

@@ -11,7 +11,7 @@ export type MorceauCreationDto = {
 };
 
 export type DernierMorceauAPI = {
-    morceauId: number;
+    id: number;
     titre: string;
     compositeur: string;
     genre: string;
@@ -47,6 +47,27 @@ export const getLastMorceau = async (): Promise<DernierMorceauAPI | null> => {
         }
         // Pour toute autre erreur (erreur serveur 500, réseau, etc.), on la propage
         console.error("Erreur lors de la récupération du dernier morceau:", error);
+        throw error;
+    }
+};
+
+/**
+ * [GET] Récupère le morceau le plus récemment ajouté pour un ensemble spécifique.
+ * * NOTE: Cette fonction suppose que vous avez créé l'endpoint back-end correspondant 
+ * (ex: /api/morceaux/ensemble/{ensembleId}/last).
+ * * @param ensembleId L'ID de l'ensemble
+ * @returns Le morceau le plus récent de cet ensemble ou null.
+ */
+export const getLastMorceauByEnsemble = async (ensembleId: number): Promise<DernierMorceauAPI | null> => {
+    try {
+        const url = `${API_BASE_URL}/ensemble/${ensembleId}/last`;
+        const response = await axios.get<DernierMorceauAPI>(url);
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+            return null; 
+        }
+        console.error(`Erreur lors de la récupération du dernier morceau pour l'ensemble ${ensembleId}:`, error);
         throw error;
     }
 };

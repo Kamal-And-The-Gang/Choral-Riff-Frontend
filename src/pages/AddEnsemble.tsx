@@ -129,7 +129,10 @@ export const AddEnsemble = () => {
       );
 
       // Redirection vers la page du nouvel ensemble ou des détails
-      // navigate(`/ensembles/${newEnsembleId}`);
+      // navigate(`/ensembles/${newEnsembleId}`, {
+      //   state: { refresh: true, successMessage: "Ensemble créé !" },
+      // });
+
       navigate("/ensembles", {
         state: { refresh: true, successMessage: "Ensemble créé !" },
       });
