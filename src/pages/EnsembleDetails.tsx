@@ -11,7 +11,7 @@ import axios from "axios";
 import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 // Import du composant Modale
 import AjouterMorceauForm from "./AjouterMorceauForm";
-import { getLastMorceauByEnsemble } from "../api/MorceauxApi";
+import { getLastMorceauByEnsemble, type DernierMorceauAPI } from "../api/MorceauxApi";
 import DernierMorceauCard from "../components/DernierMorceauCard";
 
 

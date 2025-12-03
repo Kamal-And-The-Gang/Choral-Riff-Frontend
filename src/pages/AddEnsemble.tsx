@@ -15,13 +15,6 @@ type TypeEnsemble =
   | "Groupe de Rock"
   | "Autre";
 
-  
-type EnsemblePayload = {
-  nom: string;
-  typeEnsemble: TypeEnsemble;
-  description: string;
-};
-
 const ensembleTypes: TypeEnsemble[] = [
   "Chorale",
   "Orchestre",
@@ -29,6 +22,14 @@ const ensembleTypes: TypeEnsemble[] = [
   "Groupe de Rock",
   "Autre",
 ];
+
+type Ensemble = {
+  id: string;
+  nom: string;
+  description: string;
+  typeEnsemble: TypeEnsemble;
+  createdBy: string; // important pour la vérif du créateur
+};
 /**
  *
  * @returns
@@ -38,9 +39,8 @@ export const AddEnsemble = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [ensembleType, setEnsembleType] = useState<TypeEnsemble>("Chorale");
-
+  const [ensemble, setEnsemble] = useState<Ensemble | null>(null);
   const [description, setDescription] = useState("");
-
   const [searchParams] = useSearchParams();
   const ensembleId = searchParams.get("id");
   const { user, token, updateUserRole } = useAuth();
@@ -59,6 +59,7 @@ export const AddEnsemble = () => {
           setName(data.nom);
           setDescription(data.description);
           setEnsembleType(data.typeEnsemble);
+          setEnsemble(data); // <- stocke l'ensemble complet
         })
         .catch((err) => {
           toast.error("Erreur chargement de l'ensemble : " + err.message);
@@ -76,10 +77,9 @@ export const AddEnsemble = () => {
       );
       return;
     }
-    //  Vérification du rôle pour modification
-    if (ensembleId && user.role !== "ADMIN") {
-      // attention à la casse : "ADMIN"
-      toast.error("Vous n'avez pas les droits pour modifier cet ensemble.");
+    // Vérifie si c'est une modification
+    if (ensembleId && Number(ensemble?.createdBy) !== user?.id) {
+      toast.error("Seul le créateur peut modifier cet ensemble.");
       return;
     }
 
@@ -88,7 +88,7 @@ export const AddEnsemble = () => {
       nom: name,
       typeEnsemble: ensembleType,
       description,
-      // createdBy: user?.id,
+      createdBy: user?.id,
     };
 
     try {
@@ -101,7 +101,7 @@ export const AddEnsemble = () => {
         method: ensembleId ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -116,6 +116,12 @@ export const AddEnsemble = () => {
 
       const data = await response.json();
       const newEnsembleId = data.id;
+      const isEditing = !!ensembleId;
+
+      // Mise à jour du rôle seulement si c'est une création
+      if (!isEditing) {
+        updateUserRole(newEnsembleId.toString(), "admin");
+      }
 
       //  Mise à jour du contexte pour que l'utilisateur devienne admin
       if (!ensembleId) {
@@ -128,13 +134,12 @@ export const AddEnsemble = () => {
           : "Ensemble créé avec succès !"
       );
 
-      // Redirection vers la page du nouvel ensemble ou des détails
-      // navigate(`/ensembles/${newEnsembleId}`, {
-      //   state: { refresh: true, successMessage: "Ensemble créé !" },
-      // });
-
+      // Redirection avec message correct
       navigate("/ensembles", {
-        state: { refresh: true, successMessage: "Ensemble créé !" },
+        state: {
+          refresh: true,
+          successMessage: isEditing ? "Ensemble modifié !" : "Ensemble créé !",
+        },
       });
     } catch (error: any) {
       toast.error("Erreur : " + error.message);
