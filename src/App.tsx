@@ -13,6 +13,7 @@ import { MembersList } from "./pages/MembersList";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { InvitationAcceptPage } from './pages/InvitationAcceptPage';
+import SpinnerTestPage from './pages/SpinnerTestPage';
 
 import { Invitation } from "./pages/Invitation";
 
@@ -32,6 +33,7 @@ export const App = () => {
           <Route path="/addEnsemble" element={<AddEnsemble />} />
           <Route path="/ajouter-ensemble" element={<AddEnsemble />} />
           <Route path="/ensembles/:ensembleId/invitations" element={<Invitation />} />
+          <Route path="/test-spinner" element={<SpinnerTestPage />} />
 
           <Route
             path="/ensembles/:ensembleId/ajouter-fichier"

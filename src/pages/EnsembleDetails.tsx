@@ -11,7 +11,8 @@ import axios from "axios";
 import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 // Import du composant Modale
 import AjouterMorceauForm from "./AjouterMorceauForm";
-
+import { getLastMorceauByEnsemble } from "../api/MorceauxApi";
+import DernierMorceauCard from "../components/DernierMorceauCard";
 
 
 
@@ -19,14 +20,6 @@ import AjouterMorceauForm from "./AjouterMorceauForm";
 const API_BASE_URL = "http://localhost:8080/api";
 
 // --- DTOs ---
-
-// Type du morceau récupéré pour le "Dernier Morceau"
-type DernierMorceauAPI = {
-  id: number;
-  titre: string;
-  compositeur: string;
-  genre: string;
-};
 
 // TODO: K s'occupe de la gestion des morceaux (affichage, ajout, suppression)
 // À compléter dans la section des morceaux plus bas dans le composant
@@ -212,16 +205,15 @@ export const EnsembleDetails = () => {
   const fetchLastMorceau = async () => {
     setLoadingMorceau(true);
     try {
-      const response = await axios.get<DernierMorceauAPI>(
-        `${API_BASE_URL}/ensembles/${ensembleIdNumber}/morceaux/last`
-      );
-      setDernierMorceau(response.data);
+      // *** Utilisation de la fonction centralisée de MorceauxApi.ts ***
+      const morceau = await getLastMorceauByEnsemble(ensembleIdNumber);
+      setDernierMorceau(morceau);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        setDernierMorceau(null);
-      } else {
-        console.error("Erreur lors du chargement du dernier morceau:", error);
-      }
+      // La fonction getLastMorceauByEnsemble gère le 404 (retourne null), 
+      // donc on gère ici les autres erreurs (réseau/serveur 500)
+      console.error("Erreur critique lors du chargement du dernier morceau:", error);
+      toast.error("Erreur lors du chargement du dernier morceau de l'ensemble.");
+      setDernierMorceau(null);
     } finally {
       setLoadingMorceau(false);
     }
@@ -283,37 +275,6 @@ export const EnsembleDetails = () => {
     return <div>Ensemble non trouvé.</div>;
   }
 
-  /**
-   *
-   *
-   * @param {React.FormEvent} e
-   * @return {*}
-   */
-
-  // const handleInviteSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (!email.trim()) {
-  //     toast.error("Veuillez saisir une adresse email valide");
-  //     return;
-  //   }
-
-  //   try {
-  //     await creerInvitation(email, ensembleIdNumber);
-  //     toast.success("Invitation envoyée !");
-  //     setEmail("");
-  //     setName("");
-  //     setShowModal(false);
-  //   } catch (error: any) {
-  //     if (error.response?.status === 400) {
-  //       toast.warn(error.message); // message exact du backend (ex: "Email déjà invité")
-  //     } else if (error.response?.status === 404) {
-  //       toast.error(error.message); // exemple: ensemble non trouvé
-  //     } else {
-  //       toast.error("Erreur : " + (error.message || "Erreur inconnue"));
-  //     }
-  //   }
-  // };
 
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -374,7 +335,7 @@ export const EnsembleDetails = () => {
     } catch (error: any) {
       toast.error(
         "Erreur lors de la suppression de l'ensemble : " +
-          (error.message || "Erreur inconnue")
+        (error.message || "Erreur inconnue")
       );
     }
   };
@@ -474,31 +435,11 @@ export const EnsembleDetails = () => {
           </div>
 
           {/* DERNIER MORCEAU DYNAMIQUE */}
-          <h3 className="section-title">Dernier Morceau Ajouté :</h3>
-          {loadingMorceau ? (
-            <Spinner message="Chargement du dernier morceau..." />
-          ) : dernierMorceau ? (
-            <a
-              href={`/ensembles/${ensembleIdNumber}/morceaux/${dernierMorceau.id}`}
-              className="last-morceau-link"
-              title={`Voir les détails du morceau: ${dernierMorceau.titre}`}
-            >
-              <div className="last-morceau-box">
-                <FaMusic size={40} className="morceau-icon" />
-                <div className="morceau-info">
-                  <p className="morceau-title-name">{dernierMorceau.titre}</p>
-                  <p className="morceau-subtitle">
-                    Compositeur: {dernierMorceau.compositeur}
-                  </p>
-                  <p className="morceau-subtitle">
-                    Genre: {dernierMorceau.genre}
-                  </p>
-                </div>
-              </div>
-            </a>
-          ) : (
-            <p>Aucun morceau n'a encore été ajouté.</p>
-          )}
+          <DernierMorceauCard
+            dernierMorceau={dernierMorceau}
+            loadingMorceau={loadingMorceau}
+            ensembleIdNumber={ensembleIdNumber}
+          />
 
           {/* FICHIERS / LISTE DES MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
