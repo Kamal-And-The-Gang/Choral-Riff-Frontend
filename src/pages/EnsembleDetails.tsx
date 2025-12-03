@@ -290,12 +290,12 @@ export const EnsembleDetails = () => {
 
       setInvitationResponse(response);
 
-      if (response.existant && !response.invitationDejaEnvoyee) {
+      if (response.existant && !response.dejaMembre) {
         // Utilisateur existant mais pas encore invité → juste afficher le bouton "Rattacher"
         toast.info(
           "Cet utilisateur est déjà inscrit. Vous pouvez le rattacher à l'ensemble."
         );
-      } else if (response.invitationDejaEnvoyee) {
+      } else if (response.dejaMembre) {
         toast.warn(
           "Une invitation a déjà été envoyée à cet email pour cet ensemble."
         );
@@ -572,7 +572,7 @@ export const EnsembleDetails = () => {
                         {/* Bouton visible seulement pour les admins */}
                         {+user.id === ensemble.createdBy &&
                           invitationResponse?.existant &&
-                          !invitationResponse?.invitationDejaEnvoyee && (
+                          !invitationResponse?.dejaMembre && (
                             <button
                               type="button"
                               onClick={() =>
