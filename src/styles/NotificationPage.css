@@ -1,0 +1,84 @@
+/* --- NotificationPage.css --- */
+
+/* 1. Conteneur principal de la page */
+.notification-page-container {
+    max-width: 1200px;
+    margin: 20px auto; /* Centre la page horizontalement */
+    padding: 1rem;
+    color: var(--dark-text);
+}
+
+.notification-page-container h2 {
+    font-size: 2rem;
+    color: var(--primary-color, #F58159); /* Utilisation de la couleur principale */
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* 2. Section de contrôle (Filtres et Actions globales) */
+.controls-section {
+    display: flex;
+    flex-direction: column; /* Mobile first: empilement */
+    gap: 15px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f8f8; /* Fond légèrement différent pour le panneau de contrôle */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+@media (min-width: 768px) {
+    .controls-section {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.filters {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filters label {
+    font-weight: 500;
+}
+
+.filters select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-left: 8px;
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.mark-all-read-btn {
+    background-color: var(--primary-color, #F58159);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.mark-all-read-btn:hover {
+    background-color: #e5734f;
+}
+
+/* 3. Liste des notifications */
+.notification-list-full {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espace entre les cartes de notification */
+}
+
+.no-results {
+    padding: 40px;
+    text-align: center;
+    font-style: italic;
+    color: #666;
+}

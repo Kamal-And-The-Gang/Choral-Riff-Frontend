@@ -1,0 +1,102 @@
+/* --- NotificationItem.css (Mis à jour pour ressembler à une carte) --- */
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px;
+    background-color: white; /* Fond clair pour la carte */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08); /* Ombre légère pour effet de carte */
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 5px solid transparent; /* Bordure par défaut */
+}
+
+/* Effet de survol sur les notifications cliquables */
+.notification-item[style*="cursor: pointer"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+/* Indication visuelle forte pour les notifications non lues */
+.notification-unread {
+    background-color: #fcfcfc; 
+    border-left-color: var(--primary-color, #F58159); /* Bordure latérale de couleur primaire */
+}
+
+.notification-icon {
+    flex-shrink: 0;
+    margin-right: 15px;
+    padding-top: 2px;
+    font-size: 1.2rem;
+}
+
+.notification-content {
+    flex-grow: 1;
+    font-size: 0.95em;
+    text-align: left;
+}
+
+.notification-message {
+    margin: 0 0 5px 0;
+    line-height: 1.4;
+    font-weight: 500;
+    color: #333;
+}
+
+.notification-date {
+    display: block;
+    font-size: 0.8em;
+    color: #999;
+}
+
+/* --- Statuts et Actions spécifiques --- */
+
+/* Conteneur des boutons */
+.invitation-actions-container {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px; /* Boutons pill (plus doux) */
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.accept-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.reject-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Affichage du statut après action */
+.invitation-status {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.accepted {
+    background-color: #e6ffed;
+    color: #28a745;
+}
+
+.rejected {
+    background-color: #ffe6e6;
+    color: #dc3545;
+}

@@ -15,28 +15,11 @@ import { getLastMorceauByEnsemble, type DernierMorceauAPI } from "../api/Morceau
 import DernierMorceauCard from "../components/DernierMorceauCard";
 
 
-
 // URL de base de votre API
 const API_BASE_URL = "http://localhost:8080/api";
 
 // --- DTOs ---
 
-// TODO: K s'occupe de la gestion des morceaux (affichage, ajout, suppression)
-// À compléter dans la section des morceaux plus bas dans le composant
-
-// Fichiers de données fictives
-
-const mockVideos = [
-  { id: 1, title: "Chorale Snoop et ses amis", date: "06/04/2024", link: "#" },
-  {
-    id: 2,
-    title: "Chorale Les enfants de Dr Dre",
-    date: "11/05/2024",
-    link: "#",
-  },
-];
-
-// Type du morceau récupéré pour l'affichage de la liste
 type Morceau = {
   id: number;
   titre: string;
@@ -52,7 +35,6 @@ type MorceauItemProps = {
   ensembleId: number;
 };
 
-// DTO pour les données d'ensemble de l'API
 type Ensemble = {
   id: number;
   nom: string;
@@ -61,19 +43,19 @@ type Ensemble = {
   createdBy: number; // id de l'utilisateur qui a créé l'ensemble
 };
 
+// Fichiers de données fictives
+
+const mockVideos = [
+  { id: 1, title: "Chorale Snoop et ses amis", date: "06/04/2024", link: "#" },
+  {
+    id: 2,
+    title: "Chorale Les enfants de Dr Dre",
+    date: "11/05/2024",
+    link: "#",
+  },
+];
+
 // --- Composant MorceauItem ---
-
-// type MorceauItemProps = {
-//   morceau: MorceauListeDTO;
-//   ensembleId: number;
-// };
-
-/**
- *
- *
- * @param {*} { morceau, ensembleId }
- * @return {*}
- */
 
 const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
   const navigate = useNavigate();
@@ -104,6 +86,8 @@ const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
     </div>
   );
 };
+
+// --- Modale de Confirmation de Suppression ---
 
 const toastConfirmDelete = () =>
   new Promise<boolean>((resolve) => {
@@ -140,6 +124,8 @@ const toastConfirmDelete = () =>
     );
   });
 
+// --- Composant Principal EnsembleDetails ---
+
 export const EnsembleDetails = () => {
   const { ensembleId } = useParams<{ ensembleId: string }>();
   const ensembleIdNumber = Number(ensembleId);
@@ -156,25 +142,17 @@ export const EnsembleDetails = () => {
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  // 💡 Changement de nom pour plus de clarté
+  const [showInvitationModal, setShowInvitationModal] = useState(false);
 
   const [ensemble, setEnsemble] = useState<Ensemble | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // --- Ajout du hook auth ---
+
+  // Auth
   const { user } = useAuth();
   const [invitationResponse, setInvitationResponse] =
     useState<InvitationDTO | null>(null);
-
-  // Fonction pour aller sur TrackDetail
-  // const goToTrackDetail = (morceau: Morceau) => {
-  //   navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
-  //     state: {
-  //       ensembleNom: ensemble?.nom,
-  //       morceauTitre: morceau.titre,
-  //     },
-  //   });
-  // };
 
   // --- Fonctions d'appel API ---
 
@@ -191,9 +169,8 @@ export const EnsembleDetails = () => {
         "Erreur lors du chargement de la liste des morceaux:",
         error
       );
-      // Correction: Afficher une erreur utilisateur si la liste ne charge pas
       toast.error(
-        "Impossible de charger la liste des morceaux. Veuillez rééssayer plus tard."
+        "Impossible de charger la liste des morceaux. Veuillez réessayer plus tard."
       );
       setListeMorceaux([]);
     } finally {
@@ -205,12 +182,9 @@ export const EnsembleDetails = () => {
   const fetchLastMorceau = async () => {
     setLoadingMorceau(true);
     try {
-      // *** Utilisation de la fonction centralisée de MorceauxApi.ts ***
       const morceau = await getLastMorceauByEnsemble(ensembleIdNumber);
       setDernierMorceau(morceau);
     } catch (error) {
-      // La fonction getLastMorceauByEnsemble gère le 404 (retourne null), 
-      // donc on gère ici les autres erreurs (réseau/serveur 500)
       console.error("Erreur critique lors du chargement du dernier morceau:", error);
       toast.error("Erreur lors du chargement du dernier morceau de l'ensemble.");
       setDernierMorceau(null);
@@ -218,10 +192,6 @@ export const EnsembleDetails = () => {
       setLoadingMorceau(false);
     }
   };
-  // --- LOG pour vérifier le user ---
-  useEffect(() => {
-    console.log("User actuel :", user);
-  }, [user]);
 
   // CHARGER L'ENSEMBLE
   useEffect(() => {
@@ -231,19 +201,16 @@ export const EnsembleDetails = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:8080/api/ensembles/${ensembleIdNumber}`
+          `${API_BASE_URL}/ensembles/${ensembleIdNumber}`
         );
         if (!response.ok) {
           throw new Error(`Erreur serveur : ${response.status}`);
         }
 
         const data: Ensemble = await response.json();
-
-        // Combine données API + extras
         setEnsemble(data);
       } catch (error: any) {
         setError(error.message);
-
         toast.error(
           "Erreur : impossible de charger les informations de l'ensemble."
         );
@@ -260,7 +227,7 @@ export const EnsembleDetails = () => {
       setError("Identifiant d'ensemble invalide");
       setLoading(false);
     }
-  }, [ensembleIdNumber]); // Dépendance à l'ID de l'ensemble
+  }, [ensembleIdNumber]);
 
   // FONCTION D'ACTUALISATION : recharge le dernier morceau ET la liste après ajout
   const handleMorceauAdded = () => {
@@ -269,13 +236,39 @@ export const EnsembleDetails = () => {
     fetchAllMorceaux();
   };
 
-  // --- Fonctions d'Action (Invitation/Suppression) ---
+  // Rattacher Utilisateur
+  async function rattacherUtilisateur(
+    utilisateurId: number | undefined,
+    ensembleId: number
+  ) {
+    if (!utilisateurId) {
+      toast.error("Impossible de rattacher : utilisateur inconnu.");
+      return;
+    }
 
-  if (!ensemble) {
-    return <div>Ensemble non trouvé.</div>;
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/invitations/rattacher`,
+        null,
+        { params: { utilisateurId, ensembleId } }
+      );
+
+      toast.success(
+        response.data?.message || "Utilisateur rattaché avec succès !"
+      );
+
+      // Ferme la modale après succès
+      setShowInvitationModal(false);
+      setInvitationResponse(null);
+    } catch (error: any) {
+      console.error("Erreur lors du rattachement :", error);
+      toast.error(
+        error.response?.data?.error || "Impossible de rattacher l'utilisateur"
+      );
+    }
   }
 
-
+  // Soumettre Invitation
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -285,13 +278,11 @@ export const EnsembleDetails = () => {
     }
 
     try {
-      // Appel API pour vérifier l'utilisateur / invitation
       const response = await creerInvitation(email, ensembleIdNumber);
-
       setInvitationResponse(response);
 
       if (response.existant && !response.dejaMembre) {
-        // Utilisateur existant mais pas encore invité → juste afficher le bouton "Rattacher"
+        // Utilisateur existant mais pas encore invité → bouton "Rattacher"
         toast.info(
           "Cet utilisateur est déjà inscrit. Vous pouvez le rattacher à l'ensemble."
         );
@@ -302,6 +293,7 @@ export const EnsembleDetails = () => {
       } else {
         // Utilisateur nouveau → invitation envoyée
         toast.success("Invitation envoyée !");
+        setShowInvitationModal(false); // Ferme la modale si l'invitation standard réussit
       }
 
       setEmail("");
@@ -317,19 +309,13 @@ export const EnsembleDetails = () => {
     }
   };
 
-  /**
-   *
-   * @param {string} emailInvite
-   * @param {number} ensembleId
-   * @return {*}
-   */
-
+  // Supprimer Ensemble
   const handleSupprimerEnsemble = async () => {
     const confirmed = await toastConfirmDelete();
     if (!confirmed) return;
 
     try {
-      await apiSupprimerEnsemble(ensembleIdNumber); // <-- ici l'appel correct à l'API
+      await apiSupprimerEnsemble(ensembleIdNumber);
       toast.success("Ensemble supprimé avec succès !");
       navigate("/ensembles");
     } catch (error: any) {
@@ -354,37 +340,6 @@ export const EnsembleDetails = () => {
     );
   }
 
-  // Nouvelle fonction
-  async function rattacherUtilisateur(
-    utilisateurId: number | undefined,
-    ensembleId: number
-  ) {
-    if (!utilisateurId) {
-      toast.error("Impossible de rattacher : utilisateur inconnu.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/invitations/rattacher`,
-        null,
-        { params: { utilisateurId, ensembleId } }
-      );
-
-      toast.success(
-        response.data?.message || "Utilisateur rattaché avec succès !"
-      );
-
-      // Fermer la modale
-      setShowModal(false);
-    } catch (error: any) {
-      console.error("Erreur lors du rattachement :", error);
-      toast.error(
-        error.response?.data?.error || "Impossible de rattacher l'utilisateur"
-      );
-    }
-  }
-
   // --- Rendu ---
   return (
     <div className="details-container">
@@ -405,7 +360,8 @@ export const EnsembleDetails = () => {
               </p>
 
               <div className="ensemble-buttons">
-                {user?.id != null && +user.id === ensemble.createdBy && (
+                {/* 💡 Optimisation: Utilisation de Number() pour une comparaison sûre */}
+                {user?.id != null && Number(user.id) === ensemble.createdBy && (
                   <>
                     <button
                       className="edit-button"
@@ -416,12 +372,11 @@ export const EnsembleDetails = () => {
 
                     <button
                       className="delete-button"
-                      onClick={handleSupprimerEnsemble} // <-- utiliser le nouveau handler
+                      onClick={handleSupprimerEnsemble}
                     >
                       Supprimer
                     </button>
 
-                    {/* Nouveau lien pour les invitations */}
                     <Link
                       to={`/ensembles/${ensembleId}/invitations`}
                       className="invitations-button"
@@ -447,7 +402,7 @@ export const EnsembleDetails = () => {
           {/* Ajouter un Morceau - visible uniquement pour le créateur ou les admins */}
           {user &&
             (user.globalRole === "ADMIN" ||
-              +user.id === ensemble.createdBy) && (
+              Number(user.id) === ensemble.createdBy) && (
               <div className="add-file-section">
                 <button
                   className="add-file-button"
@@ -495,14 +450,11 @@ export const EnsembleDetails = () => {
           {/* INVITATION - visible uniquement pour le créateur ou les admins */}
           {user &&
             (user.globalRole === "ADMIN" ||
-              +user.id === ensemble.createdBy) && (
+              Number(user.id) === ensemble.createdBy) && (
               <>
-                {/* <button onClick={() => setShowModal(true)} type="button">
-                  Envoyer invitation
-                </button> */}
                 <button
                   onClick={() => {
-                    setShowModal(true);
+                    setShowInvitationModal(true);
                     setInvitationResponse(null); // <-- réinitialisation
                   }}
                   type="button"
@@ -511,10 +463,10 @@ export const EnsembleDetails = () => {
                 </button>
 
                 {/* MODALE */}
-                {showModal && (
+                {showInvitationModal && (
                   <div
                     className="modal-overlay"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => setShowInvitationModal(false)}
                   >
                     <div
                       className="modal-content my-modal"
@@ -522,7 +474,7 @@ export const EnsembleDetails = () => {
                     >
                       <span
                         className="close-modal"
-                        onClick={() => setShowModal(false)}
+                        onClick={() => setShowInvitationModal(false)}
                       >
                         &times;
                       </span>
@@ -554,23 +506,8 @@ export const EnsembleDetails = () => {
                         </div>
                         <button type="submit">Envoyer</button>
 
-                        {/* {(invitationResponse?.existant ||
-                          invitationResponse?.utilisateurId) && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              rattacherUtilisateur(
-                                invitationResponse.utilisateurId,
-                                ensembleIdNumber
-                              )
-                            }
-                          >
-                            Rattacher cet utilisateur à l'ensemble
-                          </button>
-                        )} */}
-
-                        {/* Bouton visible seulement pour les admins */}
-                        {+user.id === ensemble.createdBy &&
+                        {/* Bouton visible seulement pour les admins, et après une réponse positive d'existence */}
+                        {Number(user.id) === ensemble.createdBy &&
                           invitationResponse?.existant &&
                           !invitationResponse?.dejaMembre && (
                             <button
