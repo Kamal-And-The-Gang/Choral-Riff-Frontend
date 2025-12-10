@@ -13,9 +13,11 @@ interface EnsembleRole {
   ensembleId: string;
   role: "admin" | "moderator" | "member";
 }
-export const canModify = (role?: string) =>
+export const canModify = (role?: string | null) =>
   role === "admin" || role === "moderator";
-export const canDelete = (role?: string) => role === "admin";
+export const canDelete = (role?: string | null) => role === "admin";
+
+export const isCreator = (creator?: boolean | null) => !!creator;
 
 interface DecodedUser {
   id: number;
@@ -31,22 +33,25 @@ interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   user: DecodedUser | null;
-  loading: boolean; 
+  loading: boolean;
   login: (token: string) => void;
   logout: () => void;
   updateUserRole: (
     ensembleId: string,
     newRole: "admin" | "moderator" | "member"
   ) => void; // <-- corrigé
+  updateUser: (updatedUser: Partial<DecodedUser>) => void; // <-- ajouté
 }
-
-
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<DecodedUser | null>(null);
+  const updateUser = (updatedUser: Partial<DecodedUser>) => {
+    setUser((prev) => (prev ? { ...prev, ...updatedUser } : prev));
+  };
+
   const [loading, setLoading] = useState(true);
 
   const updateUserRoleForEnsemble = (
@@ -163,7 +168,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loading,
         login,
         logout,
-        updateUserRole: updateUserRoleForEnsemble, // <-- correspond au type
+        updateUserRole: updateUserRoleForEnsemble,
+        updateUser,
       }}
     >
       {children}

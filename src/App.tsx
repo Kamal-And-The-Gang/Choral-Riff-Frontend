@@ -1,4 +1,4 @@
-import './index.css';
+import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
 import { Inscription } from "./pages/Inscription";
@@ -12,50 +12,72 @@ import { Dashboard } from "./pages/Dashboard";
 import { MembersList } from "./pages/MembersList";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
-import { InvitationAcceptPage } from './pages/InvitationAcceptPage';
-import SpinnerTestPage from './pages/SpinnerTestPage';
+import { InvitationAcceptPage } from "./pages/InvitationAcceptPage";
+import SpinnerTestPage from "./pages/SpinnerTestPage";
 
 import { Invitation } from "./pages/Invitation";
 
 export const App = () => {
   return (
     <BrowserRouter>
-    <div className="app-container">
-      <Header />
-      <main className="app-content"> 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/inscription" element={<Inscription />} />
-          <Route path="/connexion" element={<Connexion />} />
-          <Route path="/ensembles" element={<EnsemblesPage />} />
-          <Route path="/ensembleDetails" element={<EnsembleDetails />} />
-          <Route path="/ensembles/:ensembleId" element={<EnsembleDetails />} />
-          <Route path="/addEnsemble" element={<AddEnsemble />} />
-          <Route path="/ajouter-ensemble" element={<AddEnsemble />} />
-          <Route path="/ensembles/:ensembleId/invitations" element={<Invitation />} />
-          <Route path="/test-spinner" element={<SpinnerTestPage />} />
+      <div className="app-container">
+        <Header />
+        <main className="app-content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/inscription" element={<Inscription />} />
+            <Route path="/connexion" element={<Connexion />} />
+            <Route path="/ensembles" element={<EnsemblesPage />} />
+            <Route path="/ensembleDetails" element={<EnsembleDetails />} />
+            <Route path="/addEnsemble" element={<AddEnsemble />} />
+            <Route path="/ajouter-ensemble" element={<AddEnsemble />} />
+            <Route
+              path="/ensembles/:ensembleId/invitations"
+              element={<Invitation />}
+            />
+            <Route path="/test-spinner" element={<SpinnerTestPage />} />
 
-          <Route
-            path="/ensembles/:ensembleId/ajouter-fichier"
-            element={<AddMorceau />}
-          />
-          <Route
-            path="/ensembles/:ensembleId/morceaux/:trackId"
-            element={<TrackDetails />}
-          />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/mon-espace" element={<Dashboard />} />
-          <Route
-            path="/ensembles/:ensembleId/membres"
-            element={<MembersList />}
-          />
-          {/* <Route path="/invitation" element={<Invitation />} /> */}
-          <Route path="/invitations/accept" element={<InvitationAcceptPage />} />
-           <Route path="/ensembles/:ensembleId/members" element={<MembersList />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+            <Route
+              path="/ensembles/:ensembleId/ajouter-fichier"
+              element={<AddMorceau />}
+            />
+            <Route
+              path="/ensembles/:ensembleId/morceaux/:trackId"
+              element={<TrackDetails />}
+            />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/mon-espace" element={<Dashboard />} />
+            <Route
+              path="/ensembles/:ensembleId/membres"
+              element={<MembersList />}
+            />
+            {/* <Route path="/invitation" element={<Invitation />} /> */}
+            <Route
+              path="/invitations/accept"
+              element={<InvitationAcceptPage />}
+            />
+            <Route
+              path="/ensembles/:ensembleId/members"
+              element={<MembersList />}
+            />
+          </Routes>
+          <Routes>
+            {/* Détail d'un ensemble */}
+            <Route
+              path="/ensembles/:ensembleId"
+              element={<EnsembleDetails />}
+            />
+
+            {/* Modifier ou créer un ensemble */}
+            <Route
+              path="/ensembles/:ensembleId/edit"
+              element={<AddEnsemble />}
+            />
+            <Route path="/ensembles/add" element={<AddEnsemble />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 };

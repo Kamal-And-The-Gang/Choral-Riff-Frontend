@@ -120,6 +120,27 @@ export async function getInvitationsWithRoles(
   }
 }
 
+export const rattacherUtilisateurApresInscription = async (
+  token: string,
+  utilisateurId: number
+) => {
+  const response = await fetch(
+    `http://localhost:8080/api/invitations/rattacher-apres-inscription?token=${token}&nouvelUtilisateurId=${utilisateurId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData?.error || "Erreur serveur");
+  }
+
+  return await response.json(); // InvitationDTO
+};
+
+
 /**
  * Rattache un utilisateur existant à un ensemble
  * @param utilisateurId ID de l'utilisateur

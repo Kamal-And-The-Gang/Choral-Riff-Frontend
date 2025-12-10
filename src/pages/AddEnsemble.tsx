@@ -4,8 +4,7 @@ import "../styles/AddEnsemble.css";
 import { FaPlus } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 type TypeEnsemble =
@@ -28,7 +27,9 @@ type Ensemble = {
   nom: string;
   description: string;
   typeEnsemble: TypeEnsemble;
-  createdBy: string; // important pour la vérif du créateur
+  createdBy: string;
+  userRole: "ADMIN" | "MODERATEUR" | "MEMBRE";
+  creator?: boolean; // <-- ajout
 };
 /**
  *
@@ -41,31 +42,31 @@ export const AddEnsemble = () => {
   const [ensembleType, setEnsembleType] = useState<TypeEnsemble>("Chorale");
   const [ensemble, setEnsemble] = useState<Ensemble | null>(null);
   const [description, setDescription] = useState("");
-  const [searchParams] = useSearchParams();
-  const ensembleId = searchParams.get("id");
+  const { ensembleId } = useParams<{ ensembleId: string }>();
   const { user, token, updateUserRole } = useAuth();
 
-  /**
-   * Charge les informations de l'ensemble si un ID est fourni.
-   */
-
   useEffect(() => {
-    if (ensembleId) {
-      console.log("User connecté :", user);
+    if (!ensembleId || !user) return;
 
-      fetch(`http://localhost:8080/api/ensembles/${ensembleId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setName(data.nom);
-          setDescription(data.description);
-          setEnsembleType(data.typeEnsemble);
-          setEnsemble(data); // <- stocke l'ensemble complet
-        })
-        .catch((err) => {
-          toast.error("Erreur chargement de l'ensemble : " + err.message);
-        });
-    }
-  }, [ensembleId]);
+    console.log("Fetching ensembleId:", ensembleId, "userId:", user.id);
+
+    fetch(
+      `http://localhost:8080/api/ensembles/${ensembleId}/forUser/${user.id}`
+    )
+      .then((res) => {
+        if (!res.ok) throw new Error("Ensemble non trouvé");
+        return res.json();
+      })
+      .then((data) => {
+        setName(data.nom);
+        setDescription(data.description);
+        setEnsembleType(data.typeEnsemble);
+        setEnsemble(data);
+      })
+      .catch((err) => {
+        toast.error("Erreur chargement de l'ensemble : " + err.message);
+      });
+  }, [ensembleId, user]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,8 +79,16 @@ export const AddEnsemble = () => {
       return;
     }
     // Vérifie si c'est une modification
-    if (ensembleId && Number(ensemble?.createdBy) !== user?.id) {
-      toast.error("Seul le créateur peut modifier cet ensemble.");
+    // if (ensembleId && Number(ensemble?.createdBy) !== user?.id) {
+    //   toast.error("Seul le créateur peut modifier cet ensemble.");
+    //   return;
+    // }
+    if (
+      ensembleId &&
+      ensemble?.userRole !== "MODERATEUR" &&
+      ensemble?.userRole !== "ADMIN"
+    ) {
+      toast.error("Vous n'avez pas les droits pour modifier cet ensemble.");
       return;
     }
 
@@ -94,7 +103,7 @@ export const AddEnsemble = () => {
     try {
       // Construire l'URL selon création ou modification
       const url = ensembleId
-        ? `http://localhost:8080/api/ensembles/${ensembleId}`
+        ? `http://localhost:8080/api/ensembles/${ensembleId}?userId=${user.id}`
         : `http://localhost:8080/api/ensembles?userId=${user.id}`;
 
       const response = await fetch(url, {

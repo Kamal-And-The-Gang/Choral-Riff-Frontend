@@ -72,7 +72,6 @@
 //     .finally(() => setLoadingToken(false));
 // }, [token]);
 
-
 //   const handleSubmit = async (e: React.FormEvent) => {
 //     e.preventDefault();
 
@@ -201,6 +200,7 @@ import registrationBanner from "../assets/registration-banner.jpg";
 import { registerUser } from "../api/authApi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { rattacherUtilisateurApresInscription } from "../api/invitationApi";
 
 export const Inscription = () => {
   const navigate = useNavigate();
@@ -223,15 +223,40 @@ export const Inscription = () => {
   };
 
   // Pré-remplissage de l'email si token présent
+  // useEffect(() => {
+  //   if (!token) return;
+
+  //   fetch(`http://localhost:8080/api/invitations/token/${token}`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data.emailInvite) setEmail(data.emailInvite);
+  //     })
+  //     .catch((err) => console.error("Erreur récupération email :", err));
+  // }, [token]);
+  // --- Gérer le token expiré ou invalide ---
   useEffect(() => {
     if (!token) return;
 
     fetch(`http://localhost:8080/api/invitations/token/${token}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.emailInvite) setEmail(data.emailInvite);
+      .then((res) => {
+        if (!res.ok) {
+          if (res.status === 410) {
+            throw new Error("Le lien d'invitation a expiré.");
+          } else if (res.status === 404) {
+            throw new Error("Lien d'invitation invalide.");
+          } else {
+            throw new Error("Erreur lors de la récupération de l'invitation.");
+          }
+        }
+        return res.json();
       })
-      .catch((err) => console.error("Erreur récupération email :", err));
+      .then((data) => {
+        if (data.emailInvite) setEmail(data.emailInvite); // <-- pré-remplissage
+      })
+      .catch((err) => {
+        console.error("Erreur récupération email :", err);
+        toast.error(err.message); // message clair
+      });
   }, [token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -259,10 +284,35 @@ export const Inscription = () => {
       toast.success("Inscription réussie !");
       resetForm();
 
+      // → rattachement si token présent
+      if (token && utilisateur?.id) {
+        try {
+          await fetch(
+            `http://localhost:8080/api/invitations/rattacher-apres-inscription?token=${token}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                // "Authorization": `Bearer ${localStorage.getItem("accessToken")}` // si tu utilises JWT
+              },
+              body: JSON.stringify({
+                id: utilisateur.id,
+                nom: utilisateur.nom,
+                prenom: utilisateur.prenom,
+                email: utilisateur.email,
+              }),
+            }
+          );
+          console.log("Utilisateur rattaché à l'invitation !");
+        } catch (err: any) {
+          console.error("Erreur rattachement :", err.message);
+          toast.error(`Erreur rattachement à l'invitation : ${err.message}`);
+        }
+      }
+
       setTimeout(() => {
         const ensembleId =
-          (utilisateur as any).ensemble?.id ||
-          (utilisateur as any).ensembleId;
+          (utilisateur as any).ensemble?.id || (utilisateur as any).ensembleId;
 
         if (ensembleId) {
           navigate(`/ensembles/${ensembleId}/invitations`);

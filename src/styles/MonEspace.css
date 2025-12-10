@@ -205,3 +205,15 @@
   flex-direction: column; /* empile les boutons verticalement */
   gap: 8px; /* espace entre les boutons */
 }
+.update-button {
+  display: block;
+  margin-top: 6px;
+  padding: 4px 8px; /* moins de padding */
+  font-size: 0.8rem; /* taille de texte plus petite */
+
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}

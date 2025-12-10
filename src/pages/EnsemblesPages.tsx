@@ -5,9 +5,14 @@ import "../styles/MonEspace.css";
 import { FaUsers, FaPlus } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-
+import userProfilePic from "../assets/femme-5222905_1920.jpg";
 import ensembleBanner from "../assets/banniere-mon-espace.jpg";
-import userProfilePic from "../assets/avatar-michelle.jpg";
+import ProfilePhotoUpdater from "./ProfilePhotoUpdater";
+
+import {
+  fetchCurrentUser,
+  type Utilisateur as UtilisateurAPI,
+} from "../api/UtilisateurApi";
 import toast from "react-hot-toast";
 
 // Type des ensembles possibles
@@ -43,6 +48,37 @@ const typeLabels: Record<TypeEnsemble, string> = {
   AUTRE: "Autre",
 };
 
+export type Utilisateur = {
+  id: number;
+  nom: string;
+  prenom: string;
+  email: string;
+  photoProfil?: string;
+};
+
+export const useCurrentUser = () => {
+  const [user, setUser] = useState<UtilisateurAPI | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const data = await fetchCurrentUser();
+        setUser(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'utilisateur", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  return { user, loading };
+};
+
 const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
   return (
     <div className="ensemble-card">
@@ -71,7 +107,7 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
 // Page principale des ensembles de l'utilisateur
 export const EnsemblesPage = () => {
   const location = useLocation();
-  const { user, loading: loadingUser } = useAuth();
+  const { user, loading: loadingUser, updateUser } = useAuth();
 
   const navigate = useNavigate();
   const toastShown = useRef(false);
@@ -126,11 +162,39 @@ export const EnsemblesPage = () => {
 
       <main className="ensembles-main">
         <div className="profile-section">
-          <img
+          {/* <img
             src={userProfilePic}
             alt="Photo de profil"
             className="profile-pic"
-          />
+          /> */}
+
+          {/* <img
+            src={user?.photoProfil ? user.photoProfil : userProfilePic}
+            alt={`Photo de profil de ${user?.prenom ?? "Utilisateur"}`}
+            className="profile-pic"
+          /> */}
+          {/* {user && (
+            <ProfilePhotoUpdater
+              currentPhoto={user.photoProfil ?? userProfilePic}
+              onPhotoUpdated={(newPhotoUrl: string) =>
+                updateUser({ photoProfil: newPhotoUrl })
+              }
+            />
+          )} */}
+          {user && (
+  <ProfilePhotoUpdater
+    currentPhoto={
+      user.photoProfil
+        ? `http://localhost:8080${user.photoProfil}?t=${Date.now()}`
+        : userProfilePic
+    }
+    onPhotoUpdated={(newPath: string) =>
+      updateUser({ photoProfil: newPath })
+    }
+  />
+)}
+
+
           <div className="profile-info">
             <p
               className="profile-name"

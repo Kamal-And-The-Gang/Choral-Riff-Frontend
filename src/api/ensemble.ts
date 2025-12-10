@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
 
+
 const BASE_URL = "http://localhost:8080/api/ensembles";
 
 /**
@@ -52,10 +53,25 @@ export const API_BASE_URL = "http://localhost:8080/api";
  * @param ensembleId L'ID de l'ensemble à supprimer
  * @throws Erreur si la suppression échoue
  */
-export const supprimerEnsemble = async (ensembleId: number) => {
-  const response = await fetch(`${API_BASE_URL}/ensembles/${ensembleId}`, {
-    method: "DELETE",
-  });
+// export const supprimerEnsemble = async (ensembleId: number) => {
+//   const response = await fetch(`${API_BASE_URL}/ensembles/${ensembleId}`, {
+//     method: "DELETE",
+//   });
+
+//   if (!response.ok) {
+//     throw new Error(`Erreur lors de la suppression : ${response.statusText}`);
+//   }
+
+//   return true; // succès
+// };
+
+export const supprimerEnsemble = async (ensembleId: number, userId: number) => {
+  const response = await fetch(
+    `${API_BASE_URL}/ensembles/${ensembleId}?userId=${userId}`, // <-- ajoute userId ici
+    {
+      method: "DELETE",
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`Erreur lors de la suppression : ${response.statusText}`);
@@ -63,4 +79,3 @@ export const supprimerEnsemble = async (ensembleId: number) => {
 
   return true; // succès
 };
-

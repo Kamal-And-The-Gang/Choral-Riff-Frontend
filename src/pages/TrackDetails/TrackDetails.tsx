@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../../styles/TrackDetails.css";
 import { FaMusic, FaChevronLeft, FaTrash } from "react-icons/fa";
@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 import AddInstrumentForm from "../AddInstrumentForm";
 import { handleAddInstrumentSubmit } from "../../api/documentInstruments";
+
+import { getAllInstruments } from "../../api/documentInstruments";
 
 // Ajout du champ URL pour permettre un aperçu du document
 export type ExtendedFileItem = FileItem & {
@@ -250,12 +252,14 @@ export const TrackDetails = () => {
                   {trackData.ensemble}
                 </a>
               </p>
+              <Link
+                to={`/ensembles/${trackData.ensembleId}`}
+                className="back-link"
+              >
+                <FaChevronLeft size={12} /> Retour à l'ensemble
+              </Link>
             </div>
           </div>
-
-          <a href={`/ensembles/${trackData.ensembleId}`} className="back-link">
-            <FaChevronLeft size={12} /> Retour à l'ensemble
-          </a>
 
           <h3 className="section-title files-section-title">
             Fichiers disponibles :

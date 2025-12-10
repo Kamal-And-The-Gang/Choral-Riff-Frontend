@@ -3,7 +3,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import Spinner from "./Spinner";
-import { useAuth } from "../contexts/AuthContext";
+import {
+  canDelete,
+  canModify,
+  isCreator,
+  useAuth,
+} from "../contexts/AuthContext";
 import { creerInvitation, type InvitationDTO } from "../api/invitationApi";
 import { supprimerEnsemble as apiSupprimerEnsemble } from "../api/ensemble";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -11,10 +16,11 @@ import axios from "axios";
 import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 // Import du composant Modale
 import AjouterMorceauForm from "./AjouterMorceauForm";
-import { getLastMorceauByEnsemble, type DernierMorceauAPI } from "../api/MorceauxApi";
+import {
+  getLastMorceauByEnsemble,
+  type DernierMorceauAPI,
+} from "../api/MorceauxApi";
 import DernierMorceauCard from "../components/DernierMorceauCard";
-
-
 
 // URL de base de votre API
 const API_BASE_URL = "http://localhost:8080/api";
@@ -53,12 +59,17 @@ type MorceauItemProps = {
 };
 
 // DTO pour les données d'ensemble de l'API
-type Ensemble = {
+// src/api/ensemble.ts
+export type Ensemble = {
   id: number;
   nom: string;
   description: string;
-  dateCreation: string;
-  createdBy: number; // id de l'utilisateur qui a créé l'ensemble
+  createdBy: number | null;
+  typeEnsemble?: string;
+  userRole?: "ADMIN" | "MODERATEUR" | "MEMBRE" | string | null;
+  creator?: boolean | null; // <-- correspond à l'API
+  createurNom?: string | null; // <-- nouveau champ
+  createurPrenom?: string | null; // <-- nouveau champ
 };
 
 // --- Composant MorceauItem ---
@@ -75,7 +86,10 @@ type Ensemble = {
  * @return {*}
  */
 
-const MorceauItem: React.FC<MorceauItemProps> = ({ morceau, ensembleId }) => {
+const MorceauItem: React.FC<MorceauItemProps> = ({
+  morceau,
+  ensembleId,
+}: any): any => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -163,8 +177,10 @@ export const EnsembleDetails = () => {
   const [error, setError] = useState<string | null>(null);
   // --- Ajout du hook auth ---
   const { user } = useAuth();
+
   const [invitationResponse, setInvitationResponse] =
     useState<InvitationDTO | null>(null);
+  // --- Conversion des ids en number ---
 
   // Fonction pour aller sur TrackDetail
   // const goToTrackDetail = (morceau: Morceau) => {
@@ -209,10 +225,15 @@ export const EnsembleDetails = () => {
       const morceau = await getLastMorceauByEnsemble(ensembleIdNumber);
       setDernierMorceau(morceau);
     } catch (error) {
-      // La fonction getLastMorceauByEnsemble gère le 404 (retourne null), 
+      // La fonction getLastMorceauByEnsemble gère le 404 (retourne null),
       // donc on gère ici les autres erreurs (réseau/serveur 500)
-      console.error("Erreur critique lors du chargement du dernier morceau:", error);
-      toast.error("Erreur lors du chargement du dernier morceau de l'ensemble.");
+      console.error(
+        "Erreur critique lors du chargement du dernier morceau:",
+        error
+      );
+      toast.error(
+        "Erreur lors du chargement du dernier morceau de l'ensemble."
+      );
       setDernierMorceau(null);
     } finally {
       setLoadingMorceau(false);
@@ -225,13 +246,15 @@ export const EnsembleDetails = () => {
 
   // CHARGER L'ENSEMBLE
   useEffect(() => {
-    const fetchEnsemble = async () => {
+    const fetchEnsembleForUser = async () => {
+      if (!user) return; // utilisateur non connecté
       try {
         setLoading(true);
         setError(null);
 
         const response = await fetch(
-          `http://localhost:8080/api/ensembles/${ensembleIdNumber}`
+          // `http://localhost:8080/api/ensembles/${ensembleIdNumber}`
+          `http://localhost:8080/api/ensembles/${ensembleId}/forUser/${user.id}`
         );
         if (!response.ok) {
           throw new Error(`Erreur serveur : ${response.status}`);
@@ -253,7 +276,7 @@ export const EnsembleDetails = () => {
     };
 
     if (!isNaN(ensembleIdNumber)) {
-      fetchEnsemble();
+      fetchEnsembleForUser();
       fetchLastMorceau();
       fetchAllMorceaux();
     } else {
@@ -275,7 +298,6 @@ export const EnsembleDetails = () => {
     return <div>Ensemble non trouvé.</div>;
   }
 
-
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -290,33 +312,32 @@ export const EnsembleDetails = () => {
 
       setInvitationResponse(response);
 
-      if (response.existant && !response.dejaMembre) {
-        // Utilisateur existant mais pas encore invité → juste afficher le bouton "Rattacher"
-        toast.info(
-          "Cet utilisateur est déjà inscrit. Vous pouvez le rattacher à l'ensemble."
-        );
-      } else if (response.dejaMembre) {
-        toast.warn(
-          "Une invitation a déjà été envoyée à cet email pour cet ensemble."
-        );
+      // if (response.existant && !response.dejaMembre) {
+      // Utilisateur existant mais pas encore invité → juste afficher le bouton "Rattacher"
+      if (response.existant) {
+        if (!response.dejaMembre) {
+          toast.info(
+            "Cet utilisateur est déjà inscrit. Vous pouvez le rattacher à l'ensemble."
+          );
+        } else {
+          toast.warn(
+            "Une invitation a déjà été envoyée à cet email pour cet ensemble."
+          );
+        }
       } else {
-        // Utilisateur nouveau → invitation envoyée
         toast.success("Invitation envoyée !");
-      }
 
-      setEmail("");
-      setName("");
+        setEmail("");
+        setName("");
+      }
     } catch (error: any) {
       if (error.response?.status === 400) {
-        toast.warn(error.response.data?.error || "Une erreur est survenue");
-      } else if (error.response?.status === 404) {
-        toast.error(error.response.data?.error || "Ressource introuvable");
+        toast.warn(error.message);
       } else {
         toast.error("Erreur : " + (error.message || "Erreur inconnue"));
       }
     }
   };
-
   /**
    *
    * @param {string} emailInvite
@@ -329,13 +350,14 @@ export const EnsembleDetails = () => {
     if (!confirmed) return;
 
     try {
-      await apiSupprimerEnsemble(ensembleIdNumber); // <-- ici l'appel correct à l'API
+      await apiSupprimerEnsemble(ensembleIdNumber, user?.id!);
+      // <-- ici l'appel correct à l'API
       toast.success("Ensemble supprimé avec succès !");
       navigate("/ensembles");
     } catch (error: any) {
       toast.error(
         "Erreur lors de la suppression de l'ensemble : " +
-        (error.message || "Erreur inconnue")
+          (error.message || "Erreur inconnue")
       );
     }
   };
@@ -400,36 +422,44 @@ export const EnsembleDetails = () => {
 
             <div className="ensemble-info">
               <h2 className="ensemble-name">{ensemble.nom}</h2>
+
               <p>
-                Créé par : {user?.prenom} {user?.nom}
+                {ensemble.createdBy === user?.id
+                  ? "Vous êtes le créateur"
+                  : `Invité par : ${ensemble.createurPrenom} ${ensemble.createurNom}`}
               </p>
 
               <div className="ensemble-buttons">
-                {user?.id != null && +user.id === ensemble.createdBy && (
-                  <>
+                {ensemble &&
+                  (ensemble.userRole === "ADMIN" ||
+                    ensemble.userRole === "MODERATEUR") && (
                     <button
-                      className="edit-button"
-                      onClick={() => navigate(`/addensemble?id=${ensembleId}`)}
+                      type="button"
+                      className="submit-button validate-button"
+                      onClick={() => navigate(`/ensembles/${ensemble.id}/edit`)}
                     >
-                      Modifier
+                      <FaPlus /> Modifier l'ensemble
                     </button>
+                  )}
 
-                    <button
-                      className="delete-button"
-                      onClick={handleSupprimerEnsemble} // <-- utiliser le nouveau handler
-                    >
-                      Supprimer
-                    </button>
-
-                    {/* Nouveau lien pour les invitations */}
-                    <Link
-                      to={`/ensembles/${ensembleId}/invitations`}
-                      className="invitations-button"
-                    >
-                      Gérer les invitations
-                    </Link>
-                  </>
+                {((ensemble.userRole && canDelete(ensemble.userRole)) ||
+                  ensemble.creator) && (
+                  <button
+                    className="delete-button"
+                    onClick={handleSupprimerEnsemble}
+                  >
+                    Supprimer
+                  </button>
                 )}
+
+                {/* Toujours garder le lien vers les invitations si nécessaire */}
+
+                <Link
+                  to={`/ensembles/${ensembleId}/invitations`}
+                  className="invitations-button"
+                >
+                  Gérer les invitations
+                </Link>
               </div>
             </div>
           </div>
@@ -445,18 +475,17 @@ export const EnsembleDetails = () => {
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
 
           {/* Ajouter un Morceau - visible uniquement pour le créateur ou les admins */}
-          {user &&
-            (user.globalRole === "ADMIN" ||
-              +user.id === ensemble.createdBy) && (
-              <div className="add-file-section">
-                <button
-                  className="add-file-button"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <FaPlus size={14} /> Ajouter un Morceau
-                </button>
-              </div>
-            )}
+          {((ensemble.userRole && canModify(ensemble.userRole)) ||
+            ensemble.creator) && (
+            <div className="add-file-section">
+              <button
+                className="add-file-button"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <FaPlus size={14} /> Ajouter un Morceau
+              </button>
+            </div>
+          )}
 
           <h4 className="subsection-title">Liste des morceaux :</h4>
           <div className="scores-list">
@@ -493,69 +522,68 @@ export const EnsembleDetails = () => {
 
           {/* INVITATION */}
           {/* INVITATION - visible uniquement pour le créateur ou les admins */}
-          {user &&
-            (user.globalRole === "ADMIN" ||
-              +user.id === ensemble.createdBy) && (
-              <>
-                {/* <button onClick={() => setShowModal(true)} type="button">
-                  Envoyer invitation
-                </button> */}
-                <button
-                  onClick={() => {
-                    setShowModal(true);
-                    setInvitationResponse(null); // <-- réinitialisation
-                  }}
-                  type="button"
+          {((ensemble.userRole && canModify(ensemble.userRole)) ||
+            ensemble.creator) && (
+            <>
+              <button
+                onClick={() => {
+                  setShowModal(true);
+                  setInvitationResponse(null); // <-- réinitialisation
+                }}
+                type="button"
+              >
+                Envoyer invitation
+              </button>
+
+              {/* MODALE */}
+              {showModal && (
+                <div
+                  className="modal-overlay"
+                  onClick={() => setShowModal(false)}
                 >
-                  Envoyer invitation
-                </button>
-
-                {/* MODALE */}
-                {showModal && (
                   <div
-                    className="modal-overlay"
-                    onClick={() => setShowModal(false)}
+                    className="modal-content my-modal"
+                    onClick={(e) => e.stopPropagation()} // empêche la fermeture si clic dans la modale
                   >
-                    <div
-                      className="modal-content my-modal"
-                      onClick={(e) => e.stopPropagation()} // empêche la fermeture si clic dans la modale
+                    <span
+                      className="close-modal"
+                      onClick={() => setShowModal(false)}
                     >
-                      <span
-                        className="close-modal"
-                        onClick={() => setShowModal(false)}
-                      >
-                        &times;
-                      </span>
-                      <h2>Invitation</h2>
-                      <p>
-                        Veuillez renseigner les informations de la personne que
-                        vous souhaitez inviter :
-                      </p>
-                      <form onSubmit={handleInviteSubmit}>
-                        <div className="form-group">
-                          <label>Nom :</label>
-                          <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Nom"
-                            required
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Email :</label>
-                          <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                            required
-                          />
-                        </div>
-                        <button type="submit">Envoyer</button>
+                      &times;
+                    </span>
+                    <h2>Invitation</h2>
+                    <p>
+                      Veuillez renseigner les informations de la personne que
+                      vous souhaitez inviter :
+                    </p>
+                    <form onSubmit={handleInviteSubmit}>
+                      <div className="form-group">
+                        <label>Nom :</label>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Nom"
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Email :</label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Email"
+                          required
+                        />
+                      </div>
+                      <button type="submit">Envoyer</button>
 
-                        {/* {(invitationResponse?.existant ||
-                          invitationResponse?.utilisateurId) && (
+                      {/* Bouton visible seulement pour les modérateurs et admins */}
+                      {((ensemble.userRole && canModify(ensemble.userRole)) ||
+                        ensemble.creator) &&
+                        invitationResponse?.existant &&
+                        !invitationResponse?.dejaMembre && (
                           <button
                             type="button"
                             onClick={() =>
@@ -567,30 +595,13 @@ export const EnsembleDetails = () => {
                           >
                             Rattacher cet utilisateur à l'ensemble
                           </button>
-                        )} */}
-
-                        {/* Bouton visible seulement pour les admins */}
-                        {+user.id === ensemble.createdBy &&
-                          invitationResponse?.existant &&
-                          !invitationResponse?.dejaMembre && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                rattacherUtilisateur(
-                                  invitationResponse.utilisateurId,
-                                  ensembleIdNumber
-                                )
-                              }
-                            >
-                              Rattacher cet utilisateur à l'ensemble
-                            </button>
-                          )}
-                      </form>
-                    </div>
+                        )}
+                    </form>
                   </div>
-                )}
-              </>
-            )}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </main>
       <ToastContainer position="top-right" autoClose={3000} />
