@@ -302,10 +302,10 @@ export const EnsembleDetails = () => {
 
                 {((ensemble.userRole && canDelete(ensemble.userRole)) ||
                   ensemble.creator) && (
-                  <button className="delete-button" onClick={handleSupprimerEnsemble}>
-                    Supprimer
-                  </button>
-                )}
+                    <button className="delete-button" onClick={handleSupprimerEnsemble}>
+                      Supprimer
+                    </button>
+                  )}
 
                 <Link
                   to={`/ensembles/${ensembleId}/invitations`}
@@ -329,12 +329,12 @@ export const EnsembleDetails = () => {
 
           {((ensemble.userRole && canModify(ensemble.userRole)) ||
             ensemble.creator) && (
-            <div className="add-file-section">
-              <button className="add-file-button" onClick={() => setIsModalOpen(true)}>
-                <FaPlus size={14} /> Ajouter un Morceau
-              </button>
-            </div>
-          )}
+              <div className="add-file-section">
+                <button className="add-file-button" onClick={() => setIsModalOpen(true)}>
+                  <FaPlus size={14} /> Ajouter un Morceau
+                </button>
+              </div>
+            )}
 
           <h4 className="subsection-title">Liste des morceaux :</h4>
           <div className="scores-list">
@@ -371,65 +371,65 @@ export const EnsembleDetails = () => {
           {/* INVITATION */}
           {((ensemble.userRole && canModify(ensemble.userRole)) ||
             ensemble.creator) && (
-            <>
-              <button
-                onClick={() => {
-                  setShowInvitationModal(true);
-                  setInvitationResponse(null);
-                }}
-                type="button"
-              >
-                Envoyer invitation
-              </button>
-
-              {showInvitationModal && (
-                <div
-                  className="modal-overlay"
-                  onClick={() => setShowInvitationModal(false)}
+              <>
+                <button
+                  onClick={() => {
+                    setShowInvitationModal(true);
+                    setInvitationResponse(null);
+                  }}
+                  type="button"
                 >
+                  Envoyer invitation
+                </button>
+
+                {showInvitationModal && (
                   <div
-                    className="modal-content my-modal"
-                    onClick={(e) => e.stopPropagation()}
+                    className="modal-overlay"
+                    onClick={() => setShowInvitationModal(false)}
                   >
-                    <span
-                      className="close-modal"
-                      onClick={() => setShowInvitationModal(false)}
+                    <div
+                      className="modal-content my-modal"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      &times;
-                    </span>
+                      <span
+                        className="close-modal"
+                        onClick={() => setShowInvitationModal(false)}
+                      >
+                        &times;
+                      </span>
 
-                    <h2>Invitation</h2>
-                    <p>
-                      Veuillez renseigner les informations de la personne que
-                      vous souhaitez inviter :
-                    </p>
+                      <h2>Invitation</h2>
+                      <p>
+                        Veuillez renseigner les informations de la personne que
+                        vous souhaitez inviter :
+                      </p>
 
-                    <form onSubmit={handleInviteSubmit}>
-                      <div className="form-group">
-                        <label>Nom :</label>
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder="Nom"
-                          required
-                        />
-                      </div>
+                      <form onSubmit={handleInviteSubmit}>
+                        <div className="form-group">
+                          <label>Nom :</label>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Nom"
+                            required
+                          />
+                        </div>
 
-                      <div className="form-group">
-                        <label>Email :</label>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Email"
-                          required
-                        />
-                      </div>
+                        <div className="form-group">
+                          <label>Email :</label>
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            required
+                          />
+                        </div>
 
-                      <button type="submit">Envoyer</button>
+                        <button type="submit">Envoyer</button>
 
-                      {/* {((ensemble.userRole && canModify(ensemble.userRole)) ||
+                        {/* {((ensemble.userRole && canModify(ensemble.userRole)) ||
                         ensemble.creator) &&
                         invitationResponse?.existant &&
                         !invitationResponse?.dejaMembre && (
@@ -446,39 +446,39 @@ export const EnsembleDetails = () => {
                           </button>
                         )} */}
                         {((ensemble.userRole && canModify(ensemble.userRole)) ||
-  ensemble.creator) &&
-  invitationResponse?.existant &&
-  !invitationResponse?.dejaMembre &&
-  invitationResponse.utilisateurId !== undefined && (
-    <button
-      // type="button"
-      // onClick={() =>
-      //   rattacherUtilisateur(
-      //     invitationResponse.utilisateurId,
-      //     ensembleIdNumber
-      //   )
-      // }
+                          ensemble.creator) &&
+                          invitationResponse?.existant &&
+                          !invitationResponse?.dejaMembre &&
+                          invitationResponse.utilisateurId !== undefined && (
+                            <button
+                              // type="button"
+                              // onClick={() =>
+                              //   rattacherUtilisateur(
+                              //     invitationResponse.utilisateurId,
+                              //     ensembleIdNumber
+                              //   )
+                              // }
 
-      onClick={() => {
-  if (invitationResponse?.utilisateurId == null) {
-    toast.error("Impossible de rattacher : utilisateurId manquant.");
-    return;
-  }
+                              onClick={() => {
+                                if (invitationResponse?.utilisateurId == null) {
+                                  toast.error("Impossible de rattacher : utilisateurId manquant.");
+                                  return;
+                                }
 
-  rattacherUtilisateur(invitationResponse.utilisateurId, ensembleIdNumber);
-}}
+                                rattacherUtilisateur(invitationResponse.utilisateurId, ensembleIdNumber);
+                              }}
 
-    >
-      Rattacher cet utilisateur à l'ensemble
-    </button>
-  )}
+                            >
+                              Rattacher cet utilisateur à l'ensemble
+                            </button>
+                          )}
 
-                    </form>
+                      </form>
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
         </div>
       </main>
 
