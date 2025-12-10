@@ -12,6 +12,8 @@ import { Dashboard } from "./pages/Dashboard";
 import { MembersList } from "./pages/MembersList";
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
+import { NotificationProvider } from './contexts/NotificationContext';
+import NotificationPage from './pages/NotificationPage';
 import { InvitationAcceptPage } from "./pages/InvitationAcceptPage";
 import SpinnerTestPage from "./pages/SpinnerTestPage";
 
@@ -21,7 +23,8 @@ export const App = () => {
   return (
     <BrowserRouter>
       <div className="app-container">
-        <Header />
+        <NotificationProvider>
+      <Header />
         <main className="app-content">
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -45,9 +48,11 @@ export const App = () => {
               path="/ensembles/:ensembleId/morceaux/:trackId"
               element={<TrackDetails />}
             />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/notifications" element={<NotificationPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/mon-espace" element={<Dashboard />} />
-            <Route
+            
+          <Route
               path="/ensembles/:ensembleId/membres"
               element={<MembersList />}
             />
@@ -77,7 +82,8 @@ export const App = () => {
           </Routes>
         </main>
         <Footer />
-      </div>
+        </NotificationProvider>
+    </div>
     </BrowserRouter>
   );
 };
