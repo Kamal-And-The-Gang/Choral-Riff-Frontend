@@ -53,17 +53,7 @@ export const API_BASE_URL = "http://localhost:8080/api";
  * @param ensembleId L'ID de l'ensemble à supprimer
  * @throws Erreur si la suppression échoue
  */
-// export const supprimerEnsemble = async (ensembleId: number) => {
-//   const response = await fetch(`${API_BASE_URL}/ensembles/${ensembleId}`, {
-//     method: "DELETE",
-//   });
 
-//   if (!response.ok) {
-//     throw new Error(`Erreur lors de la suppression : ${response.statusText}`);
-//   }
-
-//   return true; // succès
-// };
 
 export const supprimerEnsemble = async (ensembleId: number, userId: number) => {
   const response = await fetch(
@@ -78,4 +68,16 @@ export const supprimerEnsemble = async (ensembleId: number, userId: number) => {
   }
 
   return true; // succès
+};
+
+
+export const fetchNombreMembres = async (ensembleId: number): Promise<number> => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/ensembles/${ensembleId}/members/count`);
+    if (!res.ok) throw new Error("Erreur lors du chargement du nombre de membres");
+    return res.json();
+  } catch (err: any) {
+    console.error(err);
+    throw err;
+  }
 };

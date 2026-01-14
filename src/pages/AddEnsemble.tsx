@@ -8,19 +8,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 type TypeEnsemble =
-  | "Chorale"
-  | "Orchestre"
-  | "Quatuor"
-  | "Groupe de Rock"
-  | "Autre";
+  | "CHOEUR"
+  | "ORCHESTRE"
+  | "QUATUOR"
+  | "GROUPE_ROCK"
+  | "AUTRE";
 
-const ensembleTypes: TypeEnsemble[] = [
-  "Chorale",
-  "Orchestre",
-  "Quatuor",
-  "Groupe de Rock",
-  "Autre",
-];
+const ensembleTypeLabels: Record<TypeEnsemble, string> = {
+  CHOEUR: "Chorale",
+  ORCHESTRE: "Orchestre",
+  QUATUOR: "Quatuor",
+  GROUPE_ROCK: "Groupe de Rock",
+  AUTRE: "Autre",
+};
 
 type Ensemble = {
   id: string;
@@ -39,7 +39,7 @@ type Ensemble = {
 export const AddEnsemble = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [ensembleType, setEnsembleType] = useState<TypeEnsemble>("Chorale");
+  const [ensembleType, setEnsembleType] = useState<TypeEnsemble>("CHOEUR");
   const [ensemble, setEnsemble] = useState<Ensemble | null>(null);
   const [description, setDescription] = useState("");
   const { ensembleId } = useParams<{ ensembleId: string }>();
@@ -186,9 +186,9 @@ export const AddEnsemble = () => {
             onChange={(e) => setEnsembleType(e.target.value as TypeEnsemble)}
             required
           >
-            {ensembleTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
+            {Object.entries(ensembleTypeLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
               </option>
             ))}
           </select>

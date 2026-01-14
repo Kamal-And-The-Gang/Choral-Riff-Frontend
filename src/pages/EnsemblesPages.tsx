@@ -17,10 +17,10 @@ import toast from "react-hot-toast";
 
 // Type des ensembles possibles
 export type TypeEnsemble =
+  | "CHOEUR"
   | "ORCHESTRE"
-  | "CHORALE"
+  | "QUATUOR"
   | "BAND"
-  | "QUARTET"
   | "AUTRE";
 
 // Interface représentant un ensemble musical
@@ -29,8 +29,8 @@ interface Ensemble {
   nom: string;
   description: string;
   dateCreation: string;
-  members: number;
-  type: TypeEnsemble;
+  nombreMembres: number; // ← correspond au back
+  typeEnsemble: TypeEnsemble; // ← correspond au backend
   userRole?: "ADMIN" | "MODERATEUR" | "MEMBRE";
 }
 
@@ -41,10 +41,10 @@ interface EnsembleListItemProps {
 
 // Mapping pour afficher le type d'ensemble de façon lisible
 const typeLabels: Record<TypeEnsemble, string> = {
+  CHOEUR: "Chorale",
   ORCHESTRE: "Orchestre",
-  CHORALE: "Chorale",
+  QUATUOR: "Quatuor",
   BAND: "Groupe de Rock",
-  QUARTET: "Quatuor",
   AUTRE: "Autre",
 };
 
@@ -79,6 +79,9 @@ export const useCurrentUser = () => {
   return { user, loading };
 };
 
+
+
+
 const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
   return (
     <div className="ensemble-card">
@@ -86,8 +89,8 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
       <div className="ensemble-details">
         <h3>{ensemble.nom}</h3>
         <p>Description : {ensemble.description}</p>
-        <p>Type : {typeLabels[ensemble.type]}</p>
-        <p>{ensemble.members} Membres</p>
+        <p>Type : {typeLabels[ensemble.typeEnsemble]}</p>
+        <p>Membres : {ensemble.nombreMembres}</p>
       </div>
 
       <div className="ensemble-actions">
@@ -103,6 +106,22 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
     </div>
   );
 };
+
+// Fonction pour récupérer le nombre de membres d'un ensemble
+const fetchNombreMembres = async (ensembleId: number) => {
+  try {
+    const res = await fetch(
+      `http://localhost:8080/api/ensembles/${ensembleId}/members/count`
+    );
+    if (!res.ok) throw new Error("Erreur lors du chargement du nombre de membres");
+    const count: number = await res.json();
+    return count;
+  } catch (err: any) {
+    console.error(err);
+    return 0; // fallback en cas d'erreur
+  }
+};
+
 
 // Page principale des ensembles de l'utilisateur
 export const EnsemblesPage = () => {
@@ -124,26 +143,39 @@ export const EnsemblesPage = () => {
     }
   }, [location.state, navigate]);
 
+
   useEffect(() => {
-    if (!user) return;
-    const fetchEnsembles = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `http://localhost:8080/api/ensembles/user/${user.id}`
-        );
-        if (!res.ok) throw new Error("Erreur de chargement");
-        const data: Ensemble[] = await res.json();
-        setEnsembles(data);
-      } catch (error) {
-        toast.error("Erreur lors du chargement des ensembles.");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEnsembles();
-  }, [user]);
+  if (!user) return;
+
+  const fetchEnsembles = async () => {
+    setLoading(true);
+    try {
+      // 1️⃣ On récupère les ensembles de l'utilisateur
+      const res = await fetch(`http://localhost:8080/api/ensembles/user/${user.id}`);
+      if (!res.ok) throw new Error("Erreur de chargement");
+      const data: Ensemble[] = await res.json();
+
+      // 2️⃣ Pour chaque ensemble, on récupère le nombre de membres via le nouvel endpoint
+      const ensemblesAvecMembres = await Promise.all(
+        data.map(async (ensemble) => {
+          const nombreMembres = await fetchNombreMembres(ensemble.id);
+          return { ...ensemble, nombreMembres };
+        })
+      );
+
+      // 3️⃣ On met à jour le state avec le nombre de membres
+      setEnsembles(ensemblesAvecMembres);
+    } catch (error) {
+      toast.error("Erreur lors du chargement des ensembles.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchEnsembles();
+}, [user]);
+
 
   if (loadingUser) return <Spinner message="Chargement de l'utilisateur..." />;
   if (!user) return <p>Vous devez être connecté pour voir cette page.</p>;
@@ -182,18 +214,17 @@ export const EnsemblesPage = () => {
             />
           )} */}
           {user && (
-  <ProfilePhotoUpdater
-    currentPhoto={
-      user.photoProfil
-        ? `http://localhost:8080${user.photoProfil}?t=${Date.now()}`
-        : userProfilePic
-    }
-    onPhotoUpdated={(newPath: string) =>
-      updateUser({ photoProfil: newPath })
-    }
-  />
-)}
-
+            <ProfilePhotoUpdater
+              currentPhoto={
+                user.photoProfil
+                  ? `http://localhost:8080${user.photoProfil}?t=${Date.now()}`
+                  : userProfilePic
+              }
+              onPhotoUpdated={(newPath: string) =>
+                updateUser({ photoProfil: newPath })
+              }
+            />
+          )}
 
           <div className="profile-info">
             <p

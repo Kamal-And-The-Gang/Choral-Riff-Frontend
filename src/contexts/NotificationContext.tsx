@@ -1,20 +1,34 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { useAuth } from './AuthContext';
-import type { NotificationDTO, InvitationStatus } from '../types/notificationTypes';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { 
-    getNotificationsByUserId, 
-    markSingleNotificationAsRead, 
-    markAllNotificationsAsRead, 
-    acceptInvitation, 
-    rejectInvitation 
-} from '../api/NotificationApi'; // 💡 Import des fonctions API
-import { mockNotifications } from '../api/mockNotifications';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { useAuth } from "./AuthContext";
+import type {
+  NotificationDTO,
+  InvitationStatus,
+  NotificationType,
+} from "../types/notificationTypes";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import {
+  getNotificationsByUserId,
+  markSingleNotificationAsRead,
+  markAllNotificationsAsRead,
+  acceptInvitation,
+  rejectInvitation,
+} from "../api/NotificationApi";
+import { mockNotifications } from "../api/mockNotifications";
+import {
+  rattacherUtilisateur,
+  rattacherUtilisateurApresInscription,
+} from "../api/invitationApi"; //  Import de la nouvelle fonction
+import axios from "axios";
 
-const IS_DEV_MODE = process.env.NODE_ENV !== 'production';
-
-
+const IS_DEV_MODE = import.meta.env.MODE !== "production";
 
 // --- Définition du Contexte ---
 type NotificationContextType = {
@@ -22,129 +36,248 @@ type NotificationContextType = {
   unreadCount: number;
   loading: boolean;
   loadNotifications: () => Promise<void>;
-  markAsRead: (notificationId: number) => Promise<void>;
+  markAsRead: (notificationId: number, isRead: boolean) => Promise<void>; // Mise à jour ici
   markAllAsRead: () => Promise<void>;
-  handleInvitation: (invitationId: number, ensembleId: number, action: 'accept' | 'reject') => Promise<void>;
+  handleInvitation: (
+    invitationId: number,
+    ensembleId: number,
+    action: "accept" | "reject"
+  ) => Promise<void>;
+  handleInvitationAfterSignup: (
+    nouvelUtilisateur: any,
+    invitation: any
+  ) => Promise<void>;
+  handleRattachementAction: (
+    ensembleId: number,
+    action: "accept" | "reject"
+  ) => Promise<void>; // <-- Ajout de cette ligne
 };
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType | undefined>(
+  undefined
+);
 
 // --- Provider ---
-export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   const [notifications, setNotifications] = useState<NotificationDTO[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const unreadCount = useMemo(() => notifications.filter(n => !n.isRead).length, [notifications]);
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => !n.isRead).length,
+    [notifications]
+  );
 
-
- const loadNotifications = useCallback(async () => {
+  const loadNotifications = useCallback(async () => {
     if (!user) {
-        setNotifications([]);
-        return;
+      setNotifications([]);
+      return;
     }
     setLoading(true);
-    
-    // --- DÉBUT LOGIQUE DE TEST ---
-    if (IS_DEV_MODE) {
-        console.log("MODE DEV: Chargement des notifications factices.");
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simule un délai réseau
-        setNotifications(mockNotifications);
-        setLoading(false);
-        return; 
-    }
-    // --- FIN LOGIQUE DE TEST ---
 
     try {
-        const data = await getNotificationsByUserId(user.id);
-        setNotifications(data);
+      const data = await getNotificationsByUserId(user.id);
+
+      const formattedNotifications: NotificationDTO[] = data.map((n) => ({
+        id: n.id,
+        type: n.type.includes("INVITATION")
+          ? (n.type as NotificationType)
+          : (n.type as NotificationType),
+        message: n.message,
+        isRead: n.isRead,
+        createdAt: n.createdAt,
+        ensembleId: n.ensembleId,
+        ensembleNom: n.ensembleNom,
+        invitationId: n.invitationId,
+        status: (n.status ?? n.etat ?? "EN_ATTENTE") as InvitationStatus,
+
+
+        senderName: n.senderName,
+        token: n.token,
+      }));
+
+      setNotifications(formattedNotifications);
     } catch (error) {
-        console.error('Erreur lors du chargement des notifications:', error);
-        setNotifications([]); 
+      console.error("Erreur lors du chargement des notifications:", error);
+      setNotifications([]);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-}, [user]);
+  }, [user]);
 
+  const markAsRead = useCallback(
+    async (notificationId: number, isRead: boolean) => {
+      try {
+        // Appel API (si ton API accepte le readState)
+        await markSingleNotificationAsRead(notificationId, isRead);
 
-  // Marquer une seule notification comme lue (utilise NotificationApi.ts)
-  const markAsRead = useCallback(async (notificationId: number) => {
-    try {
-      await markSingleNotificationAsRead(notificationId);
-      setNotifications(prev => 
-        prev.map(notif => 
-          notif.id === notificationId ? { ...notif, isRead: true } : notif
-        )
-      );
-    } catch (error) {
-      console.error('Erreur lors du marquage comme lu:', error);
-      toast.error('Erreur lors de la mise à jour du statut.');
-    }
-  }, []);
+        // Mise à jour locale
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.id === notificationId
+              ? { ...notif, isRead: isRead } // Utiliser l'état isRead
+              : notif
+          )
+        );
+      } catch (error) {
+        console.error("Erreur lors du marquage comme lu:", error);
+        toast.error("Erreur lors de la mise à jour du statut.");
+      }
+    },
+    []
+  );
 
-  // Marquer toutes les notifications comme lues (utilise NotificationApi.ts)
   const markAllAsRead = useCallback(async () => {
     if (!user) return;
     try {
       await markAllNotificationsAsRead(user.id);
-      setNotifications(prev => 
-        prev.map(notif => ({ ...notif, isRead: true }))
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, isRead: true }))
       );
-      toast.success('Toutes les notifications ont été marquées comme lues.');
+      toast.success("Toutes les notifications ont été marquées comme lues.");
     } catch (error) {
-      console.error('Erreur lors du marquage de tout comme lu:', error);
-      toast.error('Erreur lors du marquage de tout comme lu.');
+      console.error("Erreur lors du marquage de tout comme lu:", error);
+      toast.error("Erreur lors du marquage de tout comme lu.");
     }
   }, [user?.id]);
 
+  // === Gestion classique des invitations via bouton ===
+  const handleInvitation = useCallback(
+    async (
+      invitationId: number,
+      ensembleId: number,
+      action: "accept" | "reject"
+    ) => {
+      const status: InvitationStatus =
+        action === "accept" ? "ACCEPTEE" : "REFUSEE";
+      const actionText = action === "accept" ? "Accepter" : "Refuser";
 
-  // Gérer l'invitation (utilise NotificationApi.ts)
-  const handleInvitation = useCallback(async (invitationId: number, ensembleId: number, action: 'accept' | 'reject') => {
-    const status: InvitationStatus = action === 'accept' ? 'ACCEPTED' : 'REJECTED';
-    const actionText = action === 'accept' ? 'Accepter' : 'Refuser';
+      try {
+        if (action === "accept") {
+          const response = await rattacherUtilisateur(user!.id, ensembleId);
+          setNotifications((prev) =>
+            prev.map((notif) =>
+              notif.invitationId === invitationId
+                ? { ...notif, status, isRead: true, message: response.message }
+                : notif
+            )
+          );
+        } else {
+          await rejectInvitation(invitationId);
+          setNotifications((prev) =>
+            prev.map((notif) =>
+              notif.invitationId === invitationId
+                ? {
+                    ...notif,
+                    status,
+                    isRead: true,
+                    message: `Vous avez refusé l'ensemble ${notif.ensembleNom}.`,
+                  }
+                : notif
+            )
+          );
+        }
 
-    try {
-      if (action === 'accept') {
-        await acceptInvitation(invitationId, ensembleId);
-      } else {
-        await rejectInvitation(invitationId);
-      }
-      
-      // Mise à jour de l'état local
-      setNotifications(prev => prev.map(notif => 
-          notif.invitationId === invitationId ? 
-          { 
-            ...notif, 
-            status: status, 
-            isRead: true, 
-            message: `Vous avez ${action === 'accept' ? 'rejoint' : 'refusé'} l'ensemble ${notif.ensembleNom}.`
-          } 
-          : notif
-      ));
+        toast.success(`Invitation ${actionText} avec succès !`);
 
-      toast.success(`Invitation ${actionText} avec succès !`);
-      
-      if (action === 'accept') {
+        if (action === "accept") {
           navigate(`/ensembles/${ensembleId}`);
+        }
+      } catch (error: any) {
+        console.error(`Erreur lors de l'action ${actionText}:`, error);
+        toast.error(`Erreur lors de ${actionText} l'invitation.`);
       }
+    },
+    [navigate, user]
+  );
 
-    } catch (error) {
-      console.error(`Erreur lors de l'action ${actionText}:`, error);
-      toast.error(`Erreur lors de ${actionText} l'invitation.`);
-    }
-  }, [navigate]);
+  //  Nouvelle fonction pour le flux automatique après inscription
+  const handleInvitationAfterSignup = useCallback(
+    async (nouvelUtilisateur: any, invitation: any) => {
+      try {
+        await rattacherUtilisateurApresInscription(
+          nouvelUtilisateur,
+          invitation
+        );
 
+        // Recharger les notifications pour refléter l'état ACCEPTEE
+        await loadNotifications();
+
+        // Naviguer vers l'ensemble
+        navigate(`/ensembles/${invitation.ensembleId}`);
+
+        toast.success(
+          `Vous avez été ajouté automatiquement à l'ensemble ${invitation.ensembleNom} !`
+        );
+      } catch (error) {
+        console.error("Erreur lors du rattachement automatique :", error);
+        toast.error("Impossible de rattacher l'invitation après inscription.");
+      }
+    },
+    [loadNotifications, navigate]
+  );
 
   useEffect(() => {
     if (user) {
       loadNotifications();
-      const interval = setInterval(loadNotifications, 30000); 
+      const interval = setInterval(loadNotifications, 30000);
       return () => clearInterval(interval);
     }
   }, [user, loadNotifications]);
 
+  // Ajout de la fonction handleRattachement dans NotificationContext.tsx
+
+  const handleRattachementAction = useCallback(
+    async (ensembleId: number, action: "accept" | "reject") => {
+      try {
+        if (action === "accept") {
+          // Appel à la fonction rattacherUtilisateur pour rattacher l'utilisateur
+          const response = await rattacherUtilisateur(user!.id, ensembleId);
+
+          // Mise à jour de l'état des notifications
+          setNotifications((prev) =>
+            prev.map((notif) =>
+              notif.ensembleId === ensembleId
+                ? {
+                    ...notif,
+                    status: "ACCEPTEE", // La notification est marquée comme acceptée
+                    isRead: true,
+                    message: response.message,
+                  }
+                : notif
+            )
+          );
+
+          toast.success("Rattachement accepté !");
+        } else {
+          // Refuser le rattachement (mettre à jour les notifications ou une autre logique)
+          setNotifications((prev) =>
+            prev.map((notif) =>
+              notif.ensembleId === ensembleId
+                ? {
+                    ...notif,
+                    status: "REFUSEE", // La notification est marquée comme refusée
+                    isRead: true,
+                    message: `Vous avez refusé le rattachement à ${notif.ensembleNom}.`,
+                  }
+                : notif
+            )
+          );
+          toast.info("Rattachement refusé !");
+        }
+      } catch (error) {
+        console.error("Erreur lors du rattachement :", error);
+        toast.error("Impossible de traiter le rattachement.");
+      }
+    },
+    [user] // On dépend de l'utilisateur connecté
+  );
+
+  // Ajout de `handleRattachement` dans le contexte
   const contextValue = {
     notifications,
     unreadCount,
@@ -153,6 +286,8 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     markAsRead,
     markAllAsRead,
     handleInvitation,
+    handleInvitationAfterSignup,
+    handleRattachementAction, // Ajout ici
   };
 
   return (
@@ -165,7 +300,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 export const useNotifications = () => {
   const context = useContext(NotificationContext);
   if (context === undefined) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider"
+    );
   }
   return context;
 };
