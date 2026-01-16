@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { FaTimes, FaSave } from "react-icons/fa";
-// 🚨 Assurez-vous que le chemin est correct pour votre CSS
+//  Assurez-vous que le chemin est correct pour votre CSS
 import "../styles/modal-simplifie.css";
 
 const API_URL = "http://localhost:8080/api/morceaux";

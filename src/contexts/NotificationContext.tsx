@@ -95,7 +95,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         invitationId: n.invitationId,
         status: (n.status ?? n.etat ?? "EN_ATTENTE") as InvitationStatus,
 
-
         senderName: n.senderName,
         token: n.token,
       }));
@@ -238,29 +237,34 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           // Appel à la fonction rattacherUtilisateur pour rattacher l'utilisateur
           const response = await rattacherUtilisateur(user!.id, ensembleId);
 
-          // Mise à jour de l'état des notifications
-          setNotifications((prev) =>
-            prev.map((notif) =>
-              notif.ensembleId === ensembleId
-                ? {
-                    ...notif,
-                    status: "ACCEPTEE", // La notification est marquée comme acceptée
-                    isRead: true,
-                    message: response.message,
-                  }
-                : notif
-            )
-          );
+          if (response.notificationId) {
+            const newNotif: NotificationDTO = {
+              id: response.notificationId,
+              type: "RATTACHEMENT",
+              message: response.message,
+              isRead: false,
+              createdAt: new Date().toISOString(),
+              ensembleId,
+              ensembleNom: "", // à remplir si tu récupères le nom de l'ensemble
+              invitationId: undefined,
+              status: "EN_ATTENTE",
+              senderName: user?.nom || "",
+              token: "",
+            };
+
+            // Ajouter la notification au state
+            setNotifications((prev) => [...prev, newNotif]);
+          }
 
           toast.success("Rattachement accepté !");
         } else {
-          // Refuser le rattachement (mettre à jour les notifications ou une autre logique)
+          // Refuser le rattachement
           setNotifications((prev) =>
             prev.map((notif) =>
               notif.ensembleId === ensembleId
                 ? {
                     ...notif,
-                    status: "REFUSEE", // La notification est marquée comme refusée
+                    status: "REFUSEE",
                     isRead: true,
                     message: `Vous avez refusé le rattachement à ${notif.ensembleNom}.`,
                   }
@@ -274,7 +278,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         toast.error("Impossible de traiter le rattachement.");
       }
     },
-    [user] // On dépend de l'utilisateur connecté
+    [user]
   );
 
   // Ajout de `handleRattachement` dans le contexte

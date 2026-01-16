@@ -98,3 +98,83 @@ export const rejectInvitation = async (invitationId: number): Promise<void> => {
     throw error;
   }
 };
+
+/**
+ * [POST] Rattache un utilisateur à un ensemble (flow 2 - rattachement)
+ * @param utilisateurId L'ID de l'utilisateur à rattacher
+ * @param ensembleId L'ID de l'ensemble
+ * @returns {Promise<{message: string}>} Retour du backend
+ */
+// export const rattacherUtilisateur = async (
+//   utilisateurId: number,
+//   ensembleId: number
+// ): Promise<{ message: string }> => {
+//   try {
+//     const response = await axios.post(
+//       `${INVITATION_API_BASE_URL}/rattacher`,
+//       null, // pas de corps
+//       {
+//         params: { utilisateurId, ensembleId }, // <-- important !
+//       }
+//     );
+//     return response.data; // { message: "..." }
+//   } catch (error: any) {
+//     console.error(
+//       `Erreur lors du rattachement de l'utilisateur ${utilisateurId} à l'ensemble ${ensembleId}:`,
+//       error
+//     );
+//     throw error;
+//   }
+// };
+
+
+/**
+ * [POST] Rattache un utilisateur à un ensemble (flow 2 - rattachement)
+ * @param utilisateurId L'ID de l'utilisateur à rattacher
+ * @param ensembleId L'ID de l'ensemble
+ * @returns {Promise<{message: string, notificationId?: number}>} Retour du backend
+ */
+// export const rattacherUtilisateur = async (
+//   utilisateurId: number,
+//   ensembleId: number
+// ): Promise<{ message: string; notificationId?: number }> => {
+//   try {
+//     const body = { utilisateurId, ensembleId }; // <- JSON envoyé au backend
+
+//     const response = await axios.post(
+//       `${INVITATION_API_BASE_URL}/rattachement`, // <- note le "t" à la fin
+//       body // <- envoie le JSON dans le corps
+//     );
+
+//     return response.data; // { message: "...", notificationId: ... }
+//   } catch (error: any) {
+//     console.error(
+//       `Erreur lors du rattachement de l'utilisateur ${utilisateurId} à l'ensemble ${ensembleId}:`,
+//       error
+//     );
+//     throw error;
+//   }
+// };
+export const rattacherUtilisateur = async (
+  utilisateurId: number,
+  ensembleId: number
+): Promise<{ message: string }> => {
+  try {
+    const params = new URLSearchParams({
+      utilisateurId: utilisateurId.toString(),
+      ensembleId: ensembleId.toString(),
+    });
+
+    const response = await axios.post(
+      `${INVITATION_API_BASE_URL}/rattacher?${params.toString()}`
+    );
+
+    return response.data; // { message: "..." }
+  } catch (error: any) {
+    console.error(
+      `Erreur lors du rattachement de l'utilisateur ${utilisateurId} à l'ensemble ${ensembleId}:`,
+      error
+    );
+    throw error;
+  }
+};

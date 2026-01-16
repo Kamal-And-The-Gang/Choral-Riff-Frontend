@@ -25,4 +25,10 @@ export type NotificationDTO = {
 
   // Pour accepter/refuser via backend
   token?: string;
+
+  // <-- nouveau champ
+  utilisateurId?: number;
+
+   // ← nouveau champ
+  morceauTitre?: string;
 };

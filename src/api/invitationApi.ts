@@ -28,7 +28,6 @@ interface Invitation {
   instrument?: string;
 }
 
-
 export const API_BASE_URL = "http://localhost:8080/api";
 
 /**
@@ -50,7 +49,7 @@ export const creerInvitation = async (
     headers: { "Content-Type": "application/json" },
     body,
   });
- // Gestion des erreurs
+  // Gestion des erreurs
   if (!response.ok) {
     const errorData = await response.json();
     const err: any = new Error(errorData?.error || "Erreur serveur");
@@ -105,7 +104,6 @@ export async function getInvitationsWithRoles(
 
     const invitationsWithRoles = await Promise.all(
       invitations.map(async (inv) => {
-
         // Si l'invitation a un token, on appelle getRole
         // Sinon on met null
         const role = inv.token ? await getRole(inv.token) : null;
@@ -140,29 +138,34 @@ export const rattacherUtilisateurApresInscription = async (
   return await response.json(); // InvitationDTO
 };
 
-
 /**
  * Rattache un utilisateur existant à un ensemble
  * @param utilisateurId ID de l'utilisateur
  * @param ensembleId ID de l'ensemble
  * @returns message de confirmation du backend
  */
+
 export const rattacherUtilisateur = async (
   utilisateurId: number,
   ensembleId: number
 ) => {
-  const response = await fetch(`${API_BASE_URL}/invitations/rattacher`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ utilisateurId, ensembleId }),
+  // Construction des query params pour RequestParam
+  const params = new URLSearchParams({
+    utilisateurId: utilisateurId.toString(),
+    ensembleId: ensembleId.toString(),
   });
+
+  const response = await fetch(
+    `${API_BASE_URL}/invitations/rattacher?${params}`,
+    {
+      method: "POST",
+    }
+  );
 
   if (!response.ok) {
     const errorData = await response.json();
-    const err: any = new Error(errorData?.error || "Erreur serveur");
-    err.response = { status: response.status };
-    throw err;
+    throw new Error(errorData?.error || "Erreur serveur");
   }
 
-  return await response.json(); // { message: "Vous êtes maintenant rattaché à l'ensemble." }
+  return await response.json();
 };
