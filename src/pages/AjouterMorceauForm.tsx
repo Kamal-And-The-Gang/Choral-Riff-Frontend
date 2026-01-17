@@ -1,32 +1,30 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { FaTimes, FaSave } from "react-icons/fa";
-//  Assurez-vous que le chemin est correct pour votre CSS
 import "../styles/modal-simplifie.css";
+import { useAuth } from "../contexts/AuthContext"; // <-- récupération du user
+import { toast } from "react-toastify";
 
 const API_URL = "http://localhost:8080/api/morceaux";
 
 // --- DÉFINITIONS DES TYPES DTO ---
 
-// Type de l'objet envoyé au serveur (DTO de création)
 interface MorceauCreationDto {
   titre: string;
   compositeur: string;
   genre: string;
-  ensembleId: number; // L'API attend un nombre
+  descriptif?: string;
+  ensembleId: number;
 }
 
-// Type de l'objet retourné par l'API (Morceau créé)
 interface MorceauDTO {
   morceauId: number;
   titre: string;
   compositeur: string;
   genre: string;
   ensembleId: number;
-  // ... autres champs retournés par le backend
 }
 
-// Ajout des props onMorceauAdded pour l'actualisation
 interface AjouterMorceauFormProps {
   onClose: () => void;
   onMorceauAdded?: () => void;
@@ -38,53 +36,51 @@ const AjouterMorceauForm: React.FC<AjouterMorceauFormProps> = ({
   onMorceauAdded,
   ensembleId,
 }) => {
+  const { user } = useAuth(); // <-- user connecté
+
   const [titre, setTitre] = useState<string>("");
   const [compositeur, setCompositeur] = useState<string>("");
   const [genre, setGenre] = useState<string>("");
+  const [descriptif, setDescriptif] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setMessage("");
 
-    // Validation simple de l'ID de l'ensemble
-    if (!ensembleId) {
-      setMessage("Erreur: L'ID de l'ensemble est manquant.");
-      setIsSubmitting(false);
+    if (!user?.id) {
+      toast.error("Utilisateur non connecté !");
       return;
     }
 
-    //  Utilisation du type DTO pour le payload
+    setIsSubmitting(true);
+
     const nouveauMorceau: MorceauCreationDto = {
       titre,
       compositeur,
       genre,
+      descriptif,
       ensembleId,
     };
 
     try {
-      // Utilisation du type générique pour garantir le typage de la réponse
-      const response = await axios.post<MorceauDTO>(API_URL, nouveauMorceau);
+      // On passe userId via query param ou headers selon ton backend
+      const response = await axios.post<MorceauDTO>(
+        `${API_URL}?userId=${user.id}`,
+        nouveauMorceau,
+      );
 
-      setMessage(`Morceau "${response.data.titre}" ajouté avec succès !`);
+      toast.success(`Morceau "${response.data.titre}" ajouté avec succès !`);
 
-      // APPEL DE LA FONCTION D'ACTUALISATION
-      if (onMorceauAdded) {
-        onMorceauAdded();
-      }
-
+      if (onMorceauAdded) onMorceauAdded();
       setTimeout(onClose, 1000);
-    } catch (error) {
+    } catch (error: any) {
       let errorMessage =
         "Erreur lors de l'ajout du morceau. Veuillez réessayer.";
-      if (axios.isAxiosError(error) && error.response?.data) {
-        // Tente de récupérer un message d'erreur plus précis du backend
-        errorMessage = error.response.data.message || errorMessage;
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       }
+      toast.error(errorMessage);
       console.error("Erreur lors de l'ajout:", error);
-      setMessage(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -94,7 +90,7 @@ const AjouterMorceauForm: React.FC<AjouterMorceauFormProps> = ({
     <div className="modal-backdrop">
       <div className="modal-content">
         <div className="modal-header">
-          <h2 className="form-title">Ajouter un nouveau morceau </h2>
+          <h2 className="form-title">Ajouter un nouveau morceau</h2>
           <button
             onClick={onClose}
             className="close-button"
@@ -105,60 +101,44 @@ const AjouterMorceauForm: React.FC<AjouterMorceauFormProps> = ({
         </div>
 
         <form onSubmit={handleSubmit}>
-          <label className="form-label" htmlFor="titre">
-            Titre
-          </label>
+          <label className="form-label">Titre</label>
           <input
             className="form-input"
-            id="titre"
             type="text"
             value={titre}
             onChange={(e) => setTitre(e.target.value)}
             required
           />
 
-          <label className="form-label" htmlFor="compositeur">
-            Compositeur
-          </label>
+          <label className="form-label">Compositeur</label>
           <input
             className="form-input"
-            id="compositeur"
             type="text"
             value={compositeur}
             onChange={(e) => setCompositeur(e.target.value)}
             required
           />
 
-          <label className="form-label" htmlFor="genre">
-            Genre
-          </label>
+          <label className="form-label">Genre</label>
           <input
             className="form-input"
-            id="genre"
             type="text"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
             required
           />
 
-          {/* Affichage du message de succès/erreur */}
-          {message && (
-            <p
-              className={`form-message ${
-                message.includes("succès") ? "success" : "error"
-              }`}
-            >
-              {message}
-            </p>
-          )}
+          <label className="form-label">Descriptif (optionnel)</label>
+          <textarea
+            className="form-input"
+            value={descriptif}
+            onChange={(e) => setDescriptif(e.target.value)}
+          />
 
           <button
             type="submit"
             className="submit-button"
-            // Désactivation si en cours de soumission ou si un champ requis est vide
-            disabled={
-              isSubmitting || !titre || !compositeur || !genre || !ensembleId
-            }
+            disabled={isSubmitting || !titre || !compositeur || !genre}
           >
             <FaSave />{" "}
             {isSubmitting ? "Enregistrement..." : "Ajouter le Morceau"}

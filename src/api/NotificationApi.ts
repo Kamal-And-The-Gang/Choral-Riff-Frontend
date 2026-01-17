@@ -10,10 +10,10 @@ const INVITATION_API_BASE_URL = "http://localhost:8080/api/invitations";
  */
 
 export const getNotificationsByUserId = async (
-  userId: number
+  userId: number,
 ): Promise<NotificationDTO[]> => {
   const response = await axios.get<NotificationDTO[]>(
-    `${NOTIFICATION_API_BASE_URL}?utilisateurId=${userId}`
+    `${NOTIFICATION_API_BASE_URL}?utilisateurId=${userId}`,
   );
   return response.data;
 };
@@ -24,7 +24,7 @@ export const getNotificationsByUserId = async (
  */
 export const markSingleNotificationAsRead = async (
   notificationId: number,
-  isRead: boolean
+  isRead: boolean,
 ): Promise<void> => {
   try {
     await axios.put(`${NOTIFICATION_API_BASE_URL}/${notificationId}/read`, {
@@ -33,7 +33,7 @@ export const markSingleNotificationAsRead = async (
   } catch (error) {
     console.error(
       `Erreur lors de la mise à jour du statut de la notification ${notificationId}:`,
-      error
+      error,
     );
     throw error;
   }
@@ -44,14 +44,14 @@ export const markSingleNotificationAsRead = async (
  * @param userId L'ID de l'utilisateur.
  */
 export const markAllNotificationsAsRead = async (
-  userId: number
+  userId: number,
 ): Promise<void> => {
   try {
     await axios.post(`${NOTIFICATION_API_BASE_URL}/read-all`, { userId });
   } catch (error) {
     console.error(
       `Erreur lors du marquage de toutes les notifications pour l'utilisateur ${userId}:`,
-      error
+      error,
     );
     throw error;
   }
@@ -64,7 +64,7 @@ export const markAllNotificationsAsRead = async (
  */
 export const acceptInvitation = async (
   invitationId: number,
-  ensembleId: number
+  ensembleId: number,
 ): Promise<void> => {
   try {
     await axios.post(
@@ -72,12 +72,12 @@ export const acceptInvitation = async (
       null,
       {
         params: { ensembleId: ensembleId },
-      }
+      },
     );
   } catch (error) {
     console.error(
       `Erreur lors de l'acceptation de l'invitation ${invitationId}:`,
-      error
+      error,
     );
     throw error;
   }
@@ -93,7 +93,7 @@ export const rejectInvitation = async (invitationId: number): Promise<void> => {
   } catch (error) {
     console.error(
       `Erreur lors du refus de l'invitation ${invitationId}:`,
-      error
+      error,
     );
     throw error;
   }
@@ -105,28 +105,6 @@ export const rejectInvitation = async (invitationId: number): Promise<void> => {
  * @param ensembleId L'ID de l'ensemble
  * @returns {Promise<{message: string}>} Retour du backend
  */
-// export const rattacherUtilisateur = async (
-//   utilisateurId: number,
-//   ensembleId: number
-// ): Promise<{ message: string }> => {
-//   try {
-//     const response = await axios.post(
-//       `${INVITATION_API_BASE_URL}/rattacher`,
-//       null, // pas de corps
-//       {
-//         params: { utilisateurId, ensembleId }, // <-- important !
-//       }
-//     );
-//     return response.data; // { message: "..." }
-//   } catch (error: any) {
-//     console.error(
-//       `Erreur lors du rattachement de l'utilisateur ${utilisateurId} à l'ensemble ${ensembleId}:`,
-//       error
-//     );
-//     throw error;
-//   }
-// };
-
 
 /**
  * [POST] Rattache un utilisateur à un ensemble (flow 2 - rattachement)
@@ -134,30 +112,10 @@ export const rejectInvitation = async (invitationId: number): Promise<void> => {
  * @param ensembleId L'ID de l'ensemble
  * @returns {Promise<{message: string, notificationId?: number}>} Retour du backend
  */
-// export const rattacherUtilisateur = async (
-//   utilisateurId: number,
-//   ensembleId: number
-// ): Promise<{ message: string; notificationId?: number }> => {
-//   try {
-//     const body = { utilisateurId, ensembleId }; // <- JSON envoyé au backend
 
-//     const response = await axios.post(
-//       `${INVITATION_API_BASE_URL}/rattachement`, // <- note le "t" à la fin
-//       body // <- envoie le JSON dans le corps
-//     );
-
-//     return response.data; // { message: "...", notificationId: ... }
-//   } catch (error: any) {
-//     console.error(
-//       `Erreur lors du rattachement de l'utilisateur ${utilisateurId} à l'ensemble ${ensembleId}:`,
-//       error
-//     );
-//     throw error;
-//   }
-// };
 export const rattacherUtilisateur = async (
   utilisateurId: number,
-  ensembleId: number
+  ensembleId: number,
 ): Promise<{ message: string }> => {
   try {
     const params = new URLSearchParams({
@@ -166,14 +124,14 @@ export const rattacherUtilisateur = async (
     });
 
     const response = await axios.post(
-      `${INVITATION_API_BASE_URL}/rattacher?${params.toString()}`
+      `${INVITATION_API_BASE_URL}/rattacher?${params.toString()}`,
     );
 
     return response.data; // { message: "..." }
   } catch (error: any) {
     console.error(
       `Erreur lors du rattachement de l'utilisateur ${utilisateurId} à l'ensemble ${ensembleId}:`,
-      error
+      error,
     );
     throw error;
   }

@@ -5,12 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import Spinner from "./Spinner";
-import {
-  canDelete,
-  canModify,
-  isCreator,
-  useAuth,
-} from "../contexts/AuthContext";
+import { canDelete, canModify, useAuth } from "../contexts/AuthContext";
 import { creerInvitation, type InvitationDTO } from "../api/invitationApi";
 import { supprimerEnsemble as apiSupprimerEnsemble } from "../api/ensemble";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -102,16 +97,16 @@ const rattacherUtilisateur = async (userId: number, ensembleId: number) => {
           ensembleId: ensembleId,
           utilisateurId: userId,
         },
-      }
+      },
     );
 
     toast.success(
-      response.data?.message || "Utilisateur rattaché à l'ensemble"
+      response.data?.message || "Utilisateur rattaché à l'ensemble",
     );
   } catch (error: any) {
     toast.error(
       error.response?.data?.error ||
-        "Erreur lors du rattachement de l'utilisateur"
+        "Erreur lors du rattachement de l'utilisateur",
     );
   }
 };
@@ -148,7 +143,7 @@ const toastConfirmDelete = () =>
       {
         autoClose: false,
         closeOnClick: false,
-      }
+      },
     );
   });
 
@@ -185,7 +180,7 @@ export const EnsembleDetails = () => {
     setLoadingListe(true);
     try {
       const response = await axios.get<Morceau[]>(
-        `${API_BASE_URL}/morceaux/ensemble/${ensembleIdNumber}`
+        `${API_BASE_URL}/morceaux/ensemble/${ensembleIdNumber}`,
       );
       setListeMorceaux(response.data);
     } catch (error) {
@@ -220,7 +215,7 @@ export const EnsembleDetails = () => {
         //   `http://localhost:8080/api/ensembles/${ensembleId}/forUser/${user.id}`
         // );
         const response = await fetch(
-          `${API_BASE_URL}/ensembles/${ensembleIdNumber}?userId=${user?.id}`
+          `${API_BASE_URL}/ensembles/${ensembleIdNumber}?userId=${user?.id}`,
         );
 
         if (!response.ok)
@@ -287,7 +282,7 @@ export const EnsembleDetails = () => {
       "Deleting ensembleId:",
       ensembleIdNumber,
       "for userId:",
-      user?.id
+      user?.id,
     );
 
     const confirmed = await toastConfirmDelete();
@@ -372,8 +367,8 @@ export const EnsembleDetails = () => {
           {/* MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
 
-          {((ensemble.userRole && canModify(ensemble.userRole)) ||
-            ensemble.creator) && (
+          {/* Vérifie que l'utilisateur est membre ou créateur */}
+          {ensemble.creator || ensemble.userRole === "MEMBRE" ? (
             <div className="add-file-section">
               <button
                 className="add-file-button"
@@ -382,7 +377,7 @@ export const EnsembleDetails = () => {
                 <FaPlus size={14} /> Ajouter un Morceau
               </button>
             </div>
-          )}
+          ) : null}
 
           <h4 className="subsection-title">Liste des morceaux :</h4>
           <div className="scores-list">
@@ -477,22 +472,6 @@ export const EnsembleDetails = () => {
 
                       <button type="submit">Envoyer</button>
 
-                      {/* {((ensemble.userRole && canModify(ensemble.userRole)) ||
-                        ensemble.creator) &&
-                        invitationResponse?.existant &&
-                        !invitationResponse?.dejaMembre && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              rattacherUtilisateur(
-                                invitationResponse.utilisateurId,
-                                ensembleIdNumber
-                              )
-                            }
-                          >
-                            Rattacher cet utilisateur à l'ensemble
-                          </button>
-                        )} */}
                       {((ensemble.userRole && canModify(ensemble.userRole)) ||
                         ensemble.creator) &&
                         invitationResponse?.existant &&
@@ -510,14 +489,14 @@ export const EnsembleDetails = () => {
                             onClick={() => {
                               if (invitationResponse?.utilisateurId == null) {
                                 toast.error(
-                                  "Impossible de rattacher : utilisateurId manquant."
+                                  "Impossible de rattacher : utilisateurId manquant.",
                                 );
                                 return;
                               }
 
                               rattacherUtilisateur(
                                 invitationResponse.utilisateurId,
-                                ensembleIdNumber
+                                ensembleIdNumber,
                               );
                             }}
                           >

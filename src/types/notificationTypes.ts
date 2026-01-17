@@ -29,6 +29,6 @@ export type NotificationDTO = {
   // <-- nouveau champ
   utilisateurId?: number;
 
-   // ← nouveau champ
+  // ← nouveau champ
   morceauTitre?: string;
 };
