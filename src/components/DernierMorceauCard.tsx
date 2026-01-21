@@ -38,10 +38,12 @@ const DernierMorceauCard: React.FC<DernierMorceauCardProps> = ({
             <div className="morceau-info">
               <p className="morceau-title-name">{dernierMorceau.titre}</p>
               <p className="morceau-subtitle">
-                <span style={{ fontWeight: 'bold' }}>Compositeur :</span> {dernierMorceau.compositeur}
+                <span style={{ fontWeight: "bold" }}>Compositeur :</span>{" "}
+                {dernierMorceau.compositeur}
               </p>
               <p className="morceau-subtitle">
-                <span style={{ fontWeight: 'bold' }}>Genre :</span> {dernierMorceau.genre}
+                <span style={{ fontWeight: "bold" }}>Genre :</span>{" "}
+                {dernierMorceau.genre}
               </p>
             </div>
           </div>

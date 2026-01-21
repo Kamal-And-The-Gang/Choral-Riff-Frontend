@@ -50,9 +50,7 @@ export const AddEnsemble = () => {
 
     console.log("Fetching ensembleId:", ensembleId, "userId:", user.id);
 
-    fetch(
-      `http://localhost:8080/api/ensembles/${ensembleId}/forUser/${user.id}`
-    )
+    fetch(`http://localhost:8080/api/ensembles/${ensembleId}?userId=${user.id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Ensemble non trouvé");
         return res.json();
@@ -74,7 +72,7 @@ export const AddEnsemble = () => {
     // Vérifier que l'utilisateur est connecté et que son id est valide
     if (!user?.id) {
       toast.error(
-        "Impossible de récupérer un userId valide. Veuillez vous reconnecter."
+        "Impossible de récupérer un userId valide. Veuillez vous reconnecter.",
       );
       return;
     }
@@ -85,8 +83,11 @@ export const AddEnsemble = () => {
     // }
     if (
       ensembleId &&
-      ensemble?.userRole !== "MODERATEUR" &&
-      ensemble?.userRole !== "ADMIN"
+      !(
+        ensemble?.userRole === "ADMIN" ||
+        ensemble?.userRole === "MODERATEUR" ||
+        ensemble?.creator
+      )
     ) {
       toast.error("Vous n'avez pas les droits pour modifier cet ensemble.");
       return;
@@ -119,7 +120,7 @@ export const AddEnsemble = () => {
         throw new Error(
           ensembleId
             ? "Erreur lors de la mise à jour"
-            : "Erreur lors de la création"
+            : "Erreur lors de la création",
         );
       }
 
@@ -140,7 +141,7 @@ export const AddEnsemble = () => {
       toast.success(
         ensembleId
           ? "Ensemble modifié avec succès !"
-          : "Ensemble créé avec succès !"
+          : "Ensemble créé avec succès !",
       );
 
       // Redirection avec message correct

@@ -73,6 +73,7 @@ const toastConfirmDeleteDocument = () =>
 type Props = {
   file: FileItem;
   onDelete?: (id: number) => void;
+  
 };
 
 const FileItemComponent: React.FC<Props> = ({ file, onDelete }) => {
@@ -141,12 +142,16 @@ export const TrackDetails = () => {
       setEnsembleNom(state.ensembleNom);
     } else {
       axios
-        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
-        .then((res) => setEnsembleNom(res.data.nom))
-        .catch((err) => {
-          console.error(err);
-          setEnsembleNom("Nom inconnu");
-        });
+  .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
+  .then((res) => {
+    console.log(res.data); // Affiche la réponse de l'API
+    setEnsembleNom(res.data.nom);
+  })
+  .catch((err) => {
+    console.error(err);
+    setEnsembleNom("Nom inconnu");
+  });
+
     }
   }, [currentEnsembleId, state?.ensembleNom]);
 

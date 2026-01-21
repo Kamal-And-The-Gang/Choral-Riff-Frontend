@@ -7,9 +7,21 @@ const BASE_URL = "http://localhost:8080/api/ensembles";
  * Récupère un ensemble par son ID
  * @param {string} id - ID de l'ensemble
  */
-export const fetchEnsembleById = async (id: string) => {
+// export const fetchEnsembleById = async (id: string) => {
+//   try {
+//     const res = await fetch(`${BASE_URL}/${id}`);
+//     if (!res.ok) throw new Error("Erreur lors du chargement de l'ensemble");
+//     return res.json();
+//   } catch (err: any) {
+//     toast.error("Erreur chargement de l'ensemble : " + err.message);
+//     throw err;
+//   }
+// };
+
+
+export const fetchEnsembleById = async (id: string, userId: number) => {
   try {
-    const res = await fetch(`${BASE_URL}/${id}`);
+    const res = await fetch(`${BASE_URL}/${id}?userId=${userId}`); // <-- ici on passe userId
     if (!res.ok) throw new Error("Erreur lors du chargement de l'ensemble");
     return res.json();
   } catch (err: any) {
@@ -17,6 +29,7 @@ export const fetchEnsembleById = async (id: string) => {
     throw err;
   }
 };
+
 
 /**
  * Crée ou modifie un ensemble

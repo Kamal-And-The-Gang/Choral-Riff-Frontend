@@ -311,11 +311,6 @@ export const EnsembleDetails = () => {
             <div className="ensemble-info">
               <h2 className="ensemble-name">{ensemble.nom}</h2>
 
-              <p>
-                {ensemble.createdBy === user?.id
-                  ? "Vous êtes le créateur"
-                  : `Invité par : ${ensemble.createurPrenom} ${ensemble.createurNom}`}
-              </p>
               {/* --- Nouvelle ligne pour la date --- */}
               <p>
                 Créé le :{" "}
@@ -326,8 +321,7 @@ export const EnsembleDetails = () => {
 
               <div className="ensemble-buttons">
                 {ensemble &&
-                  (ensemble.userRole === "ADMIN" ||
-                    ensemble.userRole === "MODERATEUR") && (
+                  (ensemble.userRole === "ADMIN" || ensemble.creator) && (
                     <button
                       type="button"
                       className="submit-button validate-button"
@@ -347,12 +341,15 @@ export const EnsembleDetails = () => {
                   </button>
                 )}
 
-                <Link
-                  to={`/ensembles/${ensembleId}/invitations`}
-                  className="invitations-button"
-                >
-                  Gérer les invitations
-                </Link>
+                {/* Lien "Gérer les invitations" visible uniquement si l'utilisateur est ADMIN */}
+                {ensemble.userRole === "ADMIN" && (
+                  <Link
+                    to={`/ensembles/${ensembleId}/invitations`}
+                    className="invitations-button"
+                  >
+                    Gérer les invitations
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -367,8 +364,8 @@ export const EnsembleDetails = () => {
           {/* MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
 
-          {/* Vérifie que l'utilisateur est membre ou créateur */}
-          {ensemble.creator || ensemble.userRole === "MEMBRE" ? (
+          {/* Vérifie que l'utilisateur est créateur ou admin */}
+          {ensemble.creator || ensemble.userRole === "ADMIN" ? (
             <div className="add-file-section">
               <button
                 className="add-file-button"

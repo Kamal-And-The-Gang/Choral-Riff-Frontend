@@ -19,6 +19,31 @@ export const canDelete = (role?: string | null) => role === "admin";
 
 export const isCreator = (creator?: boolean | null) => !!creator;
 
+// === Nouveau helper pour gérer les morceaux ===
+export const canCreateMorceau = (
+  user: DecodedUser | null,
+  ensemble: {
+    typeEnsemble: string;
+    userRole?: string;
+    creator?: boolean;
+  } | null,
+) => {
+  if (!user || !ensemble) return false;
+
+  // Créateur ou admin classique
+  if (ensemble.creator || ensemble.userRole === "admin") return true;
+
+  // Cas groupe restreint : QUATUOR ou BAND, tous les membres deviennent admin
+  if (
+    (ensemble.typeEnsemble === "QUATUOR" || ensemble.typeEnsemble === "BAND") &&
+    ensemble.userRole === "member"
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 interface DecodedUser {
   id: number;
   sub: string;
@@ -38,7 +63,7 @@ interface AuthContextType {
   logout: () => void;
   updateUserRole: (
     ensembleId: string,
-    newRole: "admin" | "moderator" | "member"
+    newRole: "admin" | "moderator" | "member",
   ) => void; // <-- corrigé
   updateUser: (updatedUser: Partial<DecodedUser>) => void; // <-- ajouté
 }
@@ -56,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const updateUserRoleForEnsemble = (
     ensembleId: string,
-    newRole: "admin" | "moderator" | "member"
+    newRole: "admin" | "moderator" | "member",
   ) => {
     setUser((prev) => {
       if (!prev) return null;
@@ -94,7 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!userId) {
         console.error(
-          "Impossible de récupérer un userId valide depuis le token"
+          "Impossible de récupérer un userId valide depuis le token",
         );
         setUser(null);
         setToken(null);
@@ -133,7 +158,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!userId) {
         console.error(
-          "Impossible de récupérer un userId valide depuis le token"
+          "Impossible de récupérer un userId valide depuis le token",
         );
         setUser(null);
         setToken(null);
