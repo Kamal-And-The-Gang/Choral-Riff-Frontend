@@ -367,8 +367,24 @@ export const EnsembleDetails = () => {
           {/* MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
 
-          {/* Vérifie que l'utilisateur est créateur ou admin */}
+          {/* Vérifie que l'utilisateur est créateur ou admin
           {ensemble.creator || ensemble.userRole === "ADMIN" ? (
+            <div className="add-file-section">
+              <button
+                className="add-file-button"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <FaPlus size={14} /> Ajouter un Morceau
+              </button>
+            </div>
+          ) : null} */}
+
+          {/* Bouton "Ajouter un Morceau"
+    Visible pour tous les membres associés à l'ensemble (créateur, admin ou simple membre)
+    Permet d'ouvrir la modal pour créer un nouveau morceau et ajouter ses documents (partitions, audio, etc.)
+*/}
+
+          {ensemble.userRole ? (
             <div className="add-file-section">
               <button
                 className="add-file-button"
