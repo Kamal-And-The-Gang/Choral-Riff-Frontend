@@ -65,7 +65,7 @@ const toastConfirmDeleteDocument = () =>
       {
         autoClose: false,
         closeOnClick: false,
-      }
+      },
     );
   });
 
@@ -73,7 +73,6 @@ const toastConfirmDeleteDocument = () =>
 type Props = {
   file: FileItem;
   onDelete?: (id: number) => void;
-  
 };
 
 const FileItemComponent: React.FC<Props> = ({ file, onDelete }) => {
@@ -112,7 +111,7 @@ export const TrackDetails = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(
-    null
+    null,
   );
 
   const handleOpenAddInstrument = (documentId: number) => {
@@ -142,16 +141,15 @@ export const TrackDetails = () => {
       setEnsembleNom(state.ensembleNom);
     } else {
       axios
-  .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
-  .then((res) => {
-    console.log(res.data); // Affiche la réponse de l'API
-    setEnsembleNom(res.data.nom);
-  })
-  .catch((err) => {
-    console.error(err);
-    setEnsembleNom("Nom inconnu");
-  });
-
+        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
+        .then((res) => {
+          console.log(res.data); // Affiche la réponse de l'API
+          setEnsembleNom(res.data.nom);
+        })
+        .catch((err) => {
+          console.error(err);
+          setEnsembleNom("Nom inconnu");
+        });
     }
   }, [currentEnsembleId, state?.ensembleNom]);
 
@@ -215,7 +213,7 @@ export const TrackDetails = () => {
       const res = await axios.post(
         "http://localhost:8080/api/documents/upload",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
 
       setFiles((prev) => [
@@ -322,7 +320,7 @@ export const TrackDetails = () => {
                 try {
                   await handleAddInstrumentSubmit(
                     selectedDocumentId,
-                    instrument
+                    instrument,
                   );
                   toast.success("Instrument ajouté !");
                   handleCloseAddInstrument();

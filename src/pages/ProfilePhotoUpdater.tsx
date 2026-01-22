@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { updateProfilePhoto } from "../api/UtilisateurApi";
 import toast from "react-hot-toast";
 
-
 // export default ProfilePhotoUpdater;
 type ProfilePhotoUpdaterProps = {
   currentPhoto: string;

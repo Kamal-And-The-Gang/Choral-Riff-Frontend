@@ -222,6 +222,9 @@ export const EnsembleDetails = () => {
           throw new Error(`Erreur serveur : ${response.status}`);
 
         const data: Ensemble = await response.json();
+
+        console.log("ENSEMBLE RECU :", data);
+
         setEnsemble(data);
       } catch (error: any) {
         setError(error.message);
