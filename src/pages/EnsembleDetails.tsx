@@ -1,7 +1,6 @@
 import "../styles/EnsembleDetails.css";
 import { parseISO, format } from "date-fns";
-import avatarFlo from '../assets/phot_groupe.jpg';
-
+import avatarFlo from "../assets/phot_groupe.jpg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
@@ -312,12 +311,17 @@ export const EnsembleDetails = () => {
         <div className="details-content-card fiche-card">
           {/* ENSEMBLE HEADER */}
           <div className="ensemble-header-card">
-           <img
-      src={avatarFlo}
-      alt={`Image de ${ensemble.nom}`}
-      className="ensemble-image"
-      style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "8px" }}
-    />
+            <img
+              src={avatarFlo}
+              alt={`Image de ${ensemble.nom}`}
+              className="ensemble-image"
+              style={{
+                width: "120px",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "8px",
+              }}
+            />
 
             {/* INFOS DE L'ENSEMBLE */}
 

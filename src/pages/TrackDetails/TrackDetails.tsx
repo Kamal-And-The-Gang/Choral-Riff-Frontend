@@ -11,6 +11,7 @@ import AddInstrumentForm from "../AddInstrumentForm";
 import { handleAddInstrumentSubmit } from "../../api/documentInstruments";
 
 import { getAllInstruments } from "../../api/documentInstruments";
+import { useAuth } from "../../contexts/AuthContext";
 
 // Ajout du champ URL pour permettre un aperçu du document
 export type ExtendedFileItem = FileItem & {
@@ -101,7 +102,7 @@ export const TrackDetails = () => {
     ensembleId: string;
     trackId: string;
   }>();
-
+  const { token } = useAuth(); // ✅ récupère le token depuis le contexte
   const currentEnsembleId = Number(routeEnsembleId);
   const currentTrackId = Number(routeTrackId);
 
@@ -139,19 +140,24 @@ export const TrackDetails = () => {
   useEffect(() => {
     if (state?.ensembleNom) {
       setEnsembleNom(state.ensembleNom);
-    } else {
+    } else if (token) {
+      // Requête API avec token
       axios
-        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
+        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`, {
+          headers: { Authorization: `Bearer ${token}` }, // <-- important
+        })
         .then((res) => {
-          console.log(res.data); // Affiche la réponse de l'API
+          console.log("Réponse API Ensemble :", res.data);
           setEnsembleNom(res.data.nom);
         })
         .catch((err) => {
-          console.error(err);
+          console.error("Erreur récupération nom ensemble :", err);
           setEnsembleNom("Nom inconnu");
         });
+    } else {
+      setEnsembleNom("Nom inconnu");
     }
-  }, [currentEnsembleId, state?.ensembleNom]);
+  }, [currentEnsembleId, state?.ensembleNom, token]);
 
   // --- Récupération des documents du morceau ---
   useEffect(() => {
@@ -200,20 +206,28 @@ export const TrackDetails = () => {
     }
   };
 
-  // --- Ajout d'un document ---
+  // --- Ajout d'un document (modifié pour utiliser AuthContext) ---
   const handleAddDocument = async (file: File) => {
+    if (!token) {
+      toast.error("Vous devez être connecté pour ajouter un document.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("type", "partition");
     formData.append("format", file.name.split(".").pop() || "PDF");
     formData.append("morceauId", currentTrackId.toString());
-    formData.append("utilisateurId", "1");
 
     try {
       const res = await axios.post(
         "http://localhost:8080/api/documents/upload",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       setFiles((prev) => [
