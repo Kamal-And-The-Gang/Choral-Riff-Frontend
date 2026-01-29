@@ -47,10 +47,16 @@ type NotificationContextType = {
     nouvelUtilisateur: any,
     invitation: any
   ) => Promise<void>;
+  // handleRattachementAction: (
+  //   ensembleId: number,
+  //   action: "accept" | "reject"
+  // ) => Promise<void>; // <-- Ajout de cette ligne
   handleRattachementAction: (
+    notificationId: number,
     ensembleId: number,
     action: "accept" | "reject"
-  ) => Promise<void>; // <-- Ajout de cette ligne
+  ) => Promise<void>;
+
 };
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
@@ -72,6 +78,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     [notifications]
   );
 
+
   const loadNotifications = useCallback(async () => {
     if (!user) {
       setNotifications([]);
@@ -81,7 +88,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const data = await getNotificationsByUserId(user.id);
-
       const formattedNotifications: NotificationDTO[] = data.map((n) => ({
         id: n.id,
         type: n.type.includes("INVITATION")
@@ -94,7 +100,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         ensembleNom: n.ensembleNom,
         invitationId: n.invitationId,
         status: (n.status ?? n.etat ?? "EN_ATTENTE") as InvitationStatus,
-
         senderName: n.senderName,
         token: n.token,
       }));
@@ -107,6 +112,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(false);
     }
   }, [user]);
+
 
   const markAsRead = useCallback(
     async (notificationId: number, isRead: boolean) => {
@@ -171,11 +177,11 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
             prev.map((notif) =>
               notif.invitationId === invitationId
                 ? {
-                    ...notif,
-                    status,
-                    isRead: true,
-                    message: `Vous avez refusé l'ensemble ${notif.ensembleNom}.`,
-                  }
+                  ...notif,
+                  status,
+                  isRead: true,
+                  message: `Vous avez refusé l'ensemble ${notif.ensembleNom}.`,
+                }
                 : notif
             )
           );
@@ -228,58 +234,93 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [user, loadNotifications]);
 
-  // Ajout de la fonction handleRattachement dans NotificationContext.tsx
+
+
+
+
+  /**
+   * Traite l'action de rattachement depuis la notification.
+   *
+   * Flux :
+   * 1) Si l'utilisateur accepte :
+   *    - Appel API pour rattacher l'utilisateur à l'ensemble.
+   *    - Marque la notification comme traitée (isRead = true).
+   *    - Met à jour le message de la notification avec la réponse backend.
+   *    - Redirige vers la page de l'ensemble.
+   * 2) Si l'utilisateur refuse :
+   *    - Met à jour la notification localement en "REFUSEE" et "isRead = true".
+   *
+   * Le paramètre notificationId permet de cibler précisément la notification à mettre à jour,
+   * évitant ainsi que la notification "DEMANDE_RATTACHEMENT" reste affichée.
+   *
+   * @param notificationId ID de la notification traitée
+   * @param ensembleId     ID de l'ensemble concerné
+   * @param action         "accept" ou "reject"
+   */
 
   const handleRattachementAction = useCallback(
-    async (ensembleId: number, action: "accept" | "reject") => {
+    async (
+      notificationId: number,
+      ensembleId: number,
+      action: "accept" | "reject"
+    ) => {
+      if (!user) return;
+
       try {
         if (action === "accept") {
-          // Appel à la fonction rattacherUtilisateur pour rattacher l'utilisateur
-          const response = await rattacherUtilisateur(user!.id, ensembleId);
+          const params = new URLSearchParams({
+            utilisateurId: user.id.toString(),
+            ensembleId: ensembleId.toString(),
+            notificationId: notificationId.toString(), // <-- IMPORTANT
+          });
 
-          if (response.notificationId) {
-            const newNotif: NotificationDTO = {
-              id: response.notificationId,
-              type: "RATTACHEMENT",
-              message: response.message,
-              isRead: false,
-              createdAt: new Date().toISOString(),
-              ensembleId,
-              ensembleNom: "", // à remplir si tu récupères le nom de l'ensemble
-              invitationId: undefined,
-              status: "EN_ATTENTE",
-              senderName: user?.nom || "",
-              token: "",
-            };
+          const response = await fetch(
+            `http://localhost:8080/api/invitations/rattacher?${params}`,
+            { method: "POST" }
+          );
 
-            // Ajouter la notification au state
-            setNotifications((prev) => [...prev, newNotif]);
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData?.error || "Erreur serveur");
           }
 
-          toast.success("Rattachement accepté !");
-        } else {
-          // Refuser le rattachement
+          const data = await response.json();
+          toast.success("Vous êtes maintenant rattaché à l'ensemble !");
+
           setNotifications((prev) =>
             prev.map((notif) =>
-              notif.ensembleId === ensembleId
+              notif.id === notificationId
                 ? {
-                    ...notif,
-                    status: "REFUSEE",
-                    isRead: true,
-                    message: `Vous avez refusé le rattachement à ${notif.ensembleNom}.`,
-                  }
+                  ...notif,
+                  status: "ACCEPTEE",
+                  isRead: true,
+                  message: data.message,
+                }
+                : notif
+            )
+          );
+
+          navigate(`/ensembles/${ensembleId}`);
+        } else {
+          setNotifications((prev) =>
+            prev.map((notif) =>
+              notif.id === notificationId
+                ? { ...notif, status: "REFUSEE", isRead: true }
                 : notif
             )
           );
           toast.info("Rattachement refusé !");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Erreur lors du rattachement :", error);
-        toast.error("Impossible de traiter le rattachement.");
+        toast.error(error.message || "Impossible de traiter le rattachement.");
       }
     },
-    [user]
+    [user, navigate]
   );
+
+
+
 
   // Ajout de `handleRattachement` dans le contexte
   const contextValue = {

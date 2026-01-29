@@ -1,6 +1,7 @@
 import "../styles/EnsembleDetails.css";
 import { parseISO, format } from "date-fns";
 import avatarFlo from "../assets/phot_groupe.jpg";
+
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
@@ -87,27 +88,45 @@ const MorceauItem: React.FC<any> = ({ morceau, ensembleId }): any => {
 };
 
 // Fonction rattacherUtilisateur (appel backend)
-const rattacherUtilisateur = async (userId: number, ensembleId: number) => {
+// const rattacherUtilisateur = async (userId: number, ensembleId: number) => {
+//   try {
+//     const response = await axios.post(
+//       `${API_BASE_URL}/invitations/rattacher`,
+//       null,
+//       {
+//         params: {
+//           ensembleId: ensembleId,
+//           utilisateurId: userId,
+//         },
+//       },
+//     );
+
+//     toast.success(
+//       response.data?.message || "Utilisateur rattaché à l'ensemble",
+//     );
+//   } catch (error: any) {
+//     toast.error(
+//       error.response?.data?.error ||
+//         "Erreur lors du rattachement de l'utilisateur",
+//     );
+//   }
+// };
+
+const demanderRattachement = async (
+  utilisateurId: number,
+  ensembleId: number,
+) => {
   try {
-    const response = await axios.post(
-      `${API_BASE_URL}/invitations/rattacher`,
-      null,
+    const res = await axios.post(
+      `http://localhost:8080/api/invitations/demanderRattachement`,
+      null, // POST body vide
       {
-        params: {
-          ensembleId: ensembleId,
-          utilisateurId: userId,
-        },
+        params: { utilisateurId, ensembleId },
       },
     );
-
-    toast.success(
-      response.data?.message || "Utilisateur rattaché à l'ensemble",
-    );
-  } catch (error: any) {
-    toast.error(
-      error.response?.data?.error ||
-        "Erreur lors du rattachement de l'utilisateur",
-    );
+    toast.success(res.data.message);
+  } catch (err: any) {
+    toast.error(err.response?.data?.error || "Erreur lors de la demande");
   }
 };
 
@@ -348,7 +367,7 @@ export const EnsembleDetails = () => {
                     </button>
                   )}
 
-                {((ensemble.userRole && canDelete(ensemble.userRole)) ||
+                {/* {((ensemble.userRole && canDelete(ensemble.userRole)) ||
                   ensemble.creator) && (
                   <button
                     className="delete-button"
@@ -356,7 +375,32 @@ export const EnsembleDetails = () => {
                   >
                     Supprimer
                   </button>
-                )}
+                )} */}
+                {/* 
+                {((ensemble.userRole && canModify(ensemble.userRole)) ||
+                  ensemble.creator) &&
+                  invitationResponse?.existant &&
+                  !invitationResponse?.dejaMembre && // <-- IMPORTANT
+                  invitationResponse.utilisateurId !== undefined && (
+                    <button
+                      onClick={() => {
+                        if (invitationResponse?.utilisateurId == null) {
+                          toast.error(
+                            "Impossible de demander le rattachement : utilisateurId manquant.",
+                          );
+                          return;
+                        }
+
+                        // Appel API uniquement si l'utilisateur n'est pas encore membre
+                        demanderRattachement(
+                          invitationResponse.utilisateurId,
+                          ensembleIdNumber,
+                        );
+                      }}
+                    >
+                      Demander le rattachement de l'utilisateur à l'ensemble
+                    </button>
+                  )} */}
 
                 {/* Lien "Gérer les invitations" visible uniquement si l'utilisateur est ADMIN */}
                 {ensemble.userRole === "ADMIN" && (
@@ -444,65 +488,65 @@ export const EnsembleDetails = () => {
           {/* INVITATION */}
           {((ensemble.userRole && canModify(ensemble.userRole)) ||
             ensemble.creator) && (
-            <>
-              <button
-                onClick={() => {
-                  setShowInvitationModal(true);
-                  setInvitationResponse(null);
-                }}
-                type="button"
-              >
-                Envoyer invitation
-              </button>
-
-              {showInvitationModal && (
-                <div
-                  className="modal-overlay"
-                  onClick={() => setShowInvitationModal(false)}
+              <>
+                <button
+                  onClick={() => {
+                    setShowInvitationModal(true);
+                    setInvitationResponse(null);
+                  }}
+                  type="button"
                 >
+                  Envoyer invitation
+                </button>
+
+                {showInvitationModal && (
                   <div
-                    className="modal-content my-modal"
-                    onClick={(e) => e.stopPropagation()}
+                    className="modal-overlay"
+                    onClick={() => setShowInvitationModal(false)}
                   >
-                    <span
-                      className="close-modal"
-                      onClick={() => setShowInvitationModal(false)}
+                    <div
+                      className="modal-content my-modal"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      &times;
-                    </span>
+                      <span
+                        className="close-modal"
+                        onClick={() => setShowInvitationModal(false)}
+                      >
+                        &times;
+                      </span>
 
-                    <h2>Invitation</h2>
-                    <p>
-                      Veuillez renseigner les informations de la personne que
-                      vous souhaitez inviter :
-                    </p>
+                      <h2>Invitation</h2>
+                      <p>
+                        Veuillez renseigner les informations de la personne que
+                        vous souhaitez inviter :
+                      </p>
 
-                    <form onSubmit={handleInviteSubmit}>
-                      <div className="form-group">
-                        <label>Nom :</label>
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder="Nom"
-                          required
-                        />
-                      </div>
+                      <form onSubmit={handleInviteSubmit}>
+                        <div className="form-group">
+                          <label>Nom :</label>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Nom"
+                            required
+                          />
+                        </div>
 
-                      <div className="form-group">
-                        <label>Email :</label>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Email"
-                          required
-                        />
-                      </div>
+                        <div className="form-group">
+                          <label>Email :</label>
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            required
+                          />
+                        </div>
 
-                      <button type="submit">Envoyer</button>
+                        <button type="submit">Envoyer</button>
 
-                      {((ensemble.userRole && canModify(ensemble.userRole)) ||
+                        {/* {((ensemble.userRole && canModify(ensemble.userRole)) ||
                         ensemble.creator) &&
                         invitationResponse?.existant &&
                         !invitationResponse?.dejaMembre &&
@@ -532,13 +576,39 @@ export const EnsembleDetails = () => {
                           >
                             Rattacher cet utilisateur à l'ensemble
                           </button>
-                        )}
-                    </form>
+                        )} */}
+
+                        {((ensemble.userRole && canModify(ensemble.userRole)) ||
+                          ensemble.creator) &&
+                          invitationResponse?.existant &&
+                          !invitationResponse?.dejaMembre &&
+                          invitationResponse.utilisateurId !== undefined && (
+                            <button
+                              onClick={() => {
+                                if (invitationResponse?.utilisateurId == null) {
+                                  toast.error(
+                                    "Impossible de demander le rattachement : utilisateurId manquant.",
+                                  );
+                                  return;
+                                }
+
+                                // Utiliser la nouvelle méthode
+                                demanderRattachement(
+                                  invitationResponse.utilisateurId,
+                                  ensembleIdNumber,
+                                );
+                              }}
+                            >
+                              Demander le rattachement de l'utilisateur à
+                              l'ensemble
+                            </button>
+                          )}
+                      </form>
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
         </div>
       </main>
 
