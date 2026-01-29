@@ -301,16 +301,35 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           );
 
           navigate(`/ensembles/${ensembleId}`);
-        } else {
-          setNotifications((prev) =>
-            prev.map((notif) =>
-              notif.id === notificationId
-                ? { ...notif, status: "REFUSEE", isRead: true }
-                : notif
-            )
-          );
-          toast.info("Rattachement refusé !");
         }
+        // else {
+        //   setNotifications((prev) =>
+        //     prev.map((notif) =>
+        //       notif.id === notificationId
+        //         ? { ...notif, status: "REFUSEE", isRead: true }
+        //         : notif
+        //     )
+        //   );
+        //   toast.info("Rattachement refusé !");
+        // }
+
+        else {
+          await fetch(
+            `http://localhost:8080/api/invitations/refuser?notificationId=${notificationId}`,
+            { method: "POST" }
+          );
+
+          setNotifications((prev) =>
+            prev.filter((n) => n.id !== notificationId)
+          );
+        }
+
+
+
+
+
+
+
       } catch (error: any) {
         console.error("Erreur lors du rattachement :", error);
         toast.error(error.message || "Impossible de traiter le rattachement.");
