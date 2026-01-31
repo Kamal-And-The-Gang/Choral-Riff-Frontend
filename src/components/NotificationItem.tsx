@@ -35,15 +35,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onAct
   const [isRead, setIsRead] = useState(notification.isRead);
   const [hasActioned, setHasActioned] = useState(notification.status !== "EN_ATTENTE");
 
-  // Fonction pour gérer l'action du rattachement
-  // const handleAction = async (action: "accept" | "reject") => {
-  //   if (notification.ensembleId) {
-  //     // Appel à handleRattachementAction pour accepter ou refuser le rattachement
-  //     await handleRattachementAction(notification.ensembleId, action);
-  //     setHasActioned(true); // Indique que l'action a été effectuée
-  //     if (onActionComplete) onActionComplete(); // Callback si nécessaire
-  //   }
-  // };
+
 
   const handleAction = async (action: "accept" | "reject") => {
     if (notification.ensembleId) {

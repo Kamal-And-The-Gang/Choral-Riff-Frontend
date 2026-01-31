@@ -145,36 +145,36 @@ export const EnsemblesPage = () => {
 
 
   useEffect(() => {
-  if (!user) return;
+    if (!user) return;
 
-  const fetchEnsembles = async () => {
-    setLoading(true);
-    try {
-      // 1️⃣ On récupère les ensembles de l'utilisateur
-      const res = await fetch(`http://localhost:8080/api/ensembles/user/${user.id}`);
-      if (!res.ok) throw new Error("Erreur de chargement");
-      const data: Ensemble[] = await res.json();
+    const fetchEnsembles = async () => {
+      setLoading(true);
+      try {
+        // 1️⃣ On récupère les ensembles de l'utilisateur
+        const res = await fetch(`http://localhost:8080/api/ensembles/user/${user.id}`);
+        if (!res.ok) throw new Error("Erreur de chargement");
+        const data: Ensemble[] = await res.json();
 
-      // 2️⃣ Pour chaque ensemble, on récupère le nombre de membres via le nouvel endpoint
-      const ensemblesAvecMembres = await Promise.all(
-        data.map(async (ensemble) => {
-          const nombreMembres = await fetchNombreMembres(ensemble.id);
-          return { ...ensemble, nombreMembres };
-        })
-      );
+        // 2️⃣ Pour chaque ensemble, on récupère le nombre de membres via le nouvel endpoint
+        const ensemblesAvecMembres = await Promise.all(
+          data.map(async (ensemble) => {
+            const nombreMembres = await fetchNombreMembres(ensemble.id);
+            return { ...ensemble, nombreMembres };
+          })
+        );
 
-      // 3️⃣ On met à jour le state avec le nombre de membres
-      setEnsembles(ensemblesAvecMembres);
-    } catch (error) {
-      toast.error("Erreur lors du chargement des ensembles.");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        // 3️⃣ On met à jour le state avec le nombre de membres
+        setEnsembles(ensemblesAvecMembres);
+      } catch (error) {
+        toast.error("Erreur lors du chargement des ensembles.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchEnsembles();
-}, [user]);
+    fetchEnsembles();
+  }, [user]);
 
 
   if (loadingUser) return <Spinner message="Chargement de l'utilisateur..." />;
@@ -194,25 +194,7 @@ export const EnsemblesPage = () => {
 
       <main className="ensembles-main">
         <div className="profile-section">
-          {/* <img
-            src={userProfilePic}
-            alt="Photo de profil"
-            className="profile-pic"
-          /> */}
 
-          {/* <img
-            src={user?.photoProfil ? user.photoProfil : userProfilePic}
-            alt={`Photo de profil de ${user?.prenom ?? "Utilisateur"}`}
-            className="profile-pic"
-          /> */}
-          {/* {user && (
-            <ProfilePhotoUpdater
-              currentPhoto={user.photoProfil ?? userProfilePic}
-              onPhotoUpdated={(newPhotoUrl: string) =>
-                updateUser({ photoProfil: newPhotoUrl })
-              }
-            />
-          )} */}
           {user && (
             <ProfilePhotoUpdater
               currentPhoto={
