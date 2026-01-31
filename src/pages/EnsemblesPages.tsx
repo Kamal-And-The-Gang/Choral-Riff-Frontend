@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Spinner from "./Spinner";
 
 import "../styles/MonEspace.css";
-import { FaUsers, FaPlus } from "react-icons/fa";
+import { FaUsers, FaPlus, FaCrown } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import userProfilePic from "../assets/femme-5222905_1920.jpg";
@@ -87,7 +87,18 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
     <div className="ensemble-card">
       <FaUsers size={40} className="ensemble-icon" aria-hidden="true" />
       <div className="ensemble-details">
-        <h3>{ensemble.nom}</h3>
+        {/* <h3>{ensemble.nom}</h3> */}
+        <h3>
+          {ensemble.nom}{" "}
+          {ensemble.userRole === "ADMIN" && (
+            <FaCrown
+              title="Administrateur"
+              style={{ color: "gold", marginLeft: "5px" }}
+              aria-label="Administrateur"
+            />
+          )}
+        </h3>
+
         <p>Description : {ensemble.description}</p>
         <p>Type : {typeLabels[ensemble.typeEnsemble]}</p>
         <p>Membres : {ensemble.nombreMembres}</p>
