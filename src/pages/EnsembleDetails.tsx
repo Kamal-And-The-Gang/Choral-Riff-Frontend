@@ -87,30 +87,7 @@ const MorceauItem: React.FC<any> = ({ morceau, ensembleId }): any => {
   );
 };
 
-// Fonction rattacherUtilisateur (appel backend)
-// const rattacherUtilisateur = async (userId: number, ensembleId: number) => {
-//   try {
-//     const response = await axios.post(
-//       `${API_BASE_URL}/invitations/rattacher`,
-//       null,
-//       {
-//         params: {
-//           ensembleId: ensembleId,
-//           utilisateurId: userId,
-//         },
-//       },
-//     );
 
-//     toast.success(
-//       response.data?.message || "Utilisateur rattaché à l'ensemble",
-//     );
-//   } catch (error: any) {
-//     toast.error(
-//       error.response?.data?.error ||
-//         "Erreur lors du rattachement de l'utilisateur",
-//     );
-//   }
-// };
 
 const demanderRattachement = async (
   utilisateurId: number,
@@ -367,40 +344,7 @@ export const EnsembleDetails = () => {
                     </button>
                   )}
 
-                {/* {((ensemble.userRole && canDelete(ensemble.userRole)) ||
-                  ensemble.creator) && (
-                  <button
-                    className="delete-button"
-                    onClick={handleSupprimerEnsemble}
-                  >
-                    Supprimer
-                  </button>
-                )} */}
-                {/* 
-                {((ensemble.userRole && canModify(ensemble.userRole)) ||
-                  ensemble.creator) &&
-                  invitationResponse?.existant &&
-                  !invitationResponse?.dejaMembre && // <-- IMPORTANT
-                  invitationResponse.utilisateurId !== undefined && (
-                    <button
-                      onClick={() => {
-                        if (invitationResponse?.utilisateurId == null) {
-                          toast.error(
-                            "Impossible de demander le rattachement : utilisateurId manquant.",
-                          );
-                          return;
-                        }
 
-                        // Appel API uniquement si l'utilisateur n'est pas encore membre
-                        demanderRattachement(
-                          invitationResponse.utilisateurId,
-                          ensembleIdNumber,
-                        );
-                      }}
-                    >
-                      Demander le rattachement de l'utilisateur à l'ensemble
-                    </button>
-                  )} */}
 
                 {/* Lien "Gérer les invitations" visible uniquement si l'utilisateur est ADMIN */}
                 {ensemble.userRole === "ADMIN" && (
@@ -425,7 +369,7 @@ export const EnsembleDetails = () => {
           {/* MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
 
-          {/* Vérifie que l'utilisateur est créateur ou admin
+          Vérifie que l'utilisateur est créateur ou admin
           {ensemble.creator || ensemble.userRole === "ADMIN" ? (
             <div className="add-file-section">
               <button
@@ -435,23 +379,9 @@ export const EnsembleDetails = () => {
                 <FaPlus size={14} /> Ajouter un Morceau
               </button>
             </div>
-          ) : null} */}
-
-          {/* Bouton "Ajouter un Morceau"
-    Visible pour tous les membres associés à l'ensemble (créateur, admin ou simple membre)
-    Permet d'ouvrir la modal pour créer un nouveau morceau et ajouter ses documents (partitions, audio, etc.)
-*/}
-
-          {ensemble.userRole ? (
-            <div className="add-file-section">
-              <button
-                className="add-file-button"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <FaPlus size={14} /> Ajouter un Morceau
-              </button>
-            </div>
           ) : null}
+
+
 
           <h4 className="subsection-title">Liste des morceaux :</h4>
           <div className="scores-list">
@@ -546,37 +476,7 @@ export const EnsembleDetails = () => {
 
                         <button type="submit">Envoyer</button>
 
-                        {/* {((ensemble.userRole && canModify(ensemble.userRole)) ||
-                        ensemble.creator) &&
-                        invitationResponse?.existant &&
-                        !invitationResponse?.dejaMembre &&
-                        invitationResponse.utilisateurId !== undefined && (
-                          <button
-                            // type="button"
-                            // onClick={() =>
-                            //   rattacherUtilisateur(
-                            //     invitationResponse.utilisateurId,
-                            //     ensembleIdNumber
-                            //   )
-                            // }
 
-                            onClick={() => {
-                              if (invitationResponse?.utilisateurId == null) {
-                                toast.error(
-                                  "Impossible de rattacher : utilisateurId manquant.",
-                                );
-                                return;
-                              }
-
-                              rattacherUtilisateur(
-                                invitationResponse.utilisateurId,
-                                ensembleIdNumber,
-                              );
-                            }}
-                          >
-                            Rattacher cet utilisateur à l'ensemble
-                          </button>
-                        )} */}
 
                         {((ensemble.userRole && canModify(ensemble.userRole)) ||
                           ensemble.creator) &&

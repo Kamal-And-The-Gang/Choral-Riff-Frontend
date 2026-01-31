@@ -191,63 +191,133 @@ export const TrackDetails = () => {
       .finally(() => setLoading(false));
   }, [currentTrackId]);
 
-  // --- Suppression d'un document ---
-  const handleDelete = async (id: number) => {
-    const confirmed = await toastConfirmDeleteDocument();
-    if (!confirmed) return;
+  // --- Suppression d'un document ---Avec bearer
+  // const handleDelete = async (id: number) => {
+  //   const confirmed = await toastConfirmDeleteDocument();
+  //   if (!confirmed) return;
 
-    try {
-      await axios.delete(`http://localhost:8080/api/documents/${id}`);
-      setFiles((prev) => prev.filter((file) => file.id !== id));
-      toast.success("Fichier supprimé avec succès !");
-    } catch (err) {
-      console.error("Erreur lors de la suppression :", err);
-      toast.error("Impossible de supprimer le fichier.");
-    }
-  };
+  //   try {
+  //     await axios.delete(`http://localhost:8080/api/documents/${id}`);
+  //     setFiles((prev) => prev.filter((file) => file.id !== id));
+  //     toast.success("Fichier supprimé avec succès !");
+  //   } catch (err) {
+  //     console.error("Erreur lors de la suppression :", err);
+  //     toast.error("Impossible de supprimer le fichier.");
+  //   }
+  // };
 
   // --- Ajout d'un document (modifié pour utiliser AuthContext) ---
-  const handleAddDocument = async (file: File) => {
-    if (!token) {
-      toast.error("Vous devez être connecté pour ajouter un document.");
-      return;
-    }
+  // const handleAddDocument = async (file: File) => {
+  //   if (!token) {
+  //     toast.error("Vous devez être connecté pour ajouter un document.");
+  //     return;
+  //   }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", "partition");
-    formData.append("format", file.name.split(".").pop() || "PDF");
-    formData.append("morceauId", currentTrackId.toString());
+const handleDelete = async (id: number) => {
+  const confirmed = await toastConfirmDeleteDocument();
+  if (!confirmed) return;
 
-    try {
-      const res = await axios.post(
-        "http://localhost:8080/api/documents/upload",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+  const utilisateurId = 1; // même logique que l’upload (test)
 
-      setFiles((prev) => [
-        ...prev,
-        {
-          id: res.data.id_document,
-          name: res.data.urlFichier.split("/").pop(),
-          type: res.data.type,
-          format: res.data.format,
-          size: "-",
-          role: res.data.type,
-        },
-      ]);
+  try {
+    await axios.delete(
+      `http://localhost:8080/api/documents/${id}`,
+      {
+        params: { utilisateurId }, // 👈 query param
+      }
+    );
 
-      toast.success("Document ajouté !");
-    } catch (err) {
-      console.error(err);
-      toast.error("Erreur lors de l'ajout du document");
-    }
-  };
+    setFiles((prev) => prev.filter((file) => file.id !== id));
+    toast.success("Fichier supprimé avec succès !");
+  } catch (err) {
+    console.error("Erreur lors de la suppression :", err);
+    toast.error("Impossible de supprimer le fichier.");
+  }
+};
+
+
+
+
+
+
+
+
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("type", "partition");
+  //   formData.append("format", file.name.split(".").pop() || "PDF");
+  //   formData.append("morceauId", currentTrackId.toString());
+
+  //   try {
+  //     const res = await axios.post(
+  //       "http://localhost:8080/api/documents/upload",
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+
+  //     setFiles((prev) => [
+  //       ...prev,
+  //       {
+  //         id: res.data.id_document,
+  //         name: res.data.urlFichier.split("/").pop(),
+  //         type: res.data.type,
+  //         format: res.data.format,
+  //         size: "-",
+  //         role: res.data.type,
+  //       },
+  //     ]);
+
+  //     toast.success("Document ajouté !");
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Erreur lors de l'ajout du document");
+  //   }
+  // };
+
+
+
+  // --- Ajout d'un document sans JWT ---
+const handleAddDocument = async (file: File) => {
+  // Ici on peut mettre un utilisateurId fixe pour les tests
+  const utilisateurId = 1; // <- à changer selon ton utilisateur de test
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("type", "partition");
+  formData.append("format", file.name.split(".").pop() || "PDF");
+  formData.append("morceauId", currentTrackId.toString());
+  formData.append("utilisateurId", utilisateurId.toString()); // <- ajouté
+
+  try {
+    const res = await axios.post(
+      "http://localhost:8080/api/documents/upload",
+      formData
+    );
+
+    setFiles((prev) => [
+      ...prev,
+      {
+        id: res.data.id_document,
+        name: res.data.urlFichier.split("/").pop(),
+        type: res.data.type,
+        format: res.data.format,
+        size: "-",
+        role: res.data.type,
+      },
+    ]);
+
+    toast.success("Document ajouté !");
+  } catch (err) {
+    console.error(err);
+    toast.error("Erreur lors de l'ajout du document");
+  }
+};
+
 
   return (
     <div className="track-details-container">
