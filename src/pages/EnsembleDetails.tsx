@@ -126,6 +126,7 @@ const toastConfirmDelete = () =>
               Oui
             </button>
             <button
+              className="toast-no-button"
               onClick={() => {
                 resolve(false);
                 closeToast();
@@ -335,18 +336,39 @@ export const EnsembleDetails = () => {
               <div className="ensemble-buttons">
                 {ensemble &&
                   (ensemble.userRole === "ADMIN" || ensemble.creator) && (
-                    <button
-                      type="button"
-                      className="submit-button validate-button"
-                      onClick={() => navigate(`/ensembles/${ensemble.id}/edit`)}
-                    >
-                      <FaPlus /> Modifier l'ensemble
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        className="submit-button validate-button"
+                        onClick={() => navigate(`/ensembles/${ensemble.id}/edit`)}
+                      >
+                        <FaPlus /> Modifier l'ensemble
+                      </button>
+
+                      {/* <button
+                        type="button"
+                        className="submit-button delete-button"
+                        onClick={handleSupprimerEnsemble}
+                        style={{
+
+                          backgroundColor: "#e74c3c",
+                          color: "white"
+                        }}
+                      >
+                        Supprimer l'ensemble
+                      </button> */}
+
+                      <button
+                        type="button"
+                        className="submit-button delete-button"
+                        onClick={handleSupprimerEnsemble}
+                      >
+                        Supprimer l'ensemble
+                      </button>
+
+                    </>
                   )}
 
-
-
-                {/* Lien "Gérer les invitations" visible uniquement si l'utilisateur est ADMIN */}
                 {ensemble.userRole === "ADMIN" && (
                   <Link
                     to={`/ensembles/${ensembleId}/invitations`}
@@ -356,6 +378,9 @@ export const EnsembleDetails = () => {
                   </Link>
                 )}
               </div>
+
+
+
             </div>
           </div>
 

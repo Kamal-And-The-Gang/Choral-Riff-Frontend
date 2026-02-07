@@ -43,7 +43,9 @@
 /* --- 2. Carte de Contenu Principal (Fiche) --- */
 .details-content-card.fiche-card {
   background-color: var(--card-background);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 6px 15px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   position: relative;
   z-index: 5;
@@ -100,54 +102,55 @@
   margin: 0.5rem 0;
 }
 
-
 /* --- Bloc du Dernier Morceau --- */
 
 .last-morceau-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    margin-bottom: 25px;
-    transition: opacity 0.2s, transform 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  margin-bottom: 25px;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
 }
 
 .last-morceau-box {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    /* Utilisation des variables pour l'apparence */
-    border: 1px solid var(--border-color);
-    border-left: 5px solid var(--primary-color); /* Bande d'accentuation Orange */
-    border-radius: 12px;
-    background-color: var(--card-background);
-    box-shadow: var(--shadow-subtle);
-    cursor: pointer;
-    transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  /* Utilisation des variables pour l'apparence */
+  border: 1px solid var(--border-color);
+  border-left: 5px solid var(--primary-color); /* Bande d'accentuation Orange */
+  border-radius: 12px;
+  background-color: var(--card-background);
+  box-shadow: var(--shadow-subtle);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 /* Effet de survol */
 .last-morceau-link:hover .last-morceau-box {
-    /* Utilisation de l'ombre plus marquée et d'un fond clair */
-    background-color: var(--background-light);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
+  /* Utilisation de l'ombre plus marquée et d'un fond clair */
+  background-color: var(--background-light);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-.morceau-icon { /* Renommage de .track-icon en .morceau-icon si vous utilisez FaMusic */
-    color: var(--primary-color); /* L'icône est orange */
+.morceau-icon {
+  /* Renommage de .track-icon en .morceau-icon si vous utilisez FaMusic */
+  color: var(--primary-color); /* L'icône est orange */
 }
-.morceau-title-name { /* Renommage de .track-title-name */
-    font-weight: bold;
-    color: var(--dark-text);
+.morceau-title-name {
+  /* Renommage de .track-title-name */
+  font-weight: bold;
+  color: var(--dark-text);
 }
-.morceau-subtitle { /* Renommage de .track-subtitle */
-    font-size: 0.8rem;
-    color: #666;
+.morceau-subtitle {
+  /* Renommage de .track-subtitle */
+  font-size: 0.8rem;
+  color: #666;
 }
-
-
-
 
 .score-details {
   display: flex;
@@ -242,9 +245,7 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-
 }
-
 
 .scores-list {
   margin-bottom: 2rem;
@@ -502,11 +503,10 @@
 
 .form-group input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(243, 141, 104, 0.25),
+  box-shadow:
+    0 0 0 3px rgba(243, 141, 104, 0.25),
     inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
-
-
 
 .modal-content button {
   background-color: var(--primary-color);
@@ -533,11 +533,49 @@
   color: var(--light-text);
   display: block;
   margin: 3rem auto 0; /* centre horizontalement avec marge en haut */
-
 }
 
 .modal-content.my-modal button:last-of-type:hover {
   background-color: #e07a5f;
 }
 
+.ensemble-buttons .edit-button,
+.ensemble-buttons .delete-button {
+  padding: 0.75rem 1.5rem; /* même padding */
+  min-width: 160px; /* même largeur minimale */
+  font-size: 1rem;
+  font-weight: bold;
+  display: inline-flex;
+  justify-content: center; /* centrer le texte et icône */
+  align-items: center;
+  gap: 0.5rem; /* espace entre icône et texte */
+  border-radius: 50px;
+  cursor: pointer;
+}
 
+.ensemble-buttons .edit-button {
+  background-color: var(--primary-color);
+  color: var(--light-text);
+}
+
+.ensemble-buttons .edit-button:hover {
+  background-color: #e5734f;
+}
+
+.ensemble-buttons .delete-button {
+  background-color: #d9663b;
+  color: var(--light-text);
+}
+
+.ensemble-buttons .delete-button:hover {
+  background-color: #c9302c;
+}
+
+.toast-no-button {
+  background-color: var(--neutral-gray);
+  color: var(--light-text);
+}
+
+.toast-no-button:hover {
+  background-color: #5a6268;
+}
