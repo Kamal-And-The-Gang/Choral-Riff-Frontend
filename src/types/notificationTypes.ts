@@ -33,4 +33,7 @@ export type NotificationDTO = {
 
   // ← nouveau champ
   morceauTitre?: string;
+
+    // <-- Ajouter le champ valid
+  valid?: boolean;
 };

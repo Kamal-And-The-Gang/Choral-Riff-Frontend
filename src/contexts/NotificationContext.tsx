@@ -102,6 +102,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
         status: (n.status ?? n.etat ?? "EN_ATTENTE") as InvitationStatus,
         senderName: n.senderName,
         token: n.token,
+        valid: n.valid ?? true, // <-- Ajout ici pour forcer true si null
       }));
 
       setNotifications(formattedNotifications);

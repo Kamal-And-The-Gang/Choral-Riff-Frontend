@@ -11,14 +11,14 @@ type TypeEnsemble =
   | "CHOEUR"
   | "ORCHESTRE"
   | "QUATUOR"
-  | "GROUPE_ROCK"
+  | "BAND"
   | "AUTRE";
 
 const ensembleTypeLabels: Record<TypeEnsemble, string> = {
   CHOEUR: "Chorale",
   ORCHESTRE: "Orchestre",
   QUATUOR: "Quatuor",
-  GROUPE_ROCK: "Groupe de Rock",
+  BAND: "Groupe de Rock",
   AUTRE: "Autre",
 };
 

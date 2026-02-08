@@ -15,6 +15,7 @@ const NotificationPage: React.FC = () => {
   const filteredNotifications = useMemo(() => {
     return notifications
       .filter((notif) => {
+        if (notif.valid === false) return false; // seulement filtrer si explicitement invalide
         if (filterType !== "ALL" && notif.type !== filterType) return false;
         if (filterReadStatus === "UNREAD" && notif.isRead) return false;
         if (filterReadStatus === "READ" && !notif.isRead) return false;
