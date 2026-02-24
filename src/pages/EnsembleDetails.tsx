@@ -12,6 +12,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 import AjouterMorceauForm from "./AjouterMorceauForm";
+import api from "../api/axiosConfig";
 import {
   getLastMorceauByEnsemble,
   type DernierMorceauAPI,
@@ -106,7 +107,7 @@ const rattacherUtilisateur = async (userId: number, ensembleId: number) => {
   } catch (error: any) {
     toast.error(
       error.response?.data?.error ||
-        "Erreur lors du rattachement de l'utilisateur",
+      "Erreur lors du rattachement de l'utilisateur",
     );
   }
 };
@@ -209,23 +210,12 @@ export const EnsembleDetails = () => {
       if (!user) return;
       try {
         setLoading(true);
-        setError(null);
-
-        // const response = await fetch(
-        //   `http://localhost:8080/api/ensembles/${ensembleId}/forUser/${user.id}`
-        // );
-        const response = await fetch(
-          `${API_BASE_URL}/ensembles/${ensembleIdNumber}?userId=${user?.id}`,
-        );
-
-        if (!response.ok)
-          throw new Error(`Erreur serveur : ${response.status}`);
-
-        const data: Ensemble = await response.json();
-        setEnsemble(data);
+        // Le token est ajouté automatiquement par l'intercepteur !
+        const response = await api.get<Ensemble>(`/ensembles/${ensembleIdNumber}/forUser/${user.id}`);
+        setEnsemble(response.data);
       } catch (error: any) {
         setError(error.message);
-        toast.error("Impossible de charger l'ensemble.");
+        toast.error("Erreur lors du chargement des détails..");
       } finally {
         setLoading(false);
       }
@@ -333,13 +323,13 @@ export const EnsembleDetails = () => {
 
                 {((ensemble.userRole && canDelete(ensemble.userRole)) ||
                   ensemble.creator) && (
-                  <button
-                    className="delete-button"
-                    onClick={handleSupprimerEnsemble}
-                  >
-                    Supprimer
-                  </button>
-                )}
+                    <button
+                      className="delete-button"
+                      onClick={handleSupprimerEnsemble}
+                    >
+                      Supprimer
+                    </button>
+                  )}
 
                 {/* Lien "Gérer les invitations" visible uniquement si l'utilisateur est ADMIN */}
                 {ensemble.userRole === "ADMIN" && (
@@ -411,101 +401,101 @@ export const EnsembleDetails = () => {
           {/* INVITATION */}
           {((ensemble.userRole && canModify(ensemble.userRole)) ||
             ensemble.creator) && (
-            <>
-              <button
-                onClick={() => {
-                  setShowInvitationModal(true);
-                  setInvitationResponse(null);
-                }}
-                type="button"
-              >
-                Envoyer invitation
-              </button>
-
-              {showInvitationModal && (
-                <div
-                  className="modal-overlay"
-                  onClick={() => setShowInvitationModal(false)}
+              <>
+                <button
+                  onClick={() => {
+                    setShowInvitationModal(true);
+                    setInvitationResponse(null);
+                  }}
+                  type="button"
                 >
+                  Envoyer invitation
+                </button>
+
+                {showInvitationModal && (
                   <div
-                    className="modal-content my-modal"
-                    onClick={(e) => e.stopPropagation()}
+                    className="modal-overlay"
+                    onClick={() => setShowInvitationModal(false)}
                   >
-                    <span
-                      className="close-modal"
-                      onClick={() => setShowInvitationModal(false)}
+                    <div
+                      className="modal-content my-modal"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      &times;
-                    </span>
+                      <span
+                        className="close-modal"
+                        onClick={() => setShowInvitationModal(false)}
+                      >
+                        &times;
+                      </span>
 
-                    <h2>Invitation</h2>
-                    <p>
-                      Veuillez renseigner les informations de la personne que
-                      vous souhaitez inviter :
-                    </p>
+                      <h2>Invitation</h2>
+                      <p>
+                        Veuillez renseigner les informations de la personne que
+                        vous souhaitez inviter :
+                      </p>
 
-                    <form onSubmit={handleInviteSubmit}>
-                      <div className="form-group">
-                        <label>Nom :</label>
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          placeholder="Nom"
-                          required
-                        />
-                      </div>
+                      <form onSubmit={handleInviteSubmit}>
+                        <div className="form-group">
+                          <label>Nom :</label>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Nom"
+                            required
+                          />
+                        </div>
 
-                      <div className="form-group">
-                        <label>Email :</label>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Email"
-                          required
-                        />
-                      </div>
+                        <div className="form-group">
+                          <label>Email :</label>
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            required
+                          />
+                        </div>
 
-                      <button type="submit">Envoyer</button>
+                        <button type="submit">Envoyer</button>
 
-                      {((ensemble.userRole && canModify(ensemble.userRole)) ||
-                        ensemble.creator) &&
-                        invitationResponse?.existant &&
-                        !invitationResponse?.dejaMembre &&
-                        invitationResponse.utilisateurId !== undefined && (
-                          <button
-                            // type="button"
-                            // onClick={() =>
-                            //   rattacherUtilisateur(
-                            //     invitationResponse.utilisateurId,
-                            //     ensembleIdNumber
-                            //   )
-                            // }
+                        {((ensemble.userRole && canModify(ensemble.userRole)) ||
+                          ensemble.creator) &&
+                          invitationResponse?.existant &&
+                          !invitationResponse?.dejaMembre &&
+                          invitationResponse.utilisateurId !== undefined && (
+                            <button
+                              // type="button"
+                              // onClick={() =>
+                              //   rattacherUtilisateur(
+                              //     invitationResponse.utilisateurId,
+                              //     ensembleIdNumber
+                              //   )
+                              // }
 
-                            onClick={() => {
-                              if (invitationResponse?.utilisateurId == null) {
-                                toast.error(
-                                  "Impossible de rattacher : utilisateurId manquant.",
+                              onClick={() => {
+                                if (invitationResponse?.utilisateurId == null) {
+                                  toast.error(
+                                    "Impossible de rattacher : utilisateurId manquant.",
+                                  );
+                                  return;
+                                }
+
+                                rattacherUtilisateur(
+                                  invitationResponse.utilisateurId,
+                                  ensembleIdNumber,
                                 );
-                                return;
-                              }
-
-                              rattacherUtilisateur(
-                                invitationResponse.utilisateurId,
-                                ensembleIdNumber,
-                              );
-                            }}
-                          >
-                            Rattacher cet utilisateur à l'ensemble
-                          </button>
-                        )}
-                    </form>
+                              }}
+                            >
+                              Rattacher cet utilisateur à l'ensemble
+                            </button>
+                          )}
+                      </form>
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
         </div>
       </main>
 
