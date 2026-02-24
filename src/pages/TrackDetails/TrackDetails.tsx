@@ -11,6 +11,7 @@ import AddInstrumentForm from "../AddInstrumentForm";
 import { handleAddInstrumentSubmit } from "../../api/documentInstruments";
 
 import { getAllInstruments } from "../../api/documentInstruments";
+import { useAuth } from "../../contexts/AuthContext";
 
 // Ajout du champ URL pour permettre un aperçu du document
 export type ExtendedFileItem = FileItem & {
@@ -65,7 +66,7 @@ const toastConfirmDeleteDocument = () =>
       {
         autoClose: false,
         closeOnClick: false,
-      }
+      },
     );
   });
 
@@ -73,7 +74,6 @@ const toastConfirmDeleteDocument = () =>
 type Props = {
   file: FileItem;
   onDelete?: (id: number) => void;
-  
 };
 
 const FileItemComponent: React.FC<Props> = ({ file, onDelete }) => {
@@ -102,7 +102,7 @@ export const TrackDetails = () => {
     ensembleId: string;
     trackId: string;
   }>();
-
+  const { token } = useAuth(); // ✅ récupère le token depuis le contexte
   const currentEnsembleId = Number(routeEnsembleId);
   const currentTrackId = Number(routeTrackId);
 
@@ -112,7 +112,7 @@ export const TrackDetails = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(
-    null
+    null,
   );
 
   const handleOpenAddInstrument = (documentId: number) => {
@@ -140,20 +140,24 @@ export const TrackDetails = () => {
   useEffect(() => {
     if (state?.ensembleNom) {
       setEnsembleNom(state.ensembleNom);
-    } else {
+    } else if (token) {
+      // Requête API avec token
       axios
-  .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`)
-  .then((res) => {
-    console.log(res.data); // Affiche la réponse de l'API
-    setEnsembleNom(res.data.nom);
-  })
-  .catch((err) => {
-    console.error(err);
-    setEnsembleNom("Nom inconnu");
-  });
-
+        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`, {
+          headers: { Authorization: `Bearer ${token}` }, // <-- important
+        })
+        .then((res) => {
+          console.log("Réponse API Ensemble :", res.data);
+          setEnsembleNom(res.data.nom);
+        })
+        .catch((err) => {
+          console.error("Erreur récupération nom ensemble :", err);
+          setEnsembleNom("Nom inconnu");
+        });
+    } else {
+      setEnsembleNom("Nom inconnu");
     }
-  }, [currentEnsembleId, state?.ensembleNom]);
+  }, [currentEnsembleId, state?.ensembleNom, token]);
 
   // --- Récupération des documents du morceau ---
   useEffect(() => {
@@ -187,55 +191,133 @@ export const TrackDetails = () => {
       .finally(() => setLoading(false));
   }, [currentTrackId]);
 
-  // --- Suppression d'un document ---
-  const handleDelete = async (id: number) => {
-    const confirmed = await toastConfirmDeleteDocument();
-    if (!confirmed) return;
+  // --- Suppression d'un document ---Avec bearer
+  // const handleDelete = async (id: number) => {
+  //   const confirmed = await toastConfirmDeleteDocument();
+  //   if (!confirmed) return;
 
-    try {
-      await axios.delete(`http://localhost:8080/api/documents/${id}`);
-      setFiles((prev) => prev.filter((file) => file.id !== id));
-      toast.success("Fichier supprimé avec succès !");
-    } catch (err) {
-      console.error("Erreur lors de la suppression :", err);
-      toast.error("Impossible de supprimer le fichier.");
-    }
-  };
+  //   try {
+  //     await axios.delete(`http://localhost:8080/api/documents/${id}`);
+  //     setFiles((prev) => prev.filter((file) => file.id !== id));
+  //     toast.success("Fichier supprimé avec succès !");
+  //   } catch (err) {
+  //     console.error("Erreur lors de la suppression :", err);
+  //     toast.error("Impossible de supprimer le fichier.");
+  //   }
+  // };
 
-  // --- Ajout d'un document ---
-  const handleAddDocument = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", "partition");
-    formData.append("format", file.name.split(".").pop() || "PDF");
-    formData.append("morceauId", currentTrackId.toString());
-    formData.append("utilisateurId", "1");
+  // --- Ajout d'un document (modifié pour utiliser AuthContext) ---
+  // const handleAddDocument = async (file: File) => {
+  //   if (!token) {
+  //     toast.error("Vous devez être connecté pour ajouter un document.");
+  //     return;
+  //   }
 
-    try {
-      const res = await axios.post(
-        "http://localhost:8080/api/documents/upload",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+const handleDelete = async (id: number) => {
+  const confirmed = await toastConfirmDeleteDocument();
+  if (!confirmed) return;
 
-      setFiles((prev) => [
-        ...prev,
-        {
-          id: res.data.id_document,
-          name: res.data.urlFichier.split("/").pop(),
-          type: res.data.type,
-          format: res.data.format,
-          size: "-",
-          role: res.data.type,
-        },
-      ]);
+  const utilisateurId = 1; // même logique que l’upload (test)
 
-      toast.success("Document ajouté !");
-    } catch (err) {
-      console.error(err);
-      toast.error("Erreur lors de l'ajout du document");
-    }
-  };
+  try {
+    await axios.delete(
+      `http://localhost:8080/api/documents/${id}`,
+      {
+        params: { utilisateurId }, // 👈 query param
+      }
+    );
+
+    setFiles((prev) => prev.filter((file) => file.id !== id));
+    toast.success("Fichier supprimé avec succès !");
+  } catch (err) {
+    console.error("Erreur lors de la suppression :", err);
+    toast.error("Impossible de supprimer le fichier.");
+  }
+};
+
+
+
+
+
+
+
+
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("type", "partition");
+  //   formData.append("format", file.name.split(".").pop() || "PDF");
+  //   formData.append("morceauId", currentTrackId.toString());
+
+  //   try {
+  //     const res = await axios.post(
+  //       "http://localhost:8080/api/documents/upload",
+  //       formData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+
+  //     setFiles((prev) => [
+  //       ...prev,
+  //       {
+  //         id: res.data.id_document,
+  //         name: res.data.urlFichier.split("/").pop(),
+  //         type: res.data.type,
+  //         format: res.data.format,
+  //         size: "-",
+  //         role: res.data.type,
+  //       },
+  //     ]);
+
+  //     toast.success("Document ajouté !");
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Erreur lors de l'ajout du document");
+  //   }
+  // };
+
+
+
+  // --- Ajout d'un document sans JWT ---
+const handleAddDocument = async (file: File) => {
+  // Ici on peut mettre un utilisateurId fixe pour les tests
+  const utilisateurId = 1; // <- à changer selon ton utilisateur de test
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("type", "partition");
+  formData.append("format", file.name.split(".").pop() || "PDF");
+  formData.append("morceauId", currentTrackId.toString());
+  formData.append("utilisateurId", utilisateurId.toString()); // <- ajouté
+
+  try {
+    const res = await axios.post(
+      "http://localhost:8080/api/documents/upload",
+      formData
+    );
+
+    setFiles((prev) => [
+      ...prev,
+      {
+        id: res.data.id_document,
+        name: res.data.urlFichier.split("/").pop(),
+        type: res.data.type,
+        format: res.data.format,
+        size: "-",
+        role: res.data.type,
+      },
+    ]);
+
+    toast.success("Document ajouté !");
+  } catch (err) {
+    console.error(err);
+    toast.error("Erreur lors de l'ajout du document");
+  }
+};
+
 
   return (
     <div className="track-details-container">
@@ -322,7 +404,7 @@ export const TrackDetails = () => {
                 try {
                   await handleAddInstrumentSubmit(
                     selectedDocumentId,
-                    instrument
+                    instrument,
                   );
                   toast.success("Instrument ajouté !");
                   handleCloseAddInstrument();

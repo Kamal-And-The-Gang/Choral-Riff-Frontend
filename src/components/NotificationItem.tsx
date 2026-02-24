@@ -1,15 +1,7 @@
+
 import React, { useState, useEffect } from "react";
-import type {
-  NotificationDTO,
-  NotificationType,
-} from "../types/notificationTypes";
-import {
-  FaUserPlus,
-  FaMusic,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaInfoCircle,
-} from "react-icons/fa";
+import type { NotificationDTO, NotificationType } from "../types/notificationTypes";
+import { FaUserPlus, FaMusic, FaCheckCircle, FaTimesCircle, FaInfoCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../contexts/NotificationContext";
 import "../styles/NotificationItem.css";
@@ -28,29 +20,31 @@ const getIconAndColor = (type: NotificationType) => {
       return { icon: <FaMusic />, color: "#28a745" };
     case "RATTACHEMENT": // Rattachement => orange
       return { icon: <FaUserPlus />, color: "#ff9900" };
+    case "DEMANDE_RATTACHEMENT": // Demande de rattachement => orange aussi
+      return { icon: <FaUserPlus />, color: "#ff9900" };
     case "GENERAL":
     default:
       return { icon: <FaInfoCircle />, color: "#6c757d" };
   }
 };
 
-const NotificationItem: React.FC<NotificationItemProps> = ({
-  notification,
-  onActionComplete,
-}) => {
+const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onActionComplete }) => {
   const { handleRattachementAction, markAsRead } = useNotifications();
   const navigate = useNavigate();
   const { icon, color } = getIconAndColor(notification.type);
   const [isRead, setIsRead] = useState(notification.isRead);
+  const [hasActioned, setHasActioned] = useState(notification.status !== "EN_ATTENTE");
 
-  // Fonction pour gérer l'action du rattachement
+
+
   const handleAction = async (action: "accept" | "reject") => {
     if (notification.ensembleId) {
-      // Appel à handleRattachementAction pour accepter ou refuser le rattachement
-      await handleRattachementAction(notification.ensembleId, action);
-      if (onActionComplete) onActionComplete(); // Callback si nécessaire
+      await handleRattachementAction(notification.id, notification.ensembleId, action);
+      setHasActioned(true);
+      if (onActionComplete) onActionComplete();
     }
   };
+
 
   // Fonction pour gérer le clic sur la notification (marquer comme lue et navigation)
   const handleClick = async () => {
@@ -64,14 +58,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     if (onActionComplete) onActionComplete(); // Callback si nécessaire
   };
 
-  // Vérifier si la notification est de type RATTACHEMENT
-  const isRattachementNotification = notification.type === "RATTACHEMENT";
+  // Vérification du type de notification
+  const isRattachementNotification = notification.type === "RATTACHEMENT" || notification.type === "DEMANDE_RATTACHEMENT";
 
+  // Retourner la notification avec les boutons seulement si elle est en attente
   return (
     <div
-      className={`notification-item ${
-        !isRead ? "notification-unread" : "notification-read"
-      }`}
+      className={`notification-item ${!isRead ? "notification-unread" : "notification-read"}`}
       onClick={!isRattachementNotification ? handleClick : undefined}
       style={{ cursor: isRattachementNotification ? "default" : "pointer" }}
     >
@@ -85,14 +78,14 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           {new Date(notification.createdAt).toLocaleString()}
         </span>
 
-        {/* Affichage des boutons Accepter/Refuser pour les notifications de type RATTACHEMENT */}
-        {/* {isRattachementNotification && (
+        {/* Affichage des boutons Accepter/Refuser pour les notifications de type RATTACHEMENT et DEMANDE_RATTACHEMENT */}
+        {isRattachementNotification && !hasActioned && (
           <div className="rattachement-actions-container">
             <button
               className="action-btn accept-btn"
               onClick={(e) => {
                 e.stopPropagation(); // Empêche la propagation du clic
-                handleAction("accept"); // Appel de la fonction pour accepter le rattachement
+                handleAction("accept"); // Accepter le rattachement
               }}
             >
               <FaCheckCircle size={14} /> Accepter
@@ -100,26 +93,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             <button
               className="action-btn reject-btn"
               onClick={(e) => {
-                e.stopPropagation();
-                handleAction("reject"); // Appel de la fonction pour refuser le rattachement
+                e.stopPropagation(); // Empêche la propagation du clic
+                handleAction("reject"); // Refuser le rattachement
               }}
             >
               <FaTimesCircle size={14} /> Refuser
-            </button>
-          </div>
-        )} */}
-
-        {isRattachementNotification && (
-          <div className="rattachement-actions-container">
-            <button
-              className="action-btn reject-btn"
-              onClick={async (e) => {
-                e.stopPropagation();
-                // Appelle la fonction handleLeaveEnsemble depuis le contexte
-                // await handleLeaveEnsemble(notification.ensembleId);
-              }}
-            >
-              <FaTimesCircle size={14} /> Quitter l'ensemble
             </button>
           </div>
         )}

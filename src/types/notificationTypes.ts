@@ -2,7 +2,9 @@ export type NotificationType =
   | "INVITATION"
   | "MORCEAU_AJOUTE"
   | "GENERAL"
-  | "RATTACHEMENT"; // ← nouveau type pour l’admin qui rattache
+  | "RATTACHEMENT" // ← nouveau type pour l’admin qui rattache
+  | "DEMANDE_RATTACHEMENT"; // ← nouveau type pour l’admin qui rattache
+
 
 export type InvitationStatus = "EN_ATTENTE" | "ACCEPTEE" | "REFUSEE";
 

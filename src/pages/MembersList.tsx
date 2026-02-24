@@ -45,7 +45,6 @@ const mockMembers: Member[] = [
   { id: 103, name: "Dr. Dre", email: "dre@example.com", role: "member" },
 ];
 
-
 // --- COMPOSANT Membre ---
 
 const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
@@ -54,7 +53,11 @@ const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
 }) => {
   // Logique pour l'icône de rôle
   const RoleIcon =
-    member.role === "admin" ? FaCrown : member.role === "moderator" ? FaUserTie : FaUser;
+    member.role === "admin"
+      ? FaCrown
+      : member.role === "moderator"
+        ? FaUserTie
+        : FaUser;
 
   const handleRoleChange = () => {
     // Logique de changement de rôle
@@ -111,7 +114,6 @@ const MemberItem: React.FC<{ member: Member; isAdmin: boolean }> = ({
   );
 };
 
-
 // --- COMPOSANT PRINCIPAL (Liste des Membres) ---
 
 export const MembersList: React.FC = () => {
@@ -126,7 +128,9 @@ export const MembersList: React.FC = () => {
       {/* HEADER */}
       <section className="members-header-section detail-header">
         <div className="fiche-title-box">
-          <h1 className="fiche-title">Gestion de l'équipe de {mockEnsemble.name}</h1>
+          <h1 className="fiche-title">
+            Gestion de l'équipe de {mockEnsemble.name}
+          </h1>
         </div>
       </section>
 
@@ -143,7 +147,7 @@ export const MembersList: React.FC = () => {
               className="invite-button-lg"
               onClick={() =>
                 alert(
-                  `Ouvrir la modal d'invitation pour l'ensemble ID: ${ensembleId}`
+                  `Ouvrir la modal d'invitation pour l'ensemble ID: ${ensembleId}`,
                 )
               }
             >
@@ -155,8 +159,6 @@ export const MembersList: React.FC = () => {
             Membres Actuels ({mockMembers.length} membres)
           </h3>
 
-
-
           {/* Liste des membres */}
           <div className="members-list">
             {mockMembers.map((member) => (
@@ -167,7 +169,6 @@ export const MembersList: React.FC = () => {
               />
             ))}
           </div>
-
         </div>
       </main>
     </div>

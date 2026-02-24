@@ -130,12 +130,12 @@ export const AddEnsemble = () => {
 
       // Mise à jour du rôle seulement si c'est une création
       if (!isEditing) {
-        updateUserRole(newEnsembleId.toString(), "admin");
+        updateUserRole(newEnsembleId.toString(), "ADMIN");
       }
 
       //  Mise à jour du contexte pour que l'utilisateur devienne admin
       if (!ensembleId) {
-        updateUserRole(newEnsembleId.toString(), "admin");
+        updateUserRole(newEnsembleId.toString(), "ADMIN");
       }
 
       toast.success(

@@ -22,7 +22,7 @@ const NotificationPage: React.FC = () => {
       })
       .sort(
         (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
   }, [notifications, filterType, filterReadStatus]);
 
@@ -43,7 +43,7 @@ const NotificationPage: React.FC = () => {
               <option value="ALL">Tous les types</option>
               <option value="INVITATION">Invitations</option>
               <option value="MORCEAU_AJOUTE">Morceaux ajoutés</option>
-                <option value="RATTACHEMENT">Rattachement</option>
+              <option value="RATTACHEMENT">Rattachement</option>
               <option value="GENERAL">Général</option>
             </select>
           </label>

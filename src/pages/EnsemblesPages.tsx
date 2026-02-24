@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Spinner from "./Spinner";
 
 import "../styles/MonEspace.css";
-import { FaUsers, FaPlus } from "react-icons/fa";
+import { FaUsers, FaPlus, FaCrown } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import userProfilePic from "../assets/femme-5222905_1920.jpg";
@@ -87,7 +87,18 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
     <div className="ensemble-card">
       <FaUsers size={40} className="ensemble-icon" aria-hidden="true" />
       <div className="ensemble-details">
-        <h3>{ensemble.nom}</h3>
+        {/* <h3>{ensemble.nom}</h3> */}
+        <h3>
+          {ensemble.nom}{" "}
+          {ensemble.userRole === "ADMIN" && (
+            <FaCrown
+              title="Administrateur"
+              style={{ color: "gold", marginLeft: "5px" }}
+              aria-label="Administrateur"
+            />
+          )}
+        </h3>
+
         <p>Description : {ensemble.description}</p>
         <p>Type : {typeLabels[ensemble.typeEnsemble]}</p>
         <p>Membres : {ensemble.nombreMembres}</p>
@@ -145,36 +156,36 @@ export const EnsemblesPage = () => {
 
 
   useEffect(() => {
-  if (!user) return;
+    if (!user) return;
 
-  const fetchEnsembles = async () => {
-    setLoading(true);
-    try {
-      // 1️⃣ On récupère les ensembles de l'utilisateur
-      const res = await fetch(`http://localhost:8080/api/ensembles/user/${user.id}`);
-      if (!res.ok) throw new Error("Erreur de chargement");
-      const data: Ensemble[] = await res.json();
+    const fetchEnsembles = async () => {
+      setLoading(true);
+      try {
+        // 1️⃣ On récupère les ensembles de l'utilisateur
+        const res = await fetch(`http://localhost:8080/api/ensembles/user/${user.id}`);
+        if (!res.ok) throw new Error("Erreur de chargement");
+        const data: Ensemble[] = await res.json();
 
-      // 2️⃣ Pour chaque ensemble, on récupère le nombre de membres via le nouvel endpoint
-      const ensemblesAvecMembres = await Promise.all(
-        data.map(async (ensemble) => {
-          const nombreMembres = await fetchNombreMembres(ensemble.id);
-          return { ...ensemble, nombreMembres };
-        })
-      );
+        // 2️⃣ Pour chaque ensemble, on récupère le nombre de membres via le nouvel endpoint
+        const ensemblesAvecMembres = await Promise.all(
+          data.map(async (ensemble) => {
+            const nombreMembres = await fetchNombreMembres(ensemble.id);
+            return { ...ensemble, nombreMembres };
+          })
+        );
 
-      // 3️⃣ On met à jour le state avec le nombre de membres
-      setEnsembles(ensemblesAvecMembres);
-    } catch (error) {
-      toast.error("Erreur lors du chargement des ensembles.");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        // 3️⃣ On met à jour le state avec le nombre de membres
+        setEnsembles(ensemblesAvecMembres);
+      } catch (error) {
+        toast.error("Erreur lors du chargement des ensembles.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchEnsembles();
-}, [user]);
+    fetchEnsembles();
+  }, [user]);
 
 
   if (loadingUser) return <Spinner message="Chargement de l'utilisateur..." />;
@@ -194,25 +205,7 @@ export const EnsemblesPage = () => {
 
       <main className="ensembles-main">
         <div className="profile-section">
-          {/* <img
-            src={userProfilePic}
-            alt="Photo de profil"
-            className="profile-pic"
-          /> */}
 
-          {/* <img
-            src={user?.photoProfil ? user.photoProfil : userProfilePic}
-            alt={`Photo de profil de ${user?.prenom ?? "Utilisateur"}`}
-            className="profile-pic"
-          /> */}
-          {/* {user && (
-            <ProfilePhotoUpdater
-              currentPhoto={user.photoProfil ?? userProfilePic}
-              onPhotoUpdated={(newPhotoUrl: string) =>
-                updateUser({ photoProfil: newPhotoUrl })
-              }
-            />
-          )} */}
           {user && (
             <ProfilePhotoUpdater
               currentPhoto={

@@ -46,7 +46,7 @@ export const Invitation: React.FC = () => {
 
   const updateMessage = (id: number, message: string) => {
     setInvitations((prev) =>
-      prev.map((inv) => (inv.id === id ? { ...inv, message } : inv))
+      prev.map((inv) => (inv.id === id ? { ...inv, message } : inv)),
     );
   };
 
@@ -54,7 +54,7 @@ export const Invitation: React.FC = () => {
     try {
       const response = await fetch(
         `http://localhost:8080/api/invitations/resend/${invId}`,
-        { method: "POST" }
+        { method: "POST" },
       );
       if (!response.ok) {
         const errorData = await response.json();
@@ -76,7 +76,7 @@ export const Invitation: React.FC = () => {
       inv.emailInvite.toLowerCase().includes(searchText.toLowerCase()) ||
       (inv.role?.toLowerCase().includes(searchText.toLowerCase()) ?? false) ||
       (inv.instrument?.toLowerCase().includes(searchText.toLowerCase()) ??
-        false)
+        false),
   );
 
   // ---------------------------------------------------
