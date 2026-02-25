@@ -152,8 +152,7 @@ export const EnsembleDetails = () => {
   const [listeMorceaux, setListeMorceaux] = useState<Morceau[]>([]);
   const [loadingListe, setLoadingListe] = useState(true);
 
-  const [dernierMorceau, setDernierMorceau] =
-    useState<DernierMorceauAPI | null>(null);
+  const [dernierMorceau, setDernierMorceau] = useState<DernierMorceauAPI | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingMorceau, setLoadingMorceau] = useState(true);
 
@@ -161,24 +160,18 @@ export const EnsembleDetails = () => {
   const [name, setName] = useState("");
 
   const [showInvitationModal, setShowInvitationModal] = useState(false);
-
   const [ensemble, setEnsemble] = useState<Ensemble | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const { user } = useAuth();
-
-  const [invitationResponse, setInvitationResponse] =
-    useState<InvitationDTO | null>(null);
+  const [invitationResponse, setInvitationResponse] = useState<InvitationDTO | null>(null);
 
   // --- API ---
-
   const fetchAllMorceaux = async () => {
     setLoadingListe(true);
     try {
-      const response = await axios.get<Morceau[]>(
-        `${API_BASE_URL}/morceaux/ensemble/${ensembleIdNumber}`,
-      );
+      const response = await axios.get<Morceau[]>(`${API_BASE_URL}/morceaux/ensemble/${ensembleIdNumber}`);
       setListeMorceaux(response.data);
     } catch (error) {
       toast.error("Impossible de charger la liste des morceaux.");
@@ -207,21 +200,10 @@ export const EnsembleDetails = () => {
       try {
         setLoading(true);
         setError(null);
+        const response = await fetch(`${API_BASE_URL}/ensembles/${ensembleIdNumber}?userId=${user?.id}`);
 
-        // const response = await fetch(
-        //   `http://localhost:8080/api/ensembles/${ensembleId}/forUser/${user.id}`
-        // );
-        const response = await fetch(
-          `${API_BASE_URL}/ensembles/${ensembleIdNumber}?userId=${user?.id}`,
-        );
-
-        if (!response.ok)
-          throw new Error(`Erreur serveur : ${response.status}`);
-
+        if (!response.ok) throw new Error(`Erreur serveur : ${response.status}`);
         const data: Ensemble = await response.json();
-
-        console.log("ENSEMBLE RECU :", data);
-
         setEnsemble(data);
       } catch (error: any) {
         setError(error.message);
@@ -236,7 +218,7 @@ export const EnsembleDetails = () => {
       fetchLastMorceau();
       fetchAllMorceaux();
     }
-  }, [ensembleIdNumber]);
+  }, [ensembleIdNumber, user]);
 
   const handleMorceauAdded = () => {
     setIsModalOpen(false);
@@ -244,11 +226,8 @@ export const EnsembleDetails = () => {
     fetchAllMorceaux();
   };
 
-  if (!ensemble) return <div>Ensemble non trouvé.</div>;
-
   const handleInviteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!email.trim()) {
       toast.error("Veuillez saisir une adresse email valide");
       return;
@@ -268,8 +247,6 @@ export const EnsembleDetails = () => {
         toast.success("Invitation envoyée !");
         setShowInvitationModal(false);
       }
-
-      //  correction bloc try/catch
       setEmail("");
       setName("");
     } catch (error: any) {
@@ -278,13 +255,6 @@ export const EnsembleDetails = () => {
   };
 
   const handleSupprimerEnsemble = async () => {
-    console.log(
-      "Deleting ensembleId:",
-      ensembleIdNumber,
-      "for userId:",
-      user?.id,
-    );
-
     const confirmed = await toastConfirmDelete();
     if (!confirmed) return;
 
@@ -297,70 +267,49 @@ export const EnsembleDetails = () => {
     }
   };
 
-  if (loading)
-    return <div className="details-container">Chargement de l'ensemble...</div>;
-
+  if (loading) return <div className="details-container">Chargement de l'ensemble...</div>;
   if (error) return <div className="details-container">Erreur : {error}</div>;
+  if (!ensemble) return <div className="details-container">Ensemble non trouvé.</div>;
 
   return (
     <div className="details-container">
       <main className="details-main">
         <div className="details-content-card fiche-card">
+          
           {/* ENSEMBLE HEADER */}
           <div className="ensemble-header-card">
             <img
               src={avatarFlo}
               alt={`Image de ${ensemble.nom}`}
               className="ensemble-image"
-              style={{
-                width: "120px",
-                height: "120px",
-                objectFit: "cover",
-                borderRadius: "8px",
-              }}
+              style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "8px" }}
             />
-
-            {/* INFOS DE L'ENSEMBLE */}
 
             <div className="ensemble-info">
               <h2 className="ensemble-name">{ensemble.nom}</h2>
-
-              {/* --- Nouvelle ligne pour la date --- */}
               <p>
-                Créé le :{" "}
-                {ensemble.dateCreation
-                  ? format(parseISO(ensemble.dateCreation), "dd/MM/yyyy")
-                  : "Date inconnue"}
+                Créé le : {ensemble.dateCreation ? format(parseISO(ensemble.dateCreation), "dd/MM/yyyy") : "Date inconnue"}
               </p>
 
               <div className="ensemble-buttons">
-                {ensemble &&
-                  (ensemble.userRole === "ADMIN" || ensemble.creator) && (
-                    <button
-                      type="button"
-                      className="submit-button validate-button"
-                      onClick={() => navigate(`/ensembles/${ensemble.id}/edit`)}
-                    >
-                      <FaPlus /> Modifier l'ensemble
-                    </button>
-                  )}
-
-                {((ensemble.userRole && canDelete(ensemble.userRole)) ||
-                  ensemble.creator) && (
-                    <button
-                      className="delete-button"
-                      onClick={handleSupprimerEnsemble}
-                    >
-                      Supprimer
-                    </button>
-                  )}
-
-                {/* Lien "Gérer les invitations" visible uniquement si l'utilisateur est ADMIN */}
-                {ensemble.userRole === "ADMIN" && (
-                  <Link
-                    to={`/ensembles/${ensembleId}/invitations`}
-                    className="invitations-button"
+                {(ensemble.userRole === "ADMIN" || ensemble.creator) && (
+                  <button
+                    type="button"
+                    className="submit-button validate-button"
+                    onClick={() => navigate(`/ensembles/${ensemble.id}/edit`)}
                   >
+                    <FaPlus /> Modifier l'ensemble
+                  </button>
+                )}
+
+                {((ensemble.userRole && canDelete(ensemble.userRole)) || ensemble.creator) && (
+                  <button className="delete-button" onClick={handleSupprimerEnsemble}>
+                    Supprimer
+                  </button>
+                )}
+
+                {ensemble.userRole === "ADMIN" && (
+                  <Link to={`/ensembles/${ensembleId}/invitations`} className="invitations-button">
                     Gérer les invitations
                   </Link>
                 )}
@@ -378,19 +327,14 @@ export const EnsembleDetails = () => {
           {/* MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
 
-          Vérifie que l'utilisateur est créateur ou admin
-          {ensemble.creator || ensemble.userRole === "ADMIN" ? (
+          {/* Vérification créateur ou admin */}
+          {(ensemble.creator || ensemble.userRole === "ADMIN") && (
             <div className="add-file-section">
-              <button
-                className="add-file-button"
-                onClick={() => setIsModalOpen(true)}
-              >
+              <button className="add-file-button" onClick={() => setIsModalOpen(true)}>
                 <FaPlus size={14} /> Ajouter un Morceau
               </button>
             </div>
-          ) : null}
-
-
+          )}
 
           <h4 className="subsection-title">Liste des morceaux :</h4>
           <div className="scores-list">
@@ -400,206 +344,110 @@ export const EnsembleDetails = () => {
               <p>Aucun morceau n'est encore disponible pour cet ensemble.</p>
             ) : (
               listeMorceaux.map((morceau) => (
-                <MorceauItem
-                  key={morceau.id}
-                  morceau={morceau}
-                  ensembleId={ensembleIdNumber}
-                />
+                <MorceauItem key={morceau.id} morceau={morceau} ensembleId={ensembleIdNumber} />
               ))
             )}
           </div>
 
-          {/* VIDÉOS */}
-          <h4 className="subsection-title">Vidéos de lives :</h4>
-          <div className="video-grid">
-            {mockVideos.map((video) => (
-              <div key={video.id} className="video-vignette">
-                <FaPlayCircle size={24} className="play-icon" />
-                <div className="video-text">
-                  <p>{video.title}</p>
-                  <p>{video.date}</p>
-                  <p className="youtube-tag">YouTube</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* SECTION INVITATION */}
+{((ensemble.userRole && canModify(ensemble.userRole)) || ensemble.creator) && (
+  <>
+    <button
+      onClick={() => {
+        setShowInvitationModal(true);
+        setInvitationResponse(null);
+      }}
+      type="button"
+      className="invite-trigger-button"
+    >
+      Envoyer invitation
+    </button>
 
-          {/* INVITATION */}
-          {((ensemble.userRole && canModify(ensemble.userRole)) ||
-            ensemble.creator) && (
-              <>
-                <button
-                  onClick={() => {
-                    setShowInvitationModal(true);
-                    setInvitationResponse(null);
-                  }}
-                  type="button"
-                >
-                  Envoyer invitation
-                </button>
-              <>
-                <button
-                  onClick={() => {
-                    setShowInvitationModal(true);
-                    setInvitationResponse(null);
-                  }}
-                  type="button"
-                >
-                  Envoyer invitation
-                </button>
+    {showInvitationModal && (
+      <div
+        className="modal-overlay"
+        onClick={() => setShowInvitationModal(false)}
+      >
+        <div
+          className="modal-content my-modal"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span
+            className="close-modal"
+            onClick={() => setShowInvitationModal(false)}
+          >
+            &times;
+          </span>
 
-                {showInvitationModal && (
-                  <div
-                    className="modal-overlay"
-                    onClick={() => setShowInvitationModal(false)}
-                  >
-                    <div
-                      className="modal-content my-modal"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span
-                        className="close-modal"
-                        onClick={() => setShowInvitationModal(false)}
-                      >
-                        &times;
-                      </span>
-                {showInvitationModal && (
-                  <div
-                    className="modal-overlay"
-                    onClick={() => setShowInvitationModal(false)}
-                  >
-                    <div
-                      className="modal-content my-modal"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span
-                        className="close-modal"
-                        onClick={() => setShowInvitationModal(false)}
-                      >
-                        &times;
-                      </span>
+          <h2>Invitation</h2>
+          <p>
+            Veuillez renseigner les informations de la personne que vous souhaitez inviter :
+          </p>
 
-                      <h2>Invitation</h2>
-                      <p>
-                        Veuillez renseigner les informations de la personne que
-                        vous souhaitez inviter :
-                      </p>
-                      <h2>Invitation</h2>
-                      <p>
-                        Veuillez renseigner les informations de la personne que
-                        vous souhaitez inviter :
-                      </p>
+          <form onSubmit={handleInviteSubmit}>
+            <div className="form-group">
+              <label>Nom :</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Nom"
+                required
+              />
+            </div>
 
-                      <form onSubmit={handleInviteSubmit}>
-                        <div className="form-group">
-                          <label>Nom :</label>
-                          <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Nom"
-                            required
-                          />
-                        </div>
-                      <form onSubmit={handleInviteSubmit}>
-                        <div className="form-group">
-                          <label>Nom :</label>
-                          <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Nom"
-                            required
-                          />
-                        </div>
+            <div className="form-group">
+              <label>Email :</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                required
+              />
+            </div>
 
-                        <div className="form-group">
-                          <label>Email :</label>
-                          <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                            required
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Email :</label>
-                          <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                            required
-                          />
-                        </div>
+            <button type="submit" className="submit-invite-btn">Envoyer</button>
 
-                        <button type="submit">Envoyer</button>
-
-                        {((ensemble.userRole && canModify(ensemble.userRole)) ||
-                          ensemble.creator) &&
-                          invitationResponse?.existant &&
-                          !invitationResponse?.dejaMembre &&
-                          invitationResponse.utilisateurId !== undefined && (
-                            <button
-                              // type="button"
-                              // onClick={() =>
-                              //   rattacherUtilisateur(
-                              //     invitationResponse.utilisateurId,
-                              //     ensembleIdNumber
-                              //   )
-                              // }
-
-                              onClick={() => {
-                                if (invitationResponse?.utilisateurId == null) {
-                                  toast.error(
-                                    "Impossible de rattacher : utilisateurId manquant.",
-                                  );
-                                  return;
-                                }
-                        {((ensemble.userRole && canModify(ensemble.userRole)) ||
-                          ensemble.creator) &&
-                          invitationResponse?.existant &&
-                          !invitationResponse?.dejaMembre &&
-                          invitationResponse.utilisateurId !== undefined && (
-                            <button
-                              onClick={() => {
-                                if (invitationResponse?.utilisateurId == null) {
-                                  toast.error(
-                                    "Impossible de demander le rattachement : utilisateurId manquant.",
-                                  );
-                                  return;
-                                }
-
-                                // Utiliser la nouvelle méthode
-                                demanderRattachement(
-                                  invitationResponse.utilisateurId,
-                                  ensembleIdNumber,
-                                );
-                              }}
-                            >
-                              Demander le rattachement de l'utilisateur à
-                              l'ensemble
-                            </button>
-                          )}
-                      </form>
-                    </div>
-                  </div>
-                )}
-              </>
+            {/* Bouton de rattachement si l'utilisateur existe déjà mais n'est pas membre */}
+            {invitationResponse?.existant && 
+             !invitationResponse?.dejaMembre && 
+             invitationResponse.utilisateurId !== undefined && (
+              <button
+                type="button"
+                className="rattachement-button"
+                onClick={() => {
+                  if (invitationResponse?.utilisateurId == null) {
+                    toast.error("Impossible de demander le rattachement : utilisateurId manquant.");
+                    return;
+                  }
+                  demanderRattachement(
+                    invitationResponse.utilisateurId,
+                    ensembleIdNumber
+                  );
+                }}
+              >
+                Demander le rattachement de l'utilisateur à l'ensemble
+              </button>
             )}
+          </form>
+        </div>
+      </div>
+    )}
+  </>
+)}
+
+          <ToastContainer position="top-right" autoClose={3000} />
+
+          {isModalOpen && (
+            <AjouterMorceauForm
+              onClose={() => setIsModalOpen(false)}
+              onMorceauAdded={handleMorceauAdded}
+              ensembleId={ensembleIdNumber}
+            />
+          )}
         </div>
       </main>
-
-      <ToastContainer position="top-right" autoClose={3000} />
-
-      {isModalOpen && (
-        <AjouterMorceauForm
-          onClose={() => setIsModalOpen(false)}
-          onMorceauAdded={handleMorceauAdded}
-          ensembleId={ensembleIdNumber}
-        />
-      )}
     </div>
   );
 };
