@@ -16,7 +16,7 @@ export const Header = () => {
   const navigate = useNavigate();
 
   // 💡 Utilisation du Hook de Notification
-  const { unreadCount, loading } = useNotifications(); 
+  const { unreadCount, loading } = useNotifications();
   const [showPopUp, setShowPopUp] = useState(false);
 
   const toggleMenu = () => {
@@ -47,25 +47,33 @@ export const Header = () => {
       </a>
 
       <div className="nav-menu">
-        
+
         {/* 💡 Zone de Notification */}
         {isAuthenticated && (
           <div className="notification-area">
-            <button 
-                className="notification-icon-button"
-                onClick={() => setShowPopUp(!showPopUp)}
-                disabled={loading}
+           
+
+
+            <button
+              className="notification-icon-button"
+              onClick={() => setShowPopUp(!showPopUp)}
+              disabled={loading}
+              aria-label={
+                unreadCount > 0
+                  ? `Vous avez ${unreadCount} notifications non lues`
+                  : "Aucune notification"
+              }
             >
               <FaBell size={20} />
               {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
             </button>
-            
+
             {showPopUp && (
-                <NotificationPopUp onClose={() => setShowPopUp(false)} />
+              <NotificationPopUp onClose={() => setShowPopUp(false)} />
             )}
           </div>
         )}
-        
+
         <div className="menu-icon" onClick={toggleMenu}>
           <FaBars />
         </div>

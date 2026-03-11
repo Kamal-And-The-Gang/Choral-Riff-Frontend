@@ -44,6 +44,7 @@ const NotificationPage: React.FC = () => {
               <option value="ALL">Tous les types</option>
               <option value="INVITATION">Invitations</option>
               <option value="MORCEAU_AJOUTE">Morceaux ajoutés</option>
+              <option value="INSTRUMENT_AJOUTE">Instrument ajouté</option> {/* <-- nouveau */}
               <option value="RATTACHEMENT">Rattachement</option>
               <option value="GENERAL">Général</option>
             </select>

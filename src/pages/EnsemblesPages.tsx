@@ -161,12 +161,12 @@ export const EnsemblesPage = () => {
     const fetchEnsembles = async () => {
       setLoading(true);
       try {
-        // 1️⃣ On récupère les ensembles de l'utilisateur
+        //  On récupère les ensembles de l'utilisateur
         const res = await fetch(`http://localhost:8080/api/ensembles/user/${user.id}`);
         if (!res.ok) throw new Error("Erreur de chargement");
         const data: Ensemble[] = await res.json();
 
-        // 2️⃣ Pour chaque ensemble, on récupère le nombre de membres via le nouvel endpoint
+        //  Pour chaque ensemble, on récupère le nombre de membres via le nouvel endpoint
         const ensemblesAvecMembres = await Promise.all(
           data.map(async (ensemble) => {
             const nombreMembres = await fetchNombreMembres(ensemble.id);
@@ -174,7 +174,7 @@ export const EnsemblesPage = () => {
           })
         );
 
-        // 3️⃣ On met à jour le state avec le nombre de membres
+        //  On met à jour le state avec le nombre de membres
         setEnsembles(ensemblesAvecMembres);
       } catch (error) {
         toast.error("Erreur lors du chargement des ensembles.");

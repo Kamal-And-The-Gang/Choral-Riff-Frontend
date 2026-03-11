@@ -12,6 +12,7 @@ import { handleAddInstrumentSubmit } from "../../api/documentInstruments";
 
 import { getAllInstruments } from "../../api/documentInstruments";
 import { useAuth } from "../../contexts/AuthContext";
+import { fetchEnsembleById } from "../../api/ensemble";
 
 // Ajout du champ URL pour permettre un aperçu du document
 export type ExtendedFileItem = FileItem & {
@@ -137,27 +138,54 @@ export const TrackDetails = () => {
     ensembleId: currentEnsembleId,
   };
 
+  // useEffect(() => {
+  //   if (state?.ensembleNom) {
+  //     setEnsembleNom(state.ensembleNom);
+  //   } else if (token) {
+  //     // Requête API avec token
+  //     axios
+  //       .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`, {
+  //         headers: { Authorization: `Bearer ${token}` }, // <-- important
+  //       })
+  //       .then((res) => {
+  //         console.log("Réponse API Ensemble :", res.data);
+  //         setEnsembleNom(res.data.nom);
+  //       })
+  //       .catch((err) => {
+  //         console.error("Erreur récupération nom ensemble :", err);
+  //         setEnsembleNom("Nom inconnu");
+  //       });
+  //   } else {
+  //     setEnsembleNom("Nom inconnu");
+  //   }
+  // }, [currentEnsembleId, state?.ensembleNom, token]);
+
+
   useEffect(() => {
+  const fetchEnsemble = async () => {
     if (state?.ensembleNom) {
       setEnsembleNom(state.ensembleNom);
-    } else if (token) {
-      // Requête API avec token
-      axios
-        .get(`http://localhost:8080/api/ensembles/${currentEnsembleId}`, {
-          headers: { Authorization: `Bearer ${token}` }, // <-- important
-        })
-        .then((res) => {
-          console.log("Réponse API Ensemble :", res.data);
-          setEnsembleNom(res.data.nom);
-        })
-        .catch((err) => {
-          console.error("Erreur récupération nom ensemble :", err);
-          setEnsembleNom("Nom inconnu");
-        });
-    } else {
+      return;
+    }
+
+    if (!token) {
+      setEnsembleNom("Nom inconnu");
+      return;
+    }
+
+    try {
+      const userId = 1; // ou récupéré dynamiquement selon ton AuthContext
+      const ensemble = await fetchEnsembleById(currentEnsembleId.toString(), userId);
+      setEnsembleNom(ensemble.nom);
+    } catch (err) {
+      console.error(err);
       setEnsembleNom("Nom inconnu");
     }
-  }, [currentEnsembleId, state?.ensembleNom, token]);
+  };
+
+  fetchEnsemble();
+}, [currentEnsembleId, state?.ensembleNom, token]);
+
 
   // --- Récupération des documents du morceau ---
   useEffect(() => {
@@ -213,17 +241,39 @@ export const TrackDetails = () => {
   //     return;
   //   }
 
+// const handleDelete = async (id: number) => {
+//   const confirmed = await toastConfirmDeleteDocument();
+//   if (!confirmed) return;
+
+//   const utilisateurId = 1; // même logique que l’upload (test)
+
+//   try {
+//     await axios.delete(
+//       `http://localhost:8080/api/documents/${id}`,
+//       {
+//         params: { utilisateurId }, // 👈 query param
+//       }
+//     );
+
+//     setFiles((prev) => prev.filter((file) => file.id !== id));
+//     toast.success("Fichier supprimé avec succès !");
+//   } catch (err) {
+//     console.error("Erreur lors de la suppression :", err);
+//     toast.error("Impossible de supprimer le fichier.");
+//   }
+// };
+
 const handleDelete = async (id: number) => {
   const confirmed = await toastConfirmDeleteDocument();
   if (!confirmed) return;
 
-  const utilisateurId = 1; // même logique que l’upload (test)
+  const userId = 1; // pour test
 
   try {
     await axios.delete(
       `http://localhost:8080/api/documents/${id}`,
       {
-        params: { utilisateurId }, // 👈 query param
+        params: { userId }, // ✅ nom identique au controller
       }
     );
 
@@ -234,8 +284,6 @@ const handleDelete = async (id: number) => {
     toast.error("Impossible de supprimer le fichier.");
   }
 };
-
-
 
 
 
@@ -282,16 +330,58 @@ const handleDelete = async (id: number) => {
 
 
   // --- Ajout d'un document sans JWT ---
+// const handleAddDocument = async (file: File) => {
+//   // Ici on peut mettre un utilisateurId fixe pour les tests
+//   const utilisateurId = 1; // <- à changer selon ton utilisateur de test
+
+//   const formData = new FormData();
+//   formData.append("file", file);
+//   formData.append("type", "partition");
+//   formData.append("format", file.name.split(".").pop() || "PDF");
+//   formData.append("morceauId", currentTrackId.toString());
+//   formData.append("utilisateurId", utilisateurId.toString()); // <- ajouté
+
+//   try {
+//     const res = await axios.post(
+//       "http://localhost:8080/api/documents/upload",
+//       formData
+//     );
+
+//     setFiles((prev) => [
+//       ...prev,
+//       {
+//         id: res.data.id_document,
+//         name: res.data.urlFichier.split("/").pop(),
+//         type: res.data.type,
+//         format: res.data.format,
+//         size: "-",
+//         role: res.data.type,
+//       },
+//     ]);
+
+//     toast.success("Document ajouté !");
+//   } catch (err) {
+//     console.error(err);
+//     toast.error("Erreur lors de l'ajout du document");
+//   }
+// };
+
+// --- Upload d’un document ---
+// --- Ajout d'un document avec utilisateur dynamique ---
+const { user } = useAuth(); // récupère l'utilisateur connecté
+
 const handleAddDocument = async (file: File) => {
-  // Ici on peut mettre un utilisateurId fixe pour les tests
-  const utilisateurId = 1; // <- à changer selon ton utilisateur de test
+  if (!user) {
+    toast.error("Vous devez être connecté pour ajouter un document.");
+    return;
+  }
 
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("type", "partition");
+  formData.append("type", "partition"); // ou "audio", selon le cas
   formData.append("format", file.name.split(".").pop() || "PDF");
   formData.append("morceauId", currentTrackId.toString());
-  formData.append("utilisateurId", utilisateurId.toString()); // <- ajouté
+  formData.append("utilisateurId", user.id.toString()); // ✅ utilisateur dynamique
 
   try {
     const res = await axios.post(
@@ -312,8 +402,8 @@ const handleAddDocument = async (file: File) => {
     ]);
 
     toast.success("Document ajouté !");
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    console.error("Erreur lors de l'ajout du document :", err);
     toast.error("Erreur lors de l'ajout du document");
   }
 };

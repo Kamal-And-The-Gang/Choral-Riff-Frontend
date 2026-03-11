@@ -22,6 +22,8 @@ const getIconAndColor = (type: NotificationType) => {
       return { icon: <FaUserPlus />, color: "#ff9900" };
     case "DEMANDE_RATTACHEMENT": // Demande de rattachement => orange aussi
       return { icon: <FaUserPlus />, color: "#ff9900" };
+       case "INSTRUMENT_AJOUTE":  // <-- nouveau
+      return { icon: <FaMusic />, color: "#17a2b8" }; // bleu clair par exemple
     case "GENERAL":
     default:
       return { icon: <FaInfoCircle />, color: "#6c757d" };

@@ -1,10 +1,10 @@
 export type NotificationType =
   | "INVITATION"
   | "MORCEAU_AJOUTE"
+  | "INSTRUMENT_AJOUTE" // <-- nouveau type
   | "GENERAL"
   | "RATTACHEMENT" // ← nouveau type pour l’admin qui rattache
   | "DEMANDE_RATTACHEMENT"; // ← nouveau type pour l’admin qui rattache
-
 
 export type InvitationStatus = "EN_ATTENTE" | "ACCEPTEE" | "REFUSEE";
 
@@ -34,6 +34,11 @@ export type NotificationDTO = {
   // ← nouveau champ
   morceauTitre?: string;
 
-    // <-- Ajouter le champ valid
+  // <-- Ajouter le champ valid
   valid?: boolean;
+
+
+
+  // Pour instruments
+  documentId?: number; // <-- nouveau champ facultatif
 };

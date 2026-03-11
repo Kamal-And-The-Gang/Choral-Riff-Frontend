@@ -394,7 +394,7 @@ export const EnsembleDetails = () => {
           {/* MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
 
-          Vérifie que l'utilisateur est créateur ou admin
+          {/* Vérifie que l'utilisateur est créateur ou admin */}
           {ensemble.creator || ensemble.userRole === "ADMIN" ? (
             <div className="add-file-section">
               <button
@@ -444,7 +444,18 @@ export const EnsembleDetails = () => {
           {((ensemble.userRole && canModify(ensemble.userRole)) ||
             ensemble.creator) && (
               <>
+                {/* <button
+                  onClick={() => {
+                    setShowInvitationModal(true);
+                    setInvitationResponse(null);
+                  }}
+                  type="button"
+                >
+                  Envoyer invitation
+                </button> */}
+
                 <button
+                  className="invite-ensemble-button"
                   onClick={() => {
                     setShowInvitationModal(true);
                     setInvitationResponse(null);
@@ -453,6 +464,11 @@ export const EnsembleDetails = () => {
                 >
                   Envoyer invitation
                 </button>
+
+
+
+
+
 
                 {showInvitationModal && (
                   <div
