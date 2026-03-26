@@ -284,6 +284,7 @@ export interface components {
             utilisateurId?: number;
             /** Format: int64 */
             morceauId?: number;
+            
         };
         MorceauDto: {
             /** Format: int64 */
