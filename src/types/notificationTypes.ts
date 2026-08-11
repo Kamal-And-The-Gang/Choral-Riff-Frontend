@@ -2,6 +2,7 @@ export type NotificationType =
   | "INVITATION"
   | "MORCEAU_AJOUTE"
   | "INSTRUMENT_AJOUTE" // <-- nouveau type
+  | "DOCUMENT"
   | "GENERAL"
   | "RATTACHEMENT" // ← nouveau type pour l’admin qui rattache
   | "DEMANDE_RATTACHEMENT"; // ← nouveau type pour l’admin qui rattache
@@ -36,8 +37,6 @@ export type NotificationDTO = {
 
   // <-- Ajouter le champ valid
   valid?: boolean;
-
-
 
   // Pour instruments
   documentId?: number; // <-- nouveau champ facultatif

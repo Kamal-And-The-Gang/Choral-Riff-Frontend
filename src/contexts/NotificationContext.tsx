@@ -221,10 +221,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     [navigate]
   );
 
-
-
-
-
   const contextValue = {
     notifications,
     unreadCount,

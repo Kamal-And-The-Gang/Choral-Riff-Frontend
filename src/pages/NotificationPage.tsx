@@ -11,12 +11,17 @@ const NotificationPage: React.FC = () => {
 
   const [filterType, setFilterType] = useState<NotificationType | "ALL">("ALL");
   const [filterReadStatus, setFilterReadStatus] = useState<"ALL" | "UNREAD" | "READ">("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+
 
   const filteredNotifications = useMemo(() => {
     return notifications
       .filter((notif) => {
         if (notif.valid === false) return false;
-        if (filterType !== "ALL" && notif.type !== filterType) return false;
+        if (filterType === "RATTACHEMENT") {
+          if (notif.type !== "RATTACHEMENT" && notif.type !== "DEMANDE_RATTACHEMENT") return false;
+        } else if (filterType !== "ALL" && notif.type !== filterType) return false;
         if (filterReadStatus === "UNREAD" && notif.isRead) return false;
         if (filterReadStatus === "READ" && !notif.isRead) return false;
         return true;
@@ -24,9 +29,16 @@ const NotificationPage: React.FC = () => {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [notifications, filterType, filterReadStatus]);
 
+  const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
+
+  const paginatedNotifications = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredNotifications.slice(start, start + itemsPerPage);
+  }, [filteredNotifications, currentPage]);
+
   return (
     <div className="notification-page-container">
-      <h2>Centre de notifications 🔔</h2>
+      <h2>Mes notifications 🎵</h2>
 
       <div className="controls-section">
         <div className="filters">
@@ -41,6 +53,7 @@ const NotificationPage: React.FC = () => {
               <option value="MORCEAU_AJOUTE">Morceaux ajoutés</option>
               <option value="INSTRUMENT_AJOUTE">Instrument ajouté</option>
               <option value="RATTACHEMENT">Rattachement</option>
+              <option value="DOCUMENT">Documents</option>
               <option value="GENERAL">Général</option>
             </select>
           </label>
@@ -70,16 +83,42 @@ const NotificationPage: React.FC = () => {
           <Spinner message="Chargement des notifications..." />
         ) : filteredNotifications.length === 0 ? (
           <p className="no-results">Aucune notification trouvée selon les filtres appliqués.</p>
-        ) : (
-          filteredNotifications.map((notif) => (
-            <NotificationItem
-              key={notif.id}
-              notification={notif}
-              onActionComplete={() => { }}
-            />
-          ))
-        )}
+        ) :
+
+          (
+            paginatedNotifications.map((notif) => (
+              <NotificationItem
+                key={notif.id}
+                notification={notif}
+                onActionComplete={() => { }}
+              />
+            ))
+          )
+
+
+
+        }
       </div>
+
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            ← Précédent
+          </button>
+
+          <span>{currentPage} / {totalPages}</span>
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Suivant →
+          </button>
+        </div>
+      )}
     </div>
   );
 };

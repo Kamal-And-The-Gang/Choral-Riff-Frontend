@@ -24,6 +24,8 @@ const getIconAndColor = (type: NotificationType) => {
       return { icon: <FaUserPlus />, color: "#ff9900" };
     case "INSTRUMENT_AJOUTE":
       return { icon: <FaMusic />, color: "#17a2b8" };
+      case "DOCUMENT":
+  return { icon: <FaMusic />, color: "#6f42c1" };
     case "GENERAL":
     default:
       return { icon: <FaInfoCircle />, color: "#6c757d" };
