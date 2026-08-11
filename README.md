@@ -1,10 +1,28 @@
-# Choral-Riff-Frontend
+# Choral-Riff-Frontend 🎵
+
+
+## Sommaire
+
+* [Description](#description)
+* [Technologies](#technologies)
+* [Fonctionnalités](#fonctionnalités)
+* [Organisation du projet](#organisation-du-projet)
+* [Authentification](#authentification)
+* [Communication avec l'API](#communication-avec-lapi)
+* [Gestion des notifications](#gestion-des-notifications)
+* [Navigation](#navigation)
+* [Architecture générale](#architecture-générale)
+* [Installation](#installation)
+* [Ma contribution](#ma-contribution)
+* [Contexte](#contexte)
+
 
 ## Description
 
-Le frontend de Choral Riff fournit une interface web permettant aux utilisateurs de gérer leurs ensembles musicaux, leurs morceaux et leurs ressources associées.
+Le frontend de **Choral-Riff** est une application web développée avec React.
+Il permet aux utilisateurs de gérer leurs ensembles musicaux, leurs membres, leurs morceaux, leurs documents et leurs notifications.
 
-Il communique avec l'API REST Spring Boot du backend pour accéder aux fonctionnalités métier de l'application.
+Le frontend communique avec une API REST développée avec **Java / Spring Boot**.
 
 ## Technologies
 
@@ -22,63 +40,50 @@ Il communique avec l'API REST Spring Boot du backend pour accéder aux fonctionn
 
 ### Authentification
 
-* Inscription des utilisateurs
+* Inscription
 * Connexion
 * Déconnexion
-* Gestion de l'espace utilisateur
-* Gestion des invitations lors de l'inscription
-* Communication avec les endpoints d'authentification du backend
+* Gestion de la session utilisateur
+* Gestion des invitations
 
 ### Gestion des ensembles
 
 * Création d'un ensemble
 * Consultation des ensembles
-* Consultation du détail d'un ensemble
 * Modification d'un ensemble
-* Gestion des membres
-* Gestion des pupitres et des rôles
+* Consultation des membres
+* Gestion des rôles au sein des ensembles
 
-### Gestion des morceaux et ressources
+### Gestion des morceaux et documents
 
 * Ajout de morceaux
-* Consultation du détail d'un morceau
-* Gestion des documents et ressources multimédias
-* Accès aux ressources associées aux ensembles
+* Consultation des morceaux
+* Accès aux documents associés
+* Gestion des ressources musicales
 
-### Invitations et rattachements
+### Invitations
 
+* Réception d'invitations
 * Acceptation ou refus d'une invitation
-* Gestion des rattachements aux ensembles
-* Rattachement automatique après inscription
-* Gestion des invitations par token
-* Redirection vers l'ensemble après acceptation
+* Rattachement à un ensemble
+* Gestion du rattachement après inscription
 
-### Système de notifications
+### Notifications
 
-La gestion des notifications est centralisée avec la Context API de React.
+* Affichage des notifications
+* Nombre de notifications non lues
+* Marquage d'une notification comme lue
+* Marquage de toutes les notifications comme lues
+* Gestion des invitations et demandes de rattachement depuis les notifications
 
-Le `NotificationProvider` permet notamment :
-
-* De récupérer les notifications de l'utilisateur
-* De calculer le nombre de notifications non lues
-* De marquer une notification comme lue
-* De marquer toutes les notifications comme lues
-* D'accepter ou refuser les invitations
-* De gérer les demandes de rattachement
-* De mettre à jour l'interface après une action utilisateur
-
-Les notifications sont actualisées périodiquement afin de maintenir l'interface synchronisée avec le backend.
-
-Les retours utilisateur sont affichés avec React Toastify.
-
-## Architecture
+## Organisation du projet
 
 ```text
 src/
 ├── api/
 │   ├── authApi.ts
-│   ├── NotificationApi
-│   └── invitationApi
+│   ├── invitationApi
+│   └── NotificationApi
 │
 ├── components/
 │   ├── Header
@@ -98,105 +103,133 @@ src/
 │   ├── MembersList
 │   ├── TrackDetails
 │   ├── Invitation
-│   ├── InvitationAcceptPage
 │   └── NotificationPage
 │
-└── App.jsx
+└── App.tsx
 ```
 
-L'organisation du projet sépare les pages, les composants réutilisables, les contextes de gestion d'état et les modules responsables des appels à l'API.
+L'organisation permet de séparer les pages, les composants réutilisables, les appels à l'API et certains états partagés de l'application.
 
-## Gestion de l'état
+## Authentification
 
-La Context API de React est utilisée pour partager certaines données entre les différentes pages.
+L'application utilise un système d'authentification basé sur un token fourni par le backend.
 
-Le `AuthContext` centralise les informations liées à l'utilisateur connecté.
+Le frontend utilise notamment un `AuthContext` pour :
 
-Le `NotificationProvider` centralise quant à lui :
+* conserver l'état de connexion de l'utilisateur ;
+* restaurer la session lors du rechargement de l'application ;
+* récupérer certaines informations présentes dans le token ;
+* gérer la connexion et la déconnexion ;
+* gérer les rôles associés aux ensembles.
 
-* les notifications ;
-* le nombre de notifications non lues ;
-* leur état de lecture ;
-* les actions liées aux invitations ;
-* les actions de rattachement à un ensemble.
+Les contrôles de sécurité et les autorisations définitives sont assurés par le backend.
 
-## Communication avec le backend
+## Communication avec l'API
 
-Le frontend communique avec l'API REST Spring Boot à travers des modules dédiés.
+Les communications avec le backend sont réalisées à l'aide de la Fetch API et d'Axios.
 
-Les requêtes HTTP utilisent la Fetch API et Axios selon les fonctionnalités.
-
-L'URL de l'API peut être configurée avec une variable d'environnement Vite :
+L'adresse de l'API peut être configurée avec une variable d'environnement Vite :
 
 ```text
 VITE_API_URL
 ```
 
-Cela permet d'utiliser différentes configurations selon l'environnement d'exécution.
+Les appels à l'API sont regroupés dans différents fichiers afin de séparer cette partie de la logique des pages et des composants.
 
-Les données échangées avec le backend sont typées à partir de schémas générés de l'API, notamment pour les DTO d'inscription, de connexion et d'utilisateur.
+## Gestion des notifications
 
-Les erreurs HTTP sont également traitées côté frontend afin d'informer l'utilisateur lorsqu'une opération échoue.
+La gestion des notifications est centralisée avec la Context API de React.
+
+Le `NotificationContext` permet notamment de gérer :
+
+* le chargement des notifications ;
+* le nombre de notifications non lues ;
+* leur statut de lecture ;
+* les invitations ;
+* les demandes de rattachement.
+
+Les notifications sont régulièrement actualisées afin de récupérer les éventuelles nouvelles notifications.
 
 ## Navigation
 
-React Router permet de gérer les différents parcours de l'application :
+La navigation de l'application est gérée avec React Router.
 
+Quelques exemples de parcours :
+
+* Connexion
+* Inscription
 * Tableau de bord
 * Ensembles
-* Détails d'un ensemble
-* Membres
+* Membres d'un ensemble
 * Morceaux
 * Invitations
 * Notifications
-* Authentification
 
-## Architecture globale
+## Architecture générale
 
 ```text
-┌──────────────────────────────┐
-│        React / Vite          │
-│          Frontend            │
-│                              │
-│ Pages / Components           │
-│ Contexts / API Services      │
-└──────────────┬───────────────┘
-               │
-               │ API REST / HTTP
-               ▼
-┌──────────────────────────────┐
-│        Spring Boot           │
-│          Backend             │
-│                              │
-│ Controllers / Services       │
-│ Spring Security / JPA        │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│         PostgreSQL           │
-└──────────────────────────────┘
+┌─────────────────────────┐
+│      React / Vite       │
+│        Frontend         │
+│                         │
+│ Pages / Components      │
+│ Contexts / API          │
+└────────────┬────────────┘
+             │
+             │ API REST
+             ▼
+┌─────────────────────────┐
+│     Spring Boot         │
+│        Backend          │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│       PostgreSQL        │
+└─────────────────────────┘
 ```
 
-## Lancement du projet
+## Installation
+
+### Prérequis
+
+* Node.js
+* npm
+
+### Installation
 
 ```bash
 npm install
+```
+
+### Lancement
+
+```bash
 npm run dev
 ```
 
-Le frontend est ensuite accessible depuis le navigateur à l'adresse indiquée par Vite.
+L'application est ensuite accessible à l'adresse indiquée par Vite.
 
-## Contribution technique
+## Ma contribution
 
-Le développement frontend a notamment porté sur :
+Dans le cadre de ce projet, j'ai participé au développement du frontend React et à son intégration avec le backend Spring Boot.
 
-* La création des parcours utilisateurs avec React Router
-* L'intégration de l'API REST Spring Boot
-* La gestion centralisée de l'authentification
-* La gestion centralisée des notifications avec React Context
-* La gestion des invitations et des rattachements aux ensembles
-* L'intégration de données typées à partir des schémas de l'API
-* La configuration de l'URL de l'API via les variables d'environnement
-* La gestion des états de chargement et des erreurs
-* La mise en place de retours utilisateur avec React Toastify
+J'ai notamment travaillé sur :
+
+* la création et l'évolution de pages React ;
+* l'intégration des API REST ;
+* les parcours d'inscription et de connexion ;
+* la gestion des ensembles et de leurs membres ;
+* les invitations et les demandes de rattachement ;
+* la gestion des notifications ;
+* la gestion de l'état avec React Context ;
+* l'intégration des rôles et permissions dans l'interface.
+
+Ce projet m'a permis de mettre en pratique React, TypeScript, les API REST, la gestion d'état et l'intégration d'un frontend avec un backend Java / Spring Boot.
+
+## Contexte
+
+Projet réalisé dans le cadre d'un **stage en association de chant**, pour le titre professionnel **Concepteur Développeur d'Applications (CDA)**.
+
+L'objectif du projet est de proposer une application permettant à une chorale ou un ensemble musical de centraliser ses membres, morceaux, partitions et autres ressources musicales.
+
