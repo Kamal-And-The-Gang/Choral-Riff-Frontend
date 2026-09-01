@@ -40,11 +40,14 @@ export const API_BASE_URL = "http://localhost:8080/api";
  */
 export const creerInvitation = async (
   emailInvite: string,
-  ensembleId: number
+  ensembleId: number,
+    userId: number
 ) => {
   const body = JSON.stringify({ emailInvite, ensembleId });
 
-  const response = await fetch(`${API_BASE_URL}/invitations`, {
+const response = await fetch(
+  `${API_BASE_URL}/invitations?userId=${userId}`,
+  {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body,

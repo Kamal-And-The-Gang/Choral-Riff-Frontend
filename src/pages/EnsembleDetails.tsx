@@ -237,7 +237,7 @@ export const EnsembleDetails = () => {
     }
 
     try {
-      const response = await creerInvitation(email, ensembleIdNumber);
+const response = await creerInvitation(email, ensembleIdNumber, user!.id);
       setInvitationResponse(response);
 
       if (response.existant) {
