@@ -11,11 +11,11 @@ import { jwtDecode } from "jwt-decode";
 
 interface EnsembleRole {
   ensembleId: string;
-  role: "ADMIN" | "MODERATEUR" | "MEMBRE";
+  role: "OWNER" | "MODERATEUR" | "MEMBRE";
 }
 export const canModify = (role?: string | null) =>
-  role === "ADMIN" || role === "MODERATEUR";
-export const canDelete = (role?: string | null) => role === "ADMIN";
+  role === "OWNER" || role === "MODERATEUR";
+export const canDelete = (role?: string | null) => role === "OWNER";
 
 export const isCreator = (creator?: boolean | null) => !!creator;
 
@@ -30,10 +30,10 @@ export const canCreateMorceau = (
 ) => {
   if (!user || !ensemble) return false;
 
-  // Créateur ou admin classique
-  if (ensemble.creator || ensemble.userRole === "ADMIN") return true;
+  // Créateur ou OWNER classique
+  if (ensemble.creator || ensemble.userRole === "OWNER") return true;
 
-  // Cas groupe restreint : QUATUOR ou BAND, tous les membres deviennent admin
+  // Cas groupe restreint : QUATUOR ou BAND, tous les membres deviennent OWNER
   if (
     (ensemble.typeEnsemble === "QUATUOR" || ensemble.typeEnsemble === "BAND") &&
     ensemble.userRole === "MEMBRE"
@@ -63,7 +63,7 @@ interface AuthContextType {
   logout: () => void;
   updateUserRole: (
     ensembleId: string,
-    newRole: "ADMIN" | "MODERATEUR" | "MEMBRE",
+    newRole: "OWNER" | "MODERATEUR" | "MEMBRE",
   ) => void; // <-- corrigé
   updateUser: (updatedUser: Partial<DecodedUser>) => void; // <-- ajouté
 }
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const updateUserRoleForEnsemble = (
     ensembleId: string,
-    newRole: "ADMIN" | "MODERATEUR" | "MEMBRE",
+    newRole: "OWNER" | "MODERATEUR" | "MEMBRE",
   ) => {
     setUser((prev) => {
       if (!prev) return null;

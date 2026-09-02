@@ -4,8 +4,8 @@ export type NotificationType =
   | "INSTRUMENT_AJOUTE" // <-- nouveau type
   | "DOCUMENT"
   | "GENERAL"
-  | "RATTACHEMENT" // ← nouveau type pour l’admin qui rattache
-  | "DEMANDE_RATTACHEMENT"; // ← nouveau type pour l’admin qui rattache
+  | "RATTACHEMENT" // ← nouveau type pour l’OWNER qui rattache
+  | "DEMANDE_RATTACHEMENT"; // ← nouveau type pour l’OWNER qui rattache
 
 export type InvitationStatus = "EN_ATTENTE" | "ACCEPTEE" | "REFUSEE";
 

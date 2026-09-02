@@ -237,7 +237,7 @@ export const EnsembleDetails = () => {
     }
 
     try {
-const response = await creerInvitation(email, ensembleIdNumber, user!.id);
+      const response = await creerInvitation(email, ensembleIdNumber);
       setInvitationResponse(response);
 
       if (response.existant) {
@@ -287,7 +287,7 @@ const response = await creerInvitation(email, ensembleIdNumber, user!.id);
               </p>
 
               <div className="ensemble-buttons">
-                {(ensemble.userRole === "ADMIN" || ensemble.creator) && (
+                {(ensemble.userRole === "OWNER" || ensemble.creator) && (
                   <>
                     <button
                       type="button"
@@ -305,7 +305,7 @@ const response = await creerInvitation(email, ensembleIdNumber, user!.id);
                     </button>
                   </>
                 )}
-                {ensemble.userRole === "ADMIN" && (
+                {ensemble.userRole === "OWNER" && (
                   <Link to={`/ensembles/${ensembleId}/invitations`} className="invitations-button">
                     Gérer les invitations
                   </Link>
@@ -323,7 +323,7 @@ const response = await creerInvitation(email, ensembleIdNumber, user!.id);
 
           {/* MORCEAUX */}
           <h3 className="section-title">Morceaux (Partitions & Audios) :</h3>
-          {(ensemble.creator || ensemble.userRole === "ADMIN") && (
+          {(ensemble.creator || ensemble.userRole === "OWNER") && (
             <div className="add-file-section">
               <button className="add-file-button" onClick={() => setIsModalOpen(true)}>
                 <FaPlus size={14} /> Ajouter un Morceau

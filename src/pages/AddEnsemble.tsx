@@ -28,7 +28,7 @@ type Ensemble = {
   description: string;
   typeEnsemble: TypeEnsemble;
   createdBy: string;
-  userRole: "ADMIN" | "MODERATEUR" | "MEMBRE";
+  userRole: "OWNER" | "MODERATEUR" | "MEMBRE";
   creator?: boolean; // <-- ajout
 };
 /**
@@ -84,7 +84,7 @@ export const AddEnsemble = () => {
     if (
       ensembleId &&
       !(
-        ensemble?.userRole === "ADMIN" ||
+        ensemble?.userRole === "OWNER" ||
         ensemble?.userRole === "MODERATEUR" ||
         ensemble?.creator
       )
@@ -130,12 +130,12 @@ export const AddEnsemble = () => {
 
       // Mise à jour du rôle seulement si c'est une création
       if (!isEditing) {
-        updateUserRole(newEnsembleId.toString(), "ADMIN");
+        updateUserRole(newEnsembleId.toString(), "OWNER");
       }
 
-      //  Mise à jour du contexte pour que l'utilisateur devienne admin
+      //  Mise à jour du contexte pour que l'utilisateur devienne OWNER
       if (!ensembleId) {
-        updateUserRole(newEnsembleId.toString(), "ADMIN");
+        updateUserRole(newEnsembleId.toString(), "OWNER");
       }
 
       toast.success(

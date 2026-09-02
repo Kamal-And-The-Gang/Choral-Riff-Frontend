@@ -171,7 +171,7 @@ export const TrackDetails = () => {
       (r) => Number(r.ensembleId) === currentEnsembleId
     )?.role;
     return (
-      ensembleRole === "ADMIN" ||
+      ensembleRole === "OWNER" ||
       ensembleRole === "MODERATEUR" ||
       user.id === file.utilisateurId
     );

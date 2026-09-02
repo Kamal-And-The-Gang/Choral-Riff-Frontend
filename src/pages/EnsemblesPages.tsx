@@ -31,7 +31,7 @@ interface Ensemble {
   dateCreation: string;
   nombreMembres: number; // ← correspond au back
   typeEnsemble: TypeEnsemble; // ← correspond au backend
-  userRole?: "ADMIN" | "MODERATEUR" | "MEMBRE";
+  userRole?: "OWNER" | "MODERATEUR" | "MEMBRE";
 }
 
 // Interface pour chaque élément de la liste
@@ -90,11 +90,11 @@ const EnsembleListItem: React.FC<EnsembleListItemProps> = ({ ensemble }) => {
         {/* <h3>{ensemble.nom}</h3> */}
         <h3>
           {ensemble.nom}{" "}
-          {ensemble.userRole === "ADMIN" && (
+          {ensemble.userRole === "OWNER" && (
             <FaCrown
-              title="Administrateur"
+              title="OWNERistrateur"
               style={{ color: "gold", marginLeft: "5px" }}
-              aria-label="Administrateur"
+              aria-label="OWNERistrateur"
             />
           )}
         </h3>
@@ -246,7 +246,7 @@ export const EnsemblesPage = () => {
             )}
           </div>
 
-          {/* {ensembles.some((e) => e.userRole === "ADMIN") && (
+          {/* {ensembles.some((e) => e.userRole === "OWNER") && (
             <div className="add-ensemble-footer-button">
               <Link to="/ajouter-ensemble">
                 <button className="submit-button">
