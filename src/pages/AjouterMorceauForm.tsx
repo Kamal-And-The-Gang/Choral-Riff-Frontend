@@ -196,29 +196,45 @@ const AjouterMorceauForm: React.FC<AjouterMorceauFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
-  const genererDescriptif = async () => {
-    if (!titre || !compositeur) {
-      toast.warning("Remplis d'abord le titre et le compositeur.");
-      return;
-    }
-    setIsGenerating(true);
-    try {
-      const response = await axios.post("http://localhost:8080/api/ia/generer-descriptif", {
+const genererDescriptif = async () => {
+  if (!titre || !compositeur) {
+    toast.warning("Remplis d'abord le titre et le compositeur.");
+    return;
+  }
+
+  setIsGenerating(true);
+
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/api/ia/generer-descriptif",
+      {
         titre,
         compositeur,
-        genre
-      });
-      setDescriptif(response.data.descriptif);
-      if (response.data.genre) {
-        setGenre(response.data.genre);
+        genre,
       }
-      toast.success("Descriptif généré !");
-    } catch (error) {
-      toast.error("Erreur lors de la génération.");
-    } finally {
-      setIsGenerating(false);
+    );
+
+    setDescriptif(response.data.descriptif);
+
+    if (response.data.genre) {
+      setGenre(response.data.genre);
     }
-  };
+
+    toast.success("Descriptif généré !");
+  } catch (error) {
+    console.error("Erreur génération IA :", error);
+
+    if (axios.isAxiosError(error)) {
+      console.error("Status :", error.response?.status);
+      console.error("Réponse backend :", error.response?.data);
+    }
+
+    toast.error("Erreur lors de la génération.");
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -76,3 +76,29 @@ export const getLastMorceauByEnsemble = async (
     throw error;
   }
 };
+
+
+
+// export const supprimerMorceau = async (
+//   morceauId: number,
+//   userId: number,
+// ): Promise<void> => {
+//   await axios.delete(`${API_BASE_URL}/${morceauId}`, {
+//     params: { userId },
+//   });
+// };
+
+
+
+export const supprimerMorceau = async (
+  morceauId: number,
+): Promise<void> => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  await axios.delete(`${API_BASE_URL}/${morceauId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+

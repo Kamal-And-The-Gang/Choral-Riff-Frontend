@@ -14,10 +14,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { FaMusic, FaChevronRight, FaPlayCircle, FaPlus } from "react-icons/fa";
 import AjouterMorceauForm from "./AjouterMorceauForm";
+
 import {
   getLastMorceauByEnsemble,
+  supprimerMorceau,
   type DernierMorceauAPI,
 } from "../api/MorceauxApi";
+
 import DernierMorceauCard from "../components/DernierMorceauCard";
 
 const API_BASE_URL = "http://localhost:8080/api";
@@ -57,7 +60,44 @@ const mockVideos = [
 ];
 
 // --- Composant MorceauItem ---
-const MorceauItem: React.FC<any> = ({ morceau, ensembleId }): any => {
+// const MorceauItem: React.FC<any> = ({ morceau, ensembleId }): any => {
+//   const navigate = useNavigate();
+
+//   const handleClick = () => {
+//     navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
+//       state: { morceauTitre: morceau.titre },
+//     });
+//   };
+
+//   return (
+//     <div
+//       className="score-item"
+//       onClick={handleClick}
+//       style={{ cursor: "pointer" }}
+//       title={`Voir les fichiers de ${morceau.titre}`}
+//     >
+//       <div className="score-info">
+//         <FaMusic size={20} className="score-icon" />
+//         <span className="score-name">
+//           {morceau.titre} ({morceau.compositeur})
+//         </span>
+//       </div>
+//       <div className="score-details">
+//         <span className="score-format">Consulter </span>
+//         <FaChevronRight size={14} className="details-arrow" />
+//       </div>
+//     </div>
+//   );
+// };
+
+
+
+
+const MorceauItem: React.FC<any> = ({
+  morceau,
+  ensembleId,
+  onSupprimer,
+}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -67,25 +107,44 @@ const MorceauItem: React.FC<any> = ({ morceau, ensembleId }): any => {
   };
 
   return (
-    <div
-      className="score-item"
-      onClick={handleClick}
-      style={{ cursor: "pointer" }}
-      title={`Voir les fichiers de ${morceau.titre}`}
-    >
-      <div className="score-info">
+    <div className="score-item">
+      <div
+        className="score-info"
+        onClick={handleClick}
+        style={{ cursor: "pointer" }}
+        title={`Voir les fichiers de ${morceau.titre}`}
+      >
         <FaMusic size={20} className="score-icon" />
         <span className="score-name">
           {morceau.titre} ({morceau.compositeur})
         </span>
       </div>
+
       <div className="score-details">
-        <span className="score-format">Consulter </span>
+        <span
+          className="score-format"
+          onClick={handleClick}
+          style={{ cursor: "pointer" }}
+        >
+          Consulter
+        </span>
         <FaChevronRight size={14} className="details-arrow" />
+
+        <button
+          type="button"
+          className="submit-button delete-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSupprimer(morceau.id);
+          }}
+        >
+          Supprimer
+        </button>
       </div>
     </div>
   );
 };
+
 
 // --- Appel API rattachement ---
 const demanderRattachement = async (
@@ -223,6 +282,33 @@ export const EnsembleDetails = () => {
     fetchLastMorceau();
     fetchAllMorceaux();
   };
+  
+const handleSupprimerMorceau = async (morceauId: number) => {
+  if (!user?.id) {
+    toast.error("Vous devez être connecté pour supprimer un morceau.");
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Êtes-vous sûr de vouloir supprimer ce morceau ?"
+  );
+
+  if (!confirmed) return;
+
+  try {
+    // await supprimerMorceau(morceauId, user.id);
+    await supprimerMorceau(morceauId);
+    toast.success("Morceau supprimé !");
+    await fetchAllMorceaux();
+    await fetchLastMorceau();
+  } catch (error: any) {
+    toast.error(
+      error.response?.data?.message ||
+      "Impossible de supprimer ce morceau."
+    );
+  }
+};
+
 
   if (!ensemble) return <div>Ensemble non trouvé.</div>;
   if (loading) return <div className="details-container">Chargement de l'ensemble...</div>;
@@ -337,9 +423,16 @@ export const EnsembleDetails = () => {
             ) : listeMorceaux.length === 0 ? (
               <p>Aucun morceau n'est encore disponible pour cet ensemble.</p>
             ) : (
-              listeMorceaux.map((morceau) => (
-                <MorceauItem key={morceau.id} morceau={morceau} ensembleId={ensembleIdNumber} />
-              ))
+              
+listeMorceaux.map((morceau) => (
+  <MorceauItem
+    key={morceau.id}
+    morceau={morceau}
+    ensembleId={ensembleIdNumber}
+    onSupprimer={handleSupprimerMorceau}
+  />
+))
+
             )}
           </div>
 

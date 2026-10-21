@@ -288,26 +288,39 @@ export const TrackDetails = () => {
     }
   };
 
-  // --------------------------------------------------
-  // MULTIPLE UPLOAD
-  // --------------------------------------------------
 
   const handleAddTutti = async (fileList: FileList) => {
     if (!user) return toast.error("Vous devez être connecté");
-    const formData = new FormData();
-    Array.from(fileList).forEach((file) => {
-      formData.append("files", file);
-    });
-    formData.append("morceauId", currentTrackId.toString());
-    formData.append("utilisateurId", user.id.toString());
+
     try {
-      const res = await axios.post(
-        "http://localhost:8080/api/documents/upload/morceau",
-        formData
-      );
-      setFiles((prev) => [...prev, ...res.data.map(mapDocumentToFile)]);
-      toast.success(`${res.data.length} document(s) ajouté(s)`);
-    } catch {
+      for (const file of Array.from(fileList)) {
+        const formData = new FormData();
+
+        formData.append("file", file);
+        formData.append("type", "audio");
+        formData.append(
+          "format",
+          file.name.split(".").pop() || "unknown"
+        );
+        formData.append("morceauId", currentTrackId.toString());
+        formData.append("utilisateurId", user.id.toString());
+
+        const res = await axios.post(
+          "http://localhost:8080/api/documents/upload",
+          formData
+        );
+
+        const newFile = mapDocumentToFile(res.data);
+
+        setFiles((prev) => {
+          if (prev.some((f) => f.id === newFile.id)) return prev;
+          return [...prev, newFile];
+        });
+      }
+
+      toast.success(`${fileList.length} piste(s) audio ajoutée(s)`);
+    } catch (error) {
+      console.error("Erreur upload audio :", error);
       toast.error("Erreur upload tutti");
     }
   };
@@ -408,10 +421,12 @@ export const TrackDetails = () => {
       willMute ? [...prev, fileId] : prev.filter((id) => id !== fileId)
     );
   };
+  const hasAudio = files.some((file) => file.type === "audio");
 
   // --------------------------------------------------
   // UI
   // --------------------------------------------------
+
 
   return (
     <div className="track-details-container">
@@ -529,19 +544,29 @@ export const TrackDetails = () => {
           {/* CONTROLS */}
           <div className="controls-wrapper">
 
-            <div className="controls-group">
-              <span className="controls-label">Lecture</span>
-              <div className="controls-row">
-                <button onClick={handlePlayTutti} disabled={isPlaying}>🎧 Play</button>
-                <button onClick={handleStopTutti} disabled={!isPlaying}>⏹ Stop</button>
-                {isPlaying && (
-                  <div className="playing-indicator">
-                    <span className="playing-dot"></span>
-                    <span>Lecture en cours...</span>
-                  </div>
-                )}
+            {hasAudio && (
+              <div className="controls-group">
+                <span className="controls-label">Lecture</span>
+
+                <div className="controls-row">
+                  <button onClick={handlePlayTutti} disabled={isPlaying}>
+                    🎧 Play
+                  </button>
+
+                  <button onClick={handleStopTutti} disabled={!isPlaying}>
+                    ⏹ Stop
+                  </button>
+
+                  {isPlaying && (
+                    <div className="playing-indicator">
+                      <span className="playing-dot"></span>
+                      <span>Lecture en cours...</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
+
 
             <div className="controls-group">
               <span className="controls-label">Documents</span>
