@@ -1,0 +1,105 @@
+
+/* Page publique : Découvrir les ensembles */
+
+.ensembles-disponibles {
+  background-color: var(--background-light);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  padding-bottom: 4rem;
+  color: var(--dark-text);
+  text-align: center;
+}
+
+.ensembles-disponibles .decouverte-header {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.ensembles-disponibles .decouverte-header h1 {
+  color: var(--dark-text);
+  font-size: 1.8rem;
+  line-height: 1.3;
+  margin: 0 0 0.75rem;
+}
+
+.ensembles-disponibles .decouverte-header p {
+  color: #666;
+  margin: 0;
+}
+
+.ensembles-disponibles .ensembles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ensembles-disponibles .ensemble-card {
+  background-color: white;
+  padding: 1.2rem;
+  border-radius: 12px;
+  box-shadow:
+    0 6px 15px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(0, 0, 0, 0.04);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.ensembles-disponibles .ensemble-card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.2),
+    inset 0 0 20px rgba(0, 0, 0, 0.04);
+}
+
+.ensembles-disponibles .ensemble-icon {
+  color: var(--primary-color);
+  flex-shrink: 0;
+  font-size: 2rem;
+}
+
+.ensembles-disponibles .ensemble-details {
+  flex-grow: 1;
+}
+
+.ensembles-disponibles .ensemble-details h2 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+  color: var(--dark-text);
+}
+
+.ensembles-disponibles .ensemble-details p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.ensembles-disponibles .ensemble-card a {
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  background-color: #444;
+  color: white;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.ensembles-disponibles .ensemble-card a:hover {
+  background-color: #555;
+}
+
+@media (max-width: 600px) {
+  .ensembles-disponibles .ensemble-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -414,3 +414,37 @@
         max-width: 1000px;
     }
 }
+
+/* Boutons de la page d'accueil */
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.cta-buttons a {
+    text-decoration: none;
+}
+
+.cta-buttons .cta-button {
+    float: none;
+    margin: 0;
+}
+
+.cta-buttons .cta-button,
+.cta-buttons .cta-button:visited,
+.cta-buttons .cta-button:hover,
+.cta-buttons .cta-button:focus {
+  color: var(--light-text);
+  text-decoration: none;
+}
+
+.cta-buttons .cta-button {
+  background-color: #F58159;
+}
+
+.cta-buttons .cta-button:hover {
+  background-color: #e5734f;
+}

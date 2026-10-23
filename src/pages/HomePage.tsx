@@ -4,6 +4,7 @@ import ellipseImage from '../assets/Ellipse_21.png';
 import heroImage from '../assets/hero-background.jpg'
 import avatarLucas from '../assets/simon-lohmann-0KAEhUHvcmQ-unsplash.jpg';
 import avatarFlo from '../assets/femme-5222890_1920.jpg';
+import { Link } from 'react-router-dom';
 
 
 
@@ -57,19 +58,29 @@ export const HomePage = () => {
         </section>
 
         {/* 5. Section "Call to Action" */}
+                {/* 5. Section "Call to Action" */}
+           {/* 5. Section "Call to Action" */}
         <section className="cta-section">
           <div className="cta-box">
             <h4>Entre dans la vibe !</h4>
-            <a href="/Inscription">
-              <button className="cta-button">
-                S'inscrire
-                {/* <span className="sound-wave">|||</span> */}
-                <img src={ellipseImage} alt="onde sonore" className="sound-wave-img" />
 
-              </button>
-            </a>
+            <div className="cta-buttons">
+              <Link to="/decouvrir-ensembles" className="cta-button">
+                Découvrir les ensembles
+              </Link>
+
+              <Link to="/inscription" className="cta-button">
+                S'inscrire
+                <img
+                  src={ellipseImage}
+                  alt="onde sonore"
+                  className="sound-wave-img"
+                />
+              </Link>
+            </div>
           </div>
         </section>
+        
       </main>
     </div>
   );

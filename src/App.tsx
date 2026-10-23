@@ -19,6 +19,7 @@ import NotificationPage from './pages/NotificationPage';
 import { InvitationAcceptPage } from "./pages/InvitationAcceptPage";
 import SpinnerTestPage from "./pages/SpinnerTestPage";
 import { Invitation } from "./pages/Invitation";
+import { EnsemblesDisponiblesPage } from "./pages/EnsemblesDisponiblesPage";
 
 export const App = () => {
   return (
@@ -59,6 +60,7 @@ export const App = () => {
               <Route path="/ensembles/:ensembleId" element={<EnsembleDetails />} />
               <Route path="/ensembles/:ensembleId/edit" element={<AddEnsemble />} />
               <Route path="/ensembles/add" element={<AddEnsemble />} />
+              <Route path="/decouvrir-ensembles" element={<EnsemblesDisponiblesPage />} />
             </Routes>
           </main>
           <Footer />
