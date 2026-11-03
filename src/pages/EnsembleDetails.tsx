@@ -59,37 +59,6 @@ const mockVideos = [
   },
 ];
 
-// --- Composant MorceauItem ---
-// const MorceauItem: React.FC<any> = ({ morceau, ensembleId }): any => {
-//   const navigate = useNavigate();
-
-//   const handleClick = () => {
-//     navigate(`/ensembles/${ensembleId}/morceaux/${morceau.id}`, {
-//       state: { morceauTitre: morceau.titre },
-//     });
-//   };
-
-//   return (
-//     <div
-//       className="score-item"
-//       onClick={handleClick}
-//       style={{ cursor: "pointer" }}
-//       title={`Voir les fichiers de ${morceau.titre}`}
-//     >
-//       <div className="score-info">
-//         <FaMusic size={20} className="score-icon" />
-//         <span className="score-name">
-//           {morceau.titre} ({morceau.compositeur})
-//         </span>
-//       </div>
-//       <div className="score-details">
-//         <span className="score-format">Consulter </span>
-//         <FaChevronRight size={14} className="details-arrow" />
-//       </div>
-//     </div>
-//   );
-// };
-
 
 
 
@@ -166,12 +135,12 @@ const demanderRattachement = async (
 };
 
 // --- Modale confirmation suppression ---
-const toastConfirmDelete = () =>
+const toastConfirmDelete = (message: string) =>
   new Promise<boolean>((resolve) => {
     toast(
       ({ closeToast }) => (
         <div>
-          <p>Êtes-vous sûr de vouloir supprimer cet ensemble ?</p>
+          <p>{message}</p>
           <div
             style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
           >
@@ -195,7 +164,11 @@ const toastConfirmDelete = () =>
           </div>
         </div>
       ),
-      { autoClose: false, closeOnClick: false }
+      {
+        autoClose: false,
+        closeOnClick: false,
+        onClose: () => resolve(false), // si le toast est fermé autrement (croix, etc.)
+      }
     );
   });
 
@@ -282,32 +255,29 @@ export const EnsembleDetails = () => {
     fetchLastMorceau();
     fetchAllMorceaux();
   };
-  
-const handleSupprimerMorceau = async (morceauId: number) => {
-  if (!user?.id) {
-    toast.error("Vous devez être connecté pour supprimer un morceau.");
-    return;
-  }
 
-  const confirmed = window.confirm(
-    "Êtes-vous sûr de vouloir supprimer ce morceau ?"
-  );
+  const handleSupprimerMorceau = async (morceauId: number) => {
+    if (!user?.id) {
+      toast.error("Vous devez être connecté pour supprimer un morceau.");
+      return;
+    }
 
-  if (!confirmed) return;
-
-  try {
-    // await supprimerMorceau(morceauId, user.id);
-    await supprimerMorceau(morceauId);
-    toast.success("Morceau supprimé !");
-    await fetchAllMorceaux();
-    await fetchLastMorceau();
-  } catch (error: any) {
-    toast.error(
-      error.response?.data?.message ||
-      "Impossible de supprimer ce morceau."
+    const confirmed = await toastConfirmDelete(
+      "Êtes-vous sûr de vouloir supprimer ce morceau ?"
     );
-  }
-};
+    if (!confirmed) return;
+
+    try {
+      await supprimerMorceau(morceauId);
+      toast.success("Morceau supprimé !");
+      await fetchAllMorceaux();
+      await fetchLastMorceau();
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Impossible de supprimer ce morceau."
+      );
+    }
+  };
 
 
   if (!ensemble) return <div>Ensemble non trouvé.</div>;
@@ -342,7 +312,9 @@ const handleSupprimerMorceau = async (morceauId: number) => {
   };
 
   const handleSupprimerEnsemble = async () => {
-    const confirmed = await toastConfirmDelete();
+    const confirmed = await toastConfirmDelete(
+      "Êtes-vous sûr de vouloir supprimer cet ensemble ?"
+    );
     if (!confirmed) return;
 
     try {
@@ -423,15 +395,15 @@ const handleSupprimerMorceau = async (morceauId: number) => {
             ) : listeMorceaux.length === 0 ? (
               <p>Aucun morceau n'est encore disponible pour cet ensemble.</p>
             ) : (
-              
-listeMorceaux.map((morceau) => (
-  <MorceauItem
-    key={morceau.id}
-    morceau={morceau}
-    ensembleId={ensembleIdNumber}
-    onSupprimer={handleSupprimerMorceau}
-  />
-))
+
+              listeMorceaux.map((morceau) => (
+                <MorceauItem
+                  key={morceau.id}
+                  morceau={morceau}
+                  ensembleId={ensembleIdNumber}
+                  onSupprimer={handleSupprimerMorceau}
+                />
+              ))
 
             )}
           </div>

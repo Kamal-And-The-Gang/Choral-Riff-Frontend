@@ -1,4 +1,4 @@
-// src/context/AuthContext.tsx
+
 import {
   createContext,
   useContext,
@@ -19,7 +19,7 @@ export const canDelete = (role?: string | null) => role === "OWNER";
 
 export const isCreator = (creator?: boolean | null) => !!creator;
 
-// === Nouveau helper pour gérer les morceaux ===
+// === Helper pour gérer les morceaux ===
 export const canCreateMorceau = (
   user: DecodedUser | null,
   ensemble: {
@@ -50,7 +50,7 @@ interface DecodedUser {
   nom?: string;
   prenom?: string;
   email?: string;
-  ensembleRoles?: EnsembleRole[]; // <-- tableau des rôles par ensemble
+  ensembleRoles?: EnsembleRole[];
   [key: string]: any;
 }
 
@@ -59,25 +59,56 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: DecodedUser | null;
   loading: boolean;
-login: (token: string, refreshToken: string) => void;
+  login: (token: string, refreshToken: string) => void;
   logout: () => void;
   updateUserRole: (
     ensembleId: string,
     newRole: "OWNER" | "MODERATEUR" | "MEMBRE",
-  ) => void; // <-- corrigé
-  updateUser: (updatedUser: Partial<DecodedUser>) => void; // <-- ajouté
+  ) => void;
+  updateUser: (updatedUser: Partial<DecodedUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Décodage du token (utilisé par le useEffect et par login)
+const buildUserFromToken = (accessToken: string): DecodedUser | null => {
+  try {
+    const decoded = jwtDecode<DecodedUser>(accessToken);
+
+    let userId: number | null = null;
+    if (decoded.id && !isNaN(Number(decoded.id))) {
+      userId = Number(decoded.id);
+    } else if (decoded.sub && !isNaN(Number(decoded.sub))) {
+      userId = Number(decoded.sub);
+    }
+
+    if (!userId) {
+      console.error("Impossible de récupérer un userId valide depuis le token");
+      return null;
+    }
+
+    return {
+      id: userId,
+      prenom: decoded.prenom ?? "",
+      nom: decoded.nom ?? "",
+      email: decoded.email ?? "",
+      sub: decoded.sub ?? "",
+      ensembleRoles: decoded.ensembleRoles ?? [],
+    };
+  } catch (err) {
+    console.error("Erreur de décodage du token :", err);
+    return null;
+  }
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<DecodedUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const updateUser = (updatedUser: Partial<DecodedUser>) => {
     setUser((prev) => (prev ? { ...prev, ...updatedUser } : prev));
   };
-
-  const [loading, setLoading] = useState(true);
 
   const updateUserRoleForEnsemble = (
     ensembleId: string,
@@ -89,7 +120,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const index = updatedRoles.findIndex((r) => r.ensembleId === ensembleId);
       const newRoleObj = { ensembleId, role: newRole };
       if (index >= 0) {
-        // remplace l’objet entier au lieu de muter
         updatedRoles[index] = newRoleObj;
       } else {
         updatedRoles.push(newRoleObj);
@@ -98,92 +128,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // Au chargement de l'appli : relire le token stocké
+  
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
-    const storedRefreshToken = localStorage.getItem("refreshToken");
-    if (!storedToken) {
-      return;
+
+    if (storedToken) {
+      const u = buildUserFromToken(storedToken);
+      if (u) {
+        setToken(storedToken);
+        setUser(u);
+      }
     }
 
-    setToken(storedToken);
-
-    try {
-      const decoded = jwtDecode<DecodedUser>(storedToken);
-
-      // Vérifier et convertir userId
-      let userId: number | null = null;
-      if (decoded.id && !isNaN(Number(decoded.id))) {
-        userId = Number(decoded.id);
-      } else if (decoded.sub && !isNaN(Number(decoded.sub))) {
-        userId = Number(decoded.sub);
-      }
-
-      if (!userId) {
-        console.error(
-          "Impossible de récupérer un userId valide depuis le token",
-        );
-        setUser(null);
-        setToken(null);
-        setLoading(false);
-        return;
-      }
-
-      setUser({
-        id: userId,
-        prenom: decoded.prenom ?? "",
-        nom: decoded.nom ?? "",
-        email: decoded.email ?? "",
-        sub: decoded.sub ?? "",
-        ensembleRoles: decoded.ensembleRoles ?? [],
-      });
-    } catch (err) {
-      console.error("Erreur de décodage du token :", err);
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false); // toujours, avec ou sans token
   }, []);
 
-const login = (newToken: string, newRefreshToken: string) => {
-  localStorage.setItem("accessToken", newToken);
-  localStorage.setItem("refreshToken", newRefreshToken);
-    try {
-      const decoded = jwtDecode<DecodedUser>(newToken);
+  const login = (newToken: string, newRefreshToken: string) => {
+    const u = buildUserFromToken(newToken);
+    if (!u) return;
 
-      let userId: number | null = null;
-      if (decoded.id && !isNaN(Number(decoded.id))) {
-        userId = Number(decoded.id);
-      } else if (decoded.sub && !isNaN(Number(decoded.sub))) {
-        userId = Number(decoded.sub);
-      }
-
-      if (!userId) {
-        console.error(
-          "Impossible de récupérer un userId valide depuis le token",
-        );
-        setUser(null);
-        setToken(null);
-        return;
-      }
-
-      setUser({
-        id: userId,
-        prenom: decoded.prenom ?? "",
-        nom: decoded.nom ?? "",
-        email: decoded.email ?? "",
-        sub: decoded.sub ?? "",
-        ensembleRoles: decoded.ensembleRoles ?? [],
-      });
-    } catch (err) {
-      console.error("Erreur de décodage du token :", err);
-    }
+    localStorage.setItem("accessToken", newToken);
+    localStorage.setItem("refreshToken", newRefreshToken);
+    setToken(newToken);
+    setUser(u);
+    setLoading(false);
   };
 
- const logout = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  setToken(null);
-  setUser(null);
-};
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setToken(null);
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider
@@ -202,6 +179,7 @@ const login = (newToken: string, newRefreshToken: string) => {
     </AuthContext.Provider>
   );
 };
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");

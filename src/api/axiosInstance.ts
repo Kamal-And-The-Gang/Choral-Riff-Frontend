@@ -2,6 +2,7 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:8080",
+  timeout: 15000,
 });
 
 // Ajouter automatiquement le token d'accès à chaque requête
@@ -70,6 +71,7 @@ axiosInstance.interceptors.response.use(
       const response = await axios.post(
         "http://localhost:8080/api/auth/refresh",
         { refreshToken },
+        { timeout: 10000 },
       );
 
       const newAccessToken = response.data.accessToken;
