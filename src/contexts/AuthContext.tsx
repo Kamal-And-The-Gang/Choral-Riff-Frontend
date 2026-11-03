@@ -59,7 +59,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: DecodedUser | null;
   loading: boolean;
-  login: (token: string) => void;
+login: (token: string, refreshToken: string) => void;
   logout: () => void;
   updateUserRole: (
     ensembleId: string,
@@ -100,6 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
+    const storedRefreshToken = localStorage.getItem("refreshToken");
     if (!storedToken) {
       return;
     }
@@ -142,10 +143,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const login = (newToken: string) => {
-    localStorage.setItem("accessToken", newToken);
-    setToken(newToken);
-
+const login = (newToken: string, newRefreshToken: string) => {
+  localStorage.setItem("accessToken", newToken);
+  localStorage.setItem("refreshToken", newRefreshToken);
     try {
       const decoded = jwtDecode<DecodedUser>(newToken);
 
@@ -178,11 +178,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("accessToken");
-    setToken(null);
-    setUser(null);
-  };
+ const logout = () => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  setToken(null);
+  setUser(null);
+};
 
   return (
     <AuthContext.Provider

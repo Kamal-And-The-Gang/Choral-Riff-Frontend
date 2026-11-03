@@ -18,7 +18,7 @@ export const Connexion = () => {
     try {
       const data = { email, password };
       const tokens = await loginUser(data); // Appel API backend
-      login(tokens.accessToken); // On stocke le token via le contexte
+ login(tokens.accessToken, tokens.refreshToken);
       toast.success("Connexion réussie !");
       navigate("/"); // Redirection page d'accueil
     } catch (err: any) {
