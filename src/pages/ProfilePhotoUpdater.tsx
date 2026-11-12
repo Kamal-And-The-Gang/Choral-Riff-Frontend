@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { updateProfilePhoto } from "../api/UtilisateurApi";
 import toast from "react-hot-toast";
+import { useAuth } from "../contexts/AuthContext";
 
 // export default ProfilePhotoUpdater;
 type ProfilePhotoUpdaterProps = {
@@ -12,6 +13,7 @@ const ProfilePhotoUpdater = ({
   currentPhoto,
   onPhotoUpdated,
 }: ProfilePhotoUpdaterProps) => {
+const { user, token } = useAuth();
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,13 +26,19 @@ const ProfilePhotoUpdater = ({
     }
   };
 
-  const handleUpdate = async () => {
-    if (!selectedFile) return;
-    setLoading(true);
+ const handleUpdate = async () => {
+  if (!token) return;
+  if (!selectedFile) return;
+  if (!user?.id) {
+  toast.error("Utilisateur connecté introuvable.");
+  return;
+}
+
+  setLoading(true);
 
     try {
       // Appel API pour mettre à jour la photo
-      const updatedUser = await updateProfilePhoto(selectedFile);
+   const updatedUser = await updateProfilePhoto(selectedFile, token);
       onPhotoUpdated(updatedUser.photoProfil ?? currentPhoto);
 
       // Réinitialiser le composant

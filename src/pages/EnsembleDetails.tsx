@@ -361,13 +361,28 @@ export const EnsembleDetails = () => {
                     >
                       Supprimer l'ensemble
                     </button>
+
+                    
                   </>
-                )}
+                )
+                }
                 {ensemble.userRole === "OWNER" && (
-                  <Link to={`/ensembles/${ensembleId}/invitations`} className="invitations-button">
-                    Gérer les invitations
-                  </Link>
-                )}
+  <>
+    <Link
+      to={`/ensembles/${ensembleId}/membres`}
+      className="invitations-button"
+    >
+      Gérer les membres
+    </Link>
+
+    <Link
+      to={`/ensembles/${ensembleId}/invitations`}
+      className="invitations-button"
+    >
+      Gérer les invitations
+    </Link>
+  </>
+)}
               </div>
             </div>
           </div>

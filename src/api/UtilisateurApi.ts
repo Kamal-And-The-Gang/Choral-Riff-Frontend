@@ -23,17 +23,23 @@ export const fetchCurrentUser = async (): Promise<Utilisateur> => {
 /**
  * Met à jour la photo de profil de l'utilisateur connecté.
  */
-export const updateProfilePhoto = async (file: File): Promise<Utilisateur> => {
+export const updateProfilePhoto = async (
+  file: File,
+  token: string
+): Promise<Utilisateur> => {
   const formData = new FormData();
   formData.append("photoProfil", file);
 
   const response = await axios.post<Utilisateur>(
-    "http://localhost:8080/api/utilisateur/me/photo",
-    formData,
-    {
-      withCredentials: true, // si tu utilises cookies/session
-    }
-  );
+  "http://localhost:8080/api/utilisateur/me/photo",
+  formData,
+  {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
-  return response.data;
+return response.data;
 };
