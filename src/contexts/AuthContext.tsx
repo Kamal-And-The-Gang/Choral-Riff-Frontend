@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 interface EnsembleRole {
   ensembleId: string;
@@ -130,19 +131,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Au chargement de l'appli : relire le token stocké
   
-  useEffect(() => {
+ useEffect(() => {
+  const loadUser = async () => {
     const storedToken = localStorage.getItem("accessToken");
 
     if (storedToken) {
       const u = buildUserFromToken(storedToken);
+
       if (u) {
         setToken(storedToken);
-        setUser(u);
+
+        try {
+          const response = await axios.get(
+            "http://localhost:8080/api/utilisateur/me",
+            {
+              headers: {
+                Authorization: `Bearer ${storedToken}`,
+              },
+            }
+          );
+
+          setUser({ ...u, ...response.data });
+        } catch (error) {
+          console.error(
+            "Erreur lors de la récupération du profil :",
+            error
+          );
+          setUser(u);
+        }
       }
     }
 
-    setLoading(false); // toujours, avec ou sans token
-  }, []);
+    setLoading(false);
+  };
+
+  loadUser();
+}, []);
 
   const login = (newToken: string, newRefreshToken: string) => {
     const u = buildUserFromToken(newToken);

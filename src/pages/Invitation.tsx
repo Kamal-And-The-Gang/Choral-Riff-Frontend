@@ -282,11 +282,14 @@ export const Invitation: React.FC = () => {
         {/* Photo de profil */}
         <div className="card-photo-container">
           {invitation.photoUrl ? (
-            <img
-              src={invitation.photoUrl}
-              alt="Photo de profil"
-              className="profile-pic"
-            />
+           <img
+  src={`http://localhost:8080${invitation.photoUrl}`}
+  alt="Photo de profil"
+  className="profile-pic"
+  onError={(e) => {
+    e.currentTarget.style.display = "none";
+  }}
+/>
           ) : (
             <div className="profile-pic"></div>
           )}

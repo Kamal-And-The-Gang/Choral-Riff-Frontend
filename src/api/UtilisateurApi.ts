@@ -11,12 +11,23 @@ export type Utilisateur = {
 /**
  * Récupère l'utilisateur connecté.
  */
-export const fetchCurrentUser = async (): Promise<Utilisateur> => {
+// export const fetchCurrentUser = async (): Promise<Utilisateur> => {
+//   const response = await axios.get<Utilisateur>(
+//     "http://localhost:8080/api/utilisateur/me",
+//     {
+//       withCredentials: true, // si tu utilises cookies/session
+//     }
+//   );
+//   return response.data;
+// };
+
+
+
+
+export const fetchCurrentUser = async (token: string): Promise<Utilisateur> => {
   const response = await axios.get<Utilisateur>(
     "http://localhost:8080/api/utilisateur/me",
-    {
-      withCredentials: true, // si tu utilises cookies/session
-    }
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return response.data;
 };
