@@ -57,26 +57,16 @@ export type Utilisateur = {
 };
 
 export const useCurrentUser = () => {
-  const { token } = useAuth();
-
   const [user, setUser] = useState<UtilisateurAPI | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadUser = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const data = await fetchCurrentUser(token);
+        const data = await fetchCurrentUser();
         setUser(data);
       } catch (error) {
-        console.error(
-          "Erreur lors de la récupération de l'utilisateur",
-          error
-        );
+        console.error("Erreur lors de la récupération de l'utilisateur", error);
         setUser(null);
       } finally {
         setLoading(false);
@@ -84,7 +74,7 @@ export const useCurrentUser = () => {
     };
 
     loadUser();
-  }, [token]);
+  }, []);
 
   return { user, loading };
 };
