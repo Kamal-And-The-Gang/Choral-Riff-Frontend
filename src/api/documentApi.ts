@@ -1,4 +1,5 @@
 import type { components } from "./types.generated";
+import axios from "axios";
 
 export type DocumentDto = components["schemas"]["DocumentDto"];
 
@@ -17,21 +18,30 @@ export async function getDocumentById(id: number): Promise<DocumentDto> {
   return res.json();
 }
 
-export async function getDocumentsByMorceau(morceauId: number): Promise<DocumentDto[]> {
+export async function getDocumentsByMorceau(
+  morceauId: number,
+): Promise<DocumentDto[]> {
   const res = await fetch(`${BASE_URL}/documents/morceau/${morceauId}`);
-  if (!res.ok) throw new Error("Erreur lors du chargement des documents du morceau");
+  if (!res.ok)
+    throw new Error("Erreur lors du chargement des documents du morceau");
   return res.json();
 }
 
-export async function getDocumentsByUtilisateur(utilisateurId: number): Promise<DocumentDto[]> {
+export async function getDocumentsByUtilisateur(
+  utilisateurId: number,
+): Promise<DocumentDto[]> {
   const res = await fetch(`${BASE_URL}/documents/utilisateur/${utilisateurId}`);
-  if (!res.ok) throw new Error("Erreur lors du chargement des documents de l'utilisateur");
+  if (!res.ok)
+    throw new Error("Erreur lors du chargement des documents de l'utilisateur");
   return res.json();
 }
 
-export async function getDocumentsByEnsemble(ensembleId: number): Promise<DocumentDto[]> {
+export async function getDocumentsByEnsemble(
+  ensembleId: number,
+): Promise<DocumentDto[]> {
   const res = await fetch(`${BASE_URL}/documents/ensemble/${ensembleId}`);
-  if (!res.ok) throw new Error("Erreur lors du chargement des documents de l'ensemble");
+  if (!res.ok)
+    throw new Error("Erreur lors du chargement des documents de l'ensemble");
   return res.json();
 }
 
@@ -41,7 +51,7 @@ export async function uploadDocument(
   type: string,
   format: string,
   morceauId: number,
-  utilisateurId: number
+  utilisateurId: number,
 ): Promise<DocumentDto> {
   const formData = new FormData();
   formData.append("file", file);
@@ -57,4 +67,32 @@ export async function uploadDocument(
 
   if (!res.ok) throw new Error("Erreur lors de l'upload du document");
   return res.json();
+}
+
+// --- DELETE ---
+export async function deleteDocument(
+  id: number,
+  userId: number,
+): Promise<void> {
+  await axios.delete(`${BASE_URL}/documents/${id}`, {
+    params: { userId },
+  });
+}
+
+// --- UPLOAD PARTITION ---
+export async function uploadPartition(
+  file: File,
+  morceauId: number,
+  utilisateurId: number,
+): Promise<DocumentDto> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("type", "partition");
+  formData.append("format", file.name.split(".").pop() || "PDF");
+  formData.append("morceauId", morceauId.toString());
+  formData.append("utilisateurId", utilisateurId.toString());
+
+  const res = await axios.post(`${BASE_URL}/documents/upload`, formData);
+
+  return res.data;
 }

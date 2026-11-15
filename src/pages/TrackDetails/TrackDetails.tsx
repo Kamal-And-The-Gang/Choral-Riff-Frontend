@@ -1,8 +1,29 @@
 
+
 import { Link, useParams, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import type { FC } from "react";
 import "../../styles/TrackDetails.css";
-import { FaMusic, FaChevronLeft, FaTrash } from "react-icons/fa";
+import {
+  getDocumentsByMorceau,
+  deleteDocument,
+  uploadPartition,
+} from "../../api/documentApi";
+import {
+  FaMusic,
+  FaChevronLeft,
+  FaTrash,
+  FaPlay,
+  FaStop,
+  FaVolumeUp,
+  FaVolumeMute,
+  FaPlus,
+  FaYoutube,
+  FaHeadphones,
+  FaFileAlt,
+  FaSlidersH,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 
 import type { FileItem } from "./components/FileItemComponent";
 import axios from "axios";
@@ -14,10 +35,6 @@ import AddInstrumentForm from "../AddInstrumentForm";
 import { handleAddInstrumentSubmit } from "../../api/documentInstruments";
 import { useAuth } from "../../contexts/AuthContext";
 import { fetchEnsembleById } from "../../api/ensemble";
-
-// --------------------------------------------------
-// TYPES
-// --------------------------------------------------
 
 export type ExtendedFileItem = FileItem & {
   url?: string;
@@ -33,108 +50,125 @@ type TrackState = {
   ensembleNom?: string;
 };
 
-// --------------------------------------------------
-// MAPPING DOCUMENT
-// --------------------------------------------------
+const API_URL = "http://localhost:8080";
 
-const mapDocumentToFile = (doc: any): ExtendedFileItem => ({
-  id: doc.id_document,
-  name: doc.nomOriginal ?? doc.urlFichier.split("/").pop(),
-  nomOriginal: doc.nomOriginal,
-  url: `http://localhost:8080${doc.urlFichier}`,
-  type: doc.type,
-  format: doc.format,
-  size: "-",
-  role: doc.type,
-  utilisateurId: doc.utilisateurId,
-  dateAjout: doc.dateAjout,
-  instruments: doc.instruments ?? [],
-  urlYoutube: doc.urlYoutube,
-});
+const mapDocumentToFile = (doc: any): ExtendedFileItem => {
+  const fileUrl = doc.urlFichier
+    ? doc.urlFichier.startsWith("http")
+      ? doc.urlFichier
+      : `${API_URL}${doc.urlFichier}`
+    : undefined;
 
+  return {
+    id: doc.id_document,
+    name:
+      doc.nomOriginal ??
+      doc.urlFichier?.split("/").pop() ??
+      "Document",
+    nomOriginal: doc.nomOriginal,
+    url: fileUrl,
+    type: doc.type,
+    format: doc.format,
+    size: "-",
+    role: doc.type,
+    utilisateurId: doc.utilisateurId,
+    dateAjout: doc.dateAjout,
+    instruments: doc.instruments ?? [],
+    urlYoutube: doc.urlYoutube,
+  };
+};
 
-// --------------------------------------------------
-// YOUTUBE HELPER
-// --------------------------------------------------
+const isAudioFile = (file: ExtendedFileItem): boolean => {
+  const type = String(file.type ?? "").toLowerCase();
+  const format = String(file.format ?? "").toLowerCase();
+  const url = String(file.url ?? "");
+
+  return (
+    type.startsWith("audio/") ||
+    ["mp3", "wav", "ogg"].includes(format) ||
+    /\.(mp3|wav|ogg)(?:$|[?#])/i.test(url)
+  );
+};
 
 const extractYoutubeId = (url: string): string => {
-  const match = url.match(/(?:v=|youtu\.be\/)([^&\s]+)/);
+  const match = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?/]+)/
+  );
+
   return match ? match[1] : url;
 };
 
-// --------------------------------------------------
-// CONFIRM DELETE TOAST
-// --------------------------------------------------
-
-const toastConfirmDeleteDocument = () =>
-  new Promise<boolean>((resolve) => {
-    toast(
-      ({ closeToast }) => (
-        <div>
-          <p>Voulez-vous vraiment supprimer ce document ?</p>
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 10 }}>
-            <button
-              className="delete-button"
-              onClick={() => { resolve(true); closeToast(); }}
-            >
-              Oui
-            </button>
-            <button
-              className="delete-button"
-              style={{ background: "#6c757d" }}
-              onClick={() => { resolve(false); closeToast(); }}
-            >
-              Non
-            </button>
-          </div>
-        </div>
-      ),
-      { autoClose: false, closeOnClick: false }
-    );
-  });
-
-// --------------------------------------------------
-// FILE ITEM
-// --------------------------------------------------
-
-type Props = {
+type FileProps = {
   file: ExtendedFileItem;
   onDelete?: (id: number) => void;
 };
 
-const FileItemComponent: React.FC<Props> = ({ file, onDelete }) => {
+const FileItemComponent: FC<FileProps> = ({ file, onDelete }) => {
   const displayName = file.nomOriginal || file.name;
+
   return (
-    <div className="file-item">
-      <a className="file-name" href={file.url} target="_blank" rel="noopener noreferrer">
-        <FaMusic style={{ marginRight: 6 }} size={16} />
-        {displayName}
-      </a>
+    <div className="td-file-heading">
+      <div className="td-file-icon">
+        {isAudioFile(file) ? (
+          <FaHeadphones />
+        ) : file.urlYoutube ? (
+          <FaYoutube />
+        ) : (
+          <FaFileAlt />
+        )}
+      </div>
+
+      <div className="td-file-name-wrap">
+        {file.url ? (
+          <a
+            className="td-file-name"
+            href={file.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={displayName}
+          >
+            {displayName}
+            <FaExternalLinkAlt className="td-external-icon" />
+          </a>
+        ) : (
+          <span className="td-file-name" title={displayName}>
+            {displayName}
+          </span>
+        )}
+
+        <span className="td-file-type">
+          {file.urlYoutube
+            ? "Vidéo YouTube"
+            : isAudioFile(file)
+              ? "Piste audio"
+              : "Document"}
+        </span>
+      </div>
+
       {onDelete && (
         <button
-          className="delete-button compact"
+          className="td-icon-button td-delete-button"
           onClick={() => onDelete(file.id)}
           aria-label={`Supprimer ${displayName}`}
+          title="Supprimer"
         >
-          <FaTrash size={12} />
+          <FaTrash />
         </button>
       )}
     </div>
   );
 };
 
-// --------------------------------------------------
-// MAIN COMPONENT
-// --------------------------------------------------
-
 export const TrackDetails = () => {
-  const { ensembleId: routeEnsembleId, trackId: routeTrackId } = useParams<{
+  const {
+    ensembleId: routeEnsembleId,
+    trackId: routeTrackId,
+  } = useParams<{
     ensembleId: string;
     trackId: string;
   }>();
 
   const { token, user } = useAuth();
-
   const currentEnsembleId = Number(routeEnsembleId);
   const currentTrackId = Number(routeTrackId);
 
@@ -144,87 +178,152 @@ export const TrackDetails = () => {
   const [files, setFiles] = useState<ExtendedFileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
+  const [selectedDocumentId, setSelectedDocumentId] =
+    useState<number | null>(null);
   const [ensembleNom, setEnsembleNom] = useState("Chargement…");
   const [isPlaying, setIsPlaying] = useState(false);
   const [mutedFiles, setMutedFiles] = useState<number[]>([]);
+  const [volumes, setVolumes] = useState<Record<number, number>>({});
   const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+
   const audioRefs = useRef<Record<number, HTMLAudioElement>>({});
+  const individualAudioRefs = useRef<Record<number, HTMLAudioElement>>({});
   const gainRefs = useRef<Record<number, GainNode>>({});
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const individualAudioRefs = useRef<Record<number, HTMLAudioElement>>({});
+
+  const audioFiles = files.filter(
+    (file) => isAudioFile(file) && file.url
+  );
+
+  const documentCount = files.filter(
+    (file) => !isAudioFile(file) && !file.urlYoutube
+  ).length;
+
+  const videoCount = files.filter((file) => file.urlYoutube).length;
 
   const trackData = {
-    id: currentTrackId,
-    title: state?.morceauTitre ?? "Titre par défaut",
+    title: state?.morceauTitre ?? "Titre du morceau",
     ensemble: ensembleNom,
     ensembleId: currentEnsembleId,
   };
 
-  // --------------------------------------------------
-  // PERMISSIONS
-  // --------------------------------------------------
-
   const canDelete = (file: ExtendedFileItem) => {
     if (!user) return false;
-    const ensembleRole = user.ensembleRoles?.find(
+
+    const role = user.ensembleRoles?.find(
       (r) => Number(r.ensembleId) === currentEnsembleId
     )?.role;
+
     return (
-      ensembleRole === "OWNER" ||
-      ensembleRole === "MODERATEUR" ||
+      role === "OWNER" ||
+      role === "MODERATEUR" ||
       user.id === file.utilisateurId
     );
   };
 
-  // --------------------------------------------------
-  // ENSEMBLE FETCH
-  // --------------------------------------------------
-
   useEffect(() => {
-    const fetchEnsemble = async () => {
+    let active = true;
+
+    const loadEnsemble = async () => {
       if (state?.ensembleNom) {
         setEnsembleNom(state.ensembleNom);
         return;
       }
+
       if (!token || !user) {
-        setEnsembleNom("Nom inconnu");
+        setEnsembleNom("Ensemble");
         return;
       }
+
       try {
-        const ensemble = await fetchEnsembleById(currentEnsembleId.toString(), user.id);
-        setEnsembleNom(ensemble.nom);
+        const ensemble = await fetchEnsembleById(
+          currentEnsembleId.toString(),
+          user.id
+        );
+
+        if (active) setEnsembleNom(ensemble.nom);
       } catch {
-        setEnsembleNom("Nom inconnu");
+        if (active) setEnsembleNom("Ensemble");
       }
     };
-    fetchEnsemble();
+
+    loadEnsemble();
+
+    return () => {
+      active = false;
+    };
   }, [currentEnsembleId, state?.ensembleNom, token, user]);
 
-  // --------------------------------------------------
-  // FETCH FILES
-  // --------------------------------------------------
-
   useEffect(() => {
-    if (!currentTrackId) return;
-    setLoading(true);
-    setError(null);
-    axios
-      .get(`http://localhost:8080/api/documents/morceau/${currentTrackId}`)
-      .then((res) => {
-        if (!Array.isArray(res.data)) {
-          setError("Réponse API inattendue");
-          return;
+    if (!currentTrackId) {
+      setLoading(false);
+      setError("Identifiant du morceau invalide.");
+      return;
+    }
+
+    let active = true;
+
+    const loadFiles = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // const res = await axios.get(
+        //   `${API_URL}/api/documents/morceau/${currentTrackId}`
+        // );
+
+        // if (!Array.isArray(res.data)) {
+        //   throw new Error("Réponse API inattendue");
+        // }
+
+        // if (active) {
+        //   setFiles(res.data.map(mapDocumentToFile));
+        // }
+
+
+        const documents = await getDocumentsByMorceau(currentTrackId);
+
+        if (active) {
+          setFiles(documents.map(mapDocumentToFile));
         }
-        setFiles(res.data.map(mapDocumentToFile));
-      })
-      .catch(() => setError("Impossible de récupérer les fichiers"))
-      .finally(() => setLoading(false));
+      } catch {
+        if (active) {
+          setError("Impossible de récupérer les fichiers.");
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadFiles();
+
+    return () => {
+      active = false;
+    };
   }, [currentTrackId]);
 
-  // --------------------------------------------------
-  // AUDIO CLEANUP ON UNMOUNT
-  // --------------------------------------------------
+  const stopAllAudio = () => {
+    Object.values(audioRefs.current).forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
+    Object.values(individualAudioRefs.current).forEach((audio) => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
+    if (audioCtxRef.current) {
+      void audioCtxRef.current.close();
+    }
+
+    audioRefs.current = {};
+    gainRefs.current = {};
+    audioCtxRef.current = null;
+
+    setIsPlaying(false);
+  };
 
   useEffect(() => {
     return () => {
@@ -232,68 +331,96 @@ export const TrackDetails = () => {
         audio.pause();
         audio.currentTime = 0;
       });
+
       Object.values(individualAudioRefs.current).forEach((audio) => {
         audio.pause();
         audio.currentTime = 0;
       });
-      audioCtxRef.current?.close();
+
+      if (audioCtxRef.current) {
+        void audioCtxRef.current.close();
+      }
+
       audioRefs.current = {};
       gainRefs.current = {};
+      individualAudioRefs.current = {};
     };
   }, []);
 
-  // --------------------------------------------------
-  // DELETE
-  // --------------------------------------------------
-
   const handleDelete = async (id: number) => {
-    const confirmed = await toastConfirmDeleteDocument();
+    const confirmed = window.confirm(
+      "Voulez-vous vraiment supprimer ce fichier ?"
+    );
+
     if (!confirmed || !user) return;
+
     try {
-      await axios.delete(`http://localhost:8080/api/documents/${id}`, {
-        params: { userId: user.id },
-      });
-      setFiles((prev) => prev.filter((f) => f.id !== id));
-      toast.success("Fichier supprimé !");
+      // await axios.delete(`${API_URL}/api/documents/${id}`, {
+      //   params: { userId: user.id },
+      // });
+
+      await deleteDocument(id, user.id);
+
+      setFiles((prev) => prev.filter((file) => file.id !== id));
+      toast.success("Fichier supprimé.");
     } catch {
-      toast.error("Erreur suppression fichier");
+      toast.error("Erreur lors de la suppression.");
     }
   };
-
-  // --------------------------------------------------
-  // SINGLE UPLOAD
-  // --------------------------------------------------
 
   const handleAddDocument = async (file: File) => {
-    if (!user) return toast.error("Vous devez être connecté");
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", "partition");
-    formData.append("format", file.name.split(".").pop() || "PDF");
-    formData.append("morceauId", currentTrackId.toString());
-    formData.append("utilisateurId", user.id.toString());
+    if (!user) {
+      toast.error("Vous devez être connecté.");
+      return;
+    }
+
+    // const formData = new FormData();
+    // formData.append("file", file);
+    // formData.append("type", "partition");
+    // formData.append("format", file.name.split(".").pop() || "PDF");
+    // formData.append("morceauId", currentTrackId.toString());
+    // formData.append("utilisateurId", user.id.toString());
+
     try {
-      const res = await axios.post("http://localhost:8080/api/documents/upload", formData);
-      const newFile = mapDocumentToFile(res.data);
+      setUploading(true);
 
-      setFiles((prev) => {
-        if (prev.some((f) => f.id === newFile.id)) return prev;
-        return [...prev, newFile];
-      });
+      // const res = await axios.post(
+      //   `${API_URL}/api/documents/upload`,
+      //   formData
+      // );
 
-      console.log("UPLOAD OK");
-      toast.success("Document ajouté !");
+      // const newFile = mapDocumentToFile(res.data);
+      const document = await uploadPartition(file, currentTrackId, user.id);
+      const newFile = mapDocumentToFile(document);
+
+      setFiles((prev) =>
+        prev.some((item) => item.id === newFile.id)
+          ? prev
+          : [...prev, newFile]
+      );
+
+      toast.success("Partition ajoutée.");
     } catch {
-      toast.error("Erreur upload");
+      toast.error("Erreur lors de l'envoi de la partition.");
+    } finally {
+      setUploading(false);
     }
   };
 
-
   const handleAddTutti = async (fileList: FileList) => {
-    if (!user) return toast.error("Vous devez être connecté");
+    if (!user) {
+      toast.error("Vous devez être connecté.");
+      return;
+    }
+
+    const selectedFiles = Array.from(fileList);
+
+    if (!selectedFiles.length) return;
 
     try {
-      for (const file of Array.from(fileList)) {
+      setUploading(true);
+
+      for (const file of selectedFiles) {
         const formData = new FormData();
 
         formData.append("file", file);
@@ -306,340 +433,642 @@ export const TrackDetails = () => {
         formData.append("utilisateurId", user.id.toString());
 
         const res = await axios.post(
-          "http://localhost:8080/api/documents/upload",
+          `${API_URL}/api/documents/upload`,
           formData
         );
 
         const newFile = mapDocumentToFile(res.data);
 
-        setFiles((prev) => {
-          if (prev.some((f) => f.id === newFile.id)) return prev;
-          return [...prev, newFile];
-        });
+        setFiles((prev) =>
+          prev.some((item) => item.id === newFile.id)
+            ? prev
+            : [...prev, newFile]
+        );
       }
 
-      toast.success(`${fileList.length} piste(s) audio ajoutée(s)`);
-    } catch (error) {
-      console.error("Erreur upload audio :", error);
-      toast.error("Erreur upload tutti");
+      toast.success(
+        `${selectedFiles.length} piste(s) audio ajoutée(s).`
+      );
+    } catch (err) {
+      console.error("Erreur upload audio :", err);
+      toast.error("Une erreur est survenue pendant l'envoi des pistes.");
+    } finally {
+      setUploading(false);
     }
   };
-
-
-  // --------------------------------------------------
-  // ADD YOUTUBE
-  // --------------------------------------------------
 
   const handleAddYoutube = async () => {
     if (!user || !youtubeUrl.trim()) return;
+
     try {
-      const res = await axios.post("http://localhost:8080/api/documents/upload/youtube", {
-        morceauId: currentTrackId,
-        utilisateurId: user.id,
-        urlYoutube: youtubeUrl.trim(),
-      });
+      setUploading(true);
+
+      const res = await axios.post(
+        `${API_URL}/api/documents/upload/youtube`,
+        {
+          morceauId: currentTrackId,
+          utilisateurId: user.id,
+          urlYoutube: youtubeUrl.trim(),
+        }
+      );
+
       const newFile = mapDocumentToFile(res.data);
+
       setFiles((prev) => [...prev, newFile]);
       setYoutubeUrl("");
-      toast.success("Lien YouTube ajouté !");
+      toast.success("Lien YouTube ajouté.");
     } catch {
-      toast.error("Erreur ajout YouTube");
+      toast.error("Erreur lors de l'ajout du lien YouTube.");
+    } finally {
+      setUploading(false);
     }
   };
 
+  const handleVolumeChange = (fileId: number, value: number) => {
+    setVolumes((prev) => ({ ...prev, [fileId]: value }));
 
-  // --------------------------------------------------
-  // PLAY TUTTI
-  // --------------------------------------------------
+    const gain = gainRefs.current[fileId];
 
-  const handlePlayTutti = async () => {
-    const audioFiles = files.filter(
-      (f) => f.url && (f.url.endsWith(".mp3") || f.url.endsWith(".wav") || f.url.endsWith(".ogg"))
-    );
-    if (!audioFiles.length) return toast.error("Aucun audio compatible");
-    try {
-      // Coupe les lecteurs individuels pour éviter la superposition
-      Object.values(individualAudioRefs.current).forEach((a) => {
-        a.pause();
-        a.currentTime = 0;
-      });
-
-      Object.values(audioRefs.current).forEach((a) => { a.pause(); a.currentTime = 0; });
-      audioCtxRef.current?.close();
-      audioRefs.current = {};
-      gainRefs.current = {};
-      audioCtxRef.current = new AudioContext();
-      const ctx = audioCtxRef.current;
-      audioFiles.forEach((file) => {
-        const audio = new Audio(file.url!);
-        audio.crossOrigin = "anonymous";
-        audioRefs.current[file.id] = audio;
-        const source = ctx.createMediaElementSource(audio);
-        const gain = ctx.createGain();
-        // Applique l'état de mute existant dès la création
-        gain.gain.value = mutedFiles.includes(file.id) ? 0 : 1;
-        source.connect(gain);
-        gain.connect(ctx.destination);
-        gainRefs.current[file.id] = gain;
-      });
-      await Promise.all(
-        Object.values(audioRefs.current).map(
-          (audio) => new Promise<void>((resolve) => { audio.oncanplaythrough = () => resolve(); })
-        )
-      );
-      await Promise.all(
-        Object.values(audioRefs.current).map(async (audio) => {
-          try { await audio.play(); } catch { }
-        })
-      );
-      setIsPlaying(true);
-      toast.success("🎧 Tutti lancé !");
-    } catch {
-      toast.error("Erreur lecture audio");
+    if (gain) {
+      gain.gain.value = mutedFiles.includes(fileId)
+        ? 0
+        : value / 100;
     }
-  };
 
-  const handleStopTutti = () => {
-    Object.values(audioRefs.current).forEach((audio) => {
-      audio.pause();
-      audio.currentTime = 0;
-    });
-    setIsPlaying(false);
-    toast.info("Lecture stoppée");
+    const audio = individualAudioRefs.current[fileId];
+
+    if (audio) {
+      audio.volume = value / 100;
+    }
   };
 
   const handleToggleMute = (fileId: number) => {
     const willMute = !mutedFiles.includes(fileId);
 
     const audio = individualAudioRefs.current[fileId];
+
     if (audio) audio.muted = willMute;
 
     const gain = gainRefs.current[fileId];
-    if (gain) gain.gain.value = willMute ? 0 : 1;
+
+    if (gain) {
+      gain.gain.value = willMute
+        ? 0
+        : (volumes[fileId] ?? 100) / 100;
+    }
 
     setMutedFiles((prev) =>
-      willMute ? [...prev, fileId] : prev.filter((id) => id !== fileId)
+      willMute
+        ? [...prev, fileId]
+        : prev.filter((id) => id !== fileId)
     );
   };
-  const hasAudio = files.some((file) => file.type === "audio");
 
-  // --------------------------------------------------
-  // UI
-  // --------------------------------------------------
+  const handlePlayTutti = async () => {
+    if (!audioFiles.length) {
+      toast.error("Aucune piste audio disponible.");
+      return;
+    }
 
+    try {
+      Object.values(individualAudioRefs.current).forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+
+      Object.values(audioRefs.current).forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+
+      if (audioCtxRef.current) {
+        await audioCtxRef.current.close();
+      }
+
+      audioRefs.current = {};
+      gainRefs.current = {};
+
+      const ctx = new AudioContext();
+      audioCtxRef.current = ctx;
+
+      if (ctx.state === "suspended") {
+        await ctx.resume();
+      }
+
+      audioFiles.forEach((file) => {
+        const audio = new Audio();
+        audio.crossOrigin = "anonymous";
+        audio.src = file.url!;
+
+        audioRefs.current[file.id] = audio;
+
+        const source = ctx.createMediaElementSource(audio);
+        const gain = ctx.createGain();
+
+        gain.gain.value = mutedFiles.includes(file.id)
+          ? 0
+          : (volumes[file.id] ?? 100) / 100;
+
+        source.connect(gain);
+        gain.connect(ctx.destination);
+
+        gainRefs.current[file.id] = gain;
+      });
+
+      await Promise.all(
+        Object.values(audioRefs.current).map(
+          (audio) =>
+            new Promise<void>((resolve, reject) => {
+              if (audio.readyState >= 3) {
+                resolve();
+                return;
+              }
+
+              const timeout = window.setTimeout(() => {
+                reject(new Error("Délai de chargement dépassé."));
+              }, 15000);
+
+              audio.oncanplaythrough = () => {
+                window.clearTimeout(timeout);
+                resolve();
+              };
+
+              audio.onerror = () => {
+                window.clearTimeout(timeout);
+                reject(new Error("Impossible de charger une piste."));
+              };
+
+              audio.load();
+            })
+        )
+      );
+
+      await Promise.all(
+        Object.values(audioRefs.current).map((audio) => audio.play())
+      );
+
+      setIsPlaying(true);
+      toast.success("Tutti lancé !");
+    } catch (err) {
+      console.error("Erreur lecture Tutti :", err);
+      stopAllAudio();
+      toast.error("Impossible de lancer toutes les pistes audio.");
+    }
+  };
+
+  const handleStopTutti = () => {
+    stopAllAudio();
+    toast.info("Lecture stoppée.");
+  };
 
   return (
     <div className="track-details-container">
-      <section className="track-header-section detail-header" />
-      <main className="details-main">
-        <div className="details-content-card track-card">
+      <main className="td-page">
+        <div className="td-topbar">
+          <Link
+            to={`/ensembles/${trackData.ensembleId}`}
+            className="td-back-link"
+          >
+            <FaChevronLeft />
+            Retour à l'ensemble
+          </Link>
 
-          {/* HEADER */}
-          <div className="track-info-header">
-            <FaMusic size={50} />
-            <div>
-              <p>
-                Ensemble:{" "}
-                <a href={`/ensembles/${trackData.ensembleId}`}>{trackData.ensemble}</a>
-              </p>
-              <h2 className="fiche-title">{trackData.title}</h2>
-              <Link to={`/ensembles/${trackData.ensembleId}`}>
-                <FaChevronLeft size={12} /> Retour
-              </Link>
+          <span className="td-topbar-label">
+            ESPACE MUSICAL
+          </span>
+        </div>
+
+        <section className="td-hero">
+          <div className="td-hero-content">
+            <div className="td-eyebrow">
+              <span className="td-eyebrow-dot" />
+              FICHE MORCEAU
+            </div>
+
+            <h1>{trackData.title}</h1>
+
+            <p className="td-ensemble-name">
+              <FaMusic />
+              {trackData.ensemble}
+            </p>
+
+            <div className="td-hero-stats">
+              <div className="td-stat">
+                <strong>{files.length}</strong>
+                <span>Fichiers</span>
+              </div>
+              <div className="td-stat">
+                <strong>{audioFiles.length}</strong>
+                <span>Pistes audio</span>
+              </div>
+              <div className="td-stat">
+                <strong>{documentCount}</strong>
+                <span>Partitions</span>
+              </div>
+              <div className="td-stat">
+                <strong>{videoCount}</strong>
+                <span>Vidéos</span>
+              </div>
             </div>
           </div>
 
-          {/* MIXER TITLE */}
-          <h3 className="mixer-title">🎚 Mixeur chorale</h3>
-
-          {/* FILE LIST */}
-          {loading && <p>Chargement...</p>}
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          {!loading && files.length === 0 && <p>Aucun fichier</p>}
-
-          <div className="mixer-grid">
-            {files.map((file) => (
-              <div key={file.id} className="mixer-card">
-
-                {/* FILE INFO */}
-                <FileItemComponent
-                  file={file}
-                  onDelete={canDelete(file) ? handleDelete : undefined}
-                />
-
-                {/* DATE ET INSTRUMENTS */}
-                <div className="file-meta">
-                  {file.dateAjout && (
-                    <span className="file-date">
-                      {new Date(file.dateAjout).toLocaleDateString("fr-FR")}
-                    </span>
-                  )}
-                  {file.instruments && file.instruments.length > 0 && (
-                    <div className="file-instruments">
-                      {file.instruments.map((inst) => (
-                        <span key={inst.id} className="instrument-tag">
-                          🎵 {inst.nom}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* ACTIONS */}
-                <div className="mixer-actions">
-                  {canDelete(file) && file.format !== "youtube" && (
-                    <button
-                      className="btn-small"
-                      onClick={() => setSelectedDocumentId(file.id)}
-                    >
-                      Instrument
-                    </button>
-                  )}
-                  {file.url?.match(/\.(mp3|wav|ogg)$/) && (
-                    <button
-                      className="btn-small"
-                      onClick={() => handleToggleMute(file.id)}
-                    >
-                      {mutedFiles.includes(file.id) ? "🔇 Unmute" : "🔈 Mute"}
-                    </button>
-                  )}
-                </div>
-                {/* LECTEUR AUDIO INDIVIDUEL */}
-                {file.url?.match(/\.(mp3|wav|ogg)$/i) && (
-                  <audio
-                    ref={(el) => {
-                      if (el) individualAudioRefs.current[file.id] = el;
-                    }}
-                    controls
-                    src={file.url}
-                    onPlay={() => {
-                      Object.values(audioRefs.current).forEach((a) => a.pause());
-                      Object.entries(individualAudioRefs.current).forEach(([id, a]) => {
-                        if (Number(id) !== file.id) a.pause();
-                      });
-                      if (isPlaying) setIsPlaying(false);
-                    }}
-                    style={{ width: "100%", marginTop: "8px" }}
-                  />
-                )}
-
-
-
-                {/* LECTEUR YOUTUBE */}
-                {file.urlYoutube && (
-                  <iframe
-                    width="100%"
-                    height="200"
-                    src={`https://www.youtube.com/embed/${extractYoutubeId(file.urlYoutube)}`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
-                    allowFullScreen
-                    style={{ marginTop: "8px", borderRadius: "8px", border: "none" }}
-                  />
-                )}
-
+          <div className="td-hero-art">
+            <div className="td-hero-disc">
+              <div className="td-disc-center">
+                <FaMusic />
               </div>
-            ))}
+            </div>
+            <span className="td-art-note td-note-one">♪</span>
+            <span className="td-art-note td-note-two">♫</span>
+          </div>
+        </section>
+
+        <section className="td-mixer-section">
+          <div className="td-section-heading">
+            <div>
+              <span className="td-section-kicker">ÉCOUTE COLLECTIVE</span>
+              <h2>
+                <FaSlidersH />
+                Console de mixage
+              </h2>
+              <p>
+                Ajustez chaque pupitre et écoutez les pistes ensemble.
+              </p>
+            </div>
+
+            <span className="td-live-badge">
+              <span />
+              {isPlaying ? "EN LECTURE" : "STUDIO"}
+            </span>
           </div>
 
-          {/* CONTROLS */}
-          <div className="controls-wrapper">
+          <div className="td-player-panel">
+            <div className="td-player-main">
+              <div className="td-player-icon">
+                <FaHeadphones />
+              </div>
 
-            {hasAudio && (
-              <div className="controls-group">
-                <span className="controls-label">Lecture</span>
+              <div className="td-player-copy">
+                <span>LECTURE MULTIPISTE</span>
+                <strong>Mode Tutti</strong>
+                <small>
+                  {audioFiles.length} piste(s) prête(s) à être mixée(s)
+                </small>
+              </div>
+            </div>
 
-                <div className="controls-row">
-                  <button onClick={handlePlayTutti} disabled={isPlaying}>
-                    🎧 Play
-                  </button>
+            <div className="td-player-actions">
+              <button
+                className="td-play-button"
+                onClick={handlePlayTutti}
+                disabled={isPlaying || audioFiles.length === 0}
+              >
+                <FaPlay />
+                Lancer le Tutti
+              </button>
 
-                  <button onClick={handleStopTutti} disabled={!isPlaying}>
-                    ⏹ Stop
-                  </button>
+              <button
+                className="td-stop-button"
+                onClick={handleStopTutti}
+                disabled={!isPlaying}
+              >
+                <FaStop />
+                Arrêter
+              </button>
+            </div>
 
-                  {isPlaying && (
-                    <div className="playing-indicator">
-                      <span className="playing-dot"></span>
-                      <span>Lecture en cours...</span>
-                    </div>
-                  )}
-                </div>
+            {isPlaying && (
+              <div className="td-playing-status">
+                <span className="td-playing-bars">
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                Lecture des pistes en cours
               </div>
             )}
-
-
-            <div className="controls-group">
-              <span className="controls-label">Documents</span>
-              <div className="controls-row">
-                <div className="upload-group">
-                  <button onClick={() => document.getElementById("fileInput")?.click()}>
-                    Ajouter partition
-                  </button>
-                  <span className="upload-hint">PDF, Word, ODT</span>
-                  <input
-                    id="fileInput"
-                    type="file"
-                    hidden
-                    accept=".pdf,.doc,.docx,.odt"
-                    onChange={(e) => e.target.files?.[0] && handleAddDocument(e.target.files[0])}
-                  />
-                </div>
-                <div className="upload-group">
-                  <button onClick={() => document.getElementById("fileInputTutti")?.click()}>
-                    Ajouter pistes audio
-                  </button>
-                  <span className="upload-hint">MP3, WAV, OGG — plusieurs fichiers</span>
-                  <input
-                    id="fileInputTutti"
-                    type="file"
-                    multiple
-                    hidden
-                    accept=".mp3,.wav,.ogg"
-                    onChange={(e) => e.target.files && handleAddTutti(e.target.files)}
-                  />
-                </div>
-              </div>
-              <div className="upload-group">
-                <input
-                  type="text"
-                  placeholder="URL YouTube (ex: https://www.youtube.com/watch?v=...)"
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                  style={{ width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid #ccc" }}
-                />
-                <button onClick={handleAddYoutube} disabled={!youtubeUrl.trim()}>
-                  Ajouter lien YouTube
-                </button>
-              </div>
-            </div>
-
           </div>
 
-          {/* MODAL */}
-          {selectedDocumentId && (
-            <AddInstrumentForm
-              onSubmit={async (instrument) => {
-                try {
-                  const res = await handleAddInstrumentSubmit(selectedDocumentId, instrument);
-                  setFiles((prev) =>
-                    prev.map((f) =>
-                      f.id === selectedDocumentId
-                        ? { ...f, instruments: res.instruments ?? [] }
-                        : f
-                    )
-                  );
-                  toast.success("Instrument ajouté !");
-                  setSelectedDocumentId(null);
-                } catch {
-                  toast.error("Erreur instrument");
-                }
-              }}
-              onClose={() => setSelectedDocumentId(null)}
-            />
-          )}
+          {loading ? (
+            <div className="td-state-card">
+              <div className="td-loader" />
+              <strong>Chargement de votre espace musical…</strong>
+              <span>Récupération des fichiers du morceau</span>
+            </div>
+          ) : error ? (
+            <div className="td-state-card td-error-state">
+              <strong>Une erreur est survenue</strong>
+              <span>{error}</span>
+            </div>
+          ) : files.length === 0 ? (
+            <div className="td-state-card">
+              <div className="td-empty-icon">
+                <FaMusic />
+              </div>
+              <strong>Aucun fichier pour le moment</strong>
+              <span>
+                Ajoutez une partition ou vos premières pistes audio.
+              </span>
+            </div>
+          ) : (
+            <div className="td-track-grid">
+              {files.map((file, index) => {
+                const audioFile = isAudioFile(file) && Boolean(file.url);
+                const muted = mutedFiles.includes(file.id);
+                const volume = volumes[file.id] ?? 100;
 
-        </div>
+                return (
+                  <article className="td-track-card" key={file.id}>
+                    <div className="td-card-topline">
+                      <span className="td-track-number">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+
+                      <span
+                        className={`td-file-badge ${audioFile
+                          ? "td-audio-badge"
+                          : file.urlYoutube
+                            ? "td-video-badge"
+                            : "td-document-badge"
+                          }`}
+                      >
+                        {audioFile
+                          ? "AUDIO"
+                          : file.urlYoutube
+                            ? "YOUTUBE"
+                            : "DOCUMENT"}
+                      </span>
+                    </div>
+
+                    <FileItemComponent
+                      file={file}
+                      onDelete={
+                        canDelete(file) ? handleDelete : undefined
+                      }
+                    />
+
+                    <div className="td-card-meta">
+                      {file.dateAjout && (
+                        <span>
+                          Ajouté le{" "}
+                          {new Date(file.dateAjout).toLocaleDateString(
+                            "fr-FR"
+                          )}
+                        </span>
+                      )}
+                    </div>
+
+                    {file.instruments && file.instruments.length > 0 && (
+                      <div className="td-instruments">
+                        {file.instruments.map((instrument) => (
+                          <span
+                            className="td-instrument-tag"
+                            key={instrument.id}
+                          >
+                            {instrument.nom}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="td-card-divider" />
+
+                    {audioFile && (
+                      <div className="td-volume-section">
+                        <div className="td-volume-heading">
+                          <span>
+                            {muted ? (
+                              <FaVolumeMute />
+                            ) : (
+                              <FaVolumeUp />
+                            )}
+                            Niveau sonore
+                          </span>
+                          <strong>{volume}%</strong>
+                        </div>
+
+                        <input
+                          className="td-volume-slider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={volume}
+                          aria-label={`Volume de ${file.name}`}
+                          onChange={(event) =>
+                            handleVolumeChange(
+                              file.id,
+                              Number(event.target.value)
+                            )
+                          }
+                        />
+
+                        <button
+                          className={`td-mute-button ${muted ? "is-muted" : ""
+                            }`}
+                          onClick={() => handleToggleMute(file.id)}
+                        >
+                          {muted ? <FaVolumeMute /> : <FaVolumeUp />}
+                          {muted ? "Réactiver le son" : "Couper le son"}
+                        </button>
+
+                        <audio
+                          className="td-audio-player"
+                          ref={(element) => {
+                            if (element) {
+                              individualAudioRefs.current[file.id] = element;
+                              element.volume = volume / 100;
+                              element.muted = muted;
+                            } else {
+                              delete individualAudioRefs.current[file.id];
+                            }
+                          }}
+                          controls
+                          src={file.url}
+                          onPlay={() => {
+                            Object.values(audioRefs.current).forEach(
+                              (audio) => audio.pause()
+                            );
+
+                            setIsPlaying(false);
+
+                            Object.entries(
+                              individualAudioRefs.current
+                            ).forEach(([id, audio]) => {
+                              if (Number(id) !== file.id) {
+                                audio.pause();
+                              }
+                            });
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {file.urlYoutube && (
+                      <div className="td-youtube-player">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${extractYoutubeId(
+                            file.urlYoutube
+                          )}`}
+                          title={`Vidéo YouTube ${file.name}`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+                    )}
+
+                    {canDelete(file) && file.format !== "youtube" && (
+                      <button
+                        className="td-instrument-button"
+                        onClick={() => setSelectedDocumentId(file.id)}
+                      >
+                        <FaPlus />
+                        Associer un instrument
+                      </button>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        <section className="td-upload-section">
+          <div className="td-section-heading">
+            <div>
+              <span className="td-section-kicker">GESTION DES RESSOURCES</span>
+              <h2>
+                <FaPlus />
+                Ajouter des fichiers
+              </h2>
+              <p>
+                Enrichissez la fiche du morceau avec vos ressources.
+              </p>
+            </div>
+
+            {uploading && (
+              <span className="td-uploading-label">
+                Envoi en cours…
+              </span>
+            )}
+          </div>
+
+          <div className="td-upload-grid">
+            <div className="td-upload-card">
+              <div className="td-upload-icon td-upload-purple">
+                <FaFileAlt />
+              </div>
+              <div className="td-upload-copy">
+                <strong>Partition</strong>
+                <span>PDF, Word ou ODT</span>
+              </div>
+              <label className="td-upload-button">
+                <FaPlus />
+                Ajouter
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.odt"
+                  disabled={uploading}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void handleAddDocument(file);
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+
+            <div className="td-upload-card">
+              <div className="td-upload-icon td-upload-blue">
+                <FaHeadphones />
+              </div>
+              <div className="td-upload-copy">
+                <strong>Pistes audio</strong>
+                <span>MP3, WAV ou OGG · Plusieurs fichiers</span>
+              </div>
+              <label className="td-upload-button">
+                <FaPlus />
+                Ajouter
+                <input
+                  type="file"
+                  accept=".mp3,.wav,.ogg,audio/*"
+                  multiple
+                  disabled={uploading}
+                  onChange={(event) => {
+                    if (event.target.files) {
+                      void handleAddTutti(event.target.files);
+                    }
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="td-youtube-add">
+            <div className="td-youtube-add-icon">
+              <FaYoutube />
+            </div>
+
+            <div className="td-youtube-add-copy">
+              <strong>Ajouter une vidéo</strong>
+              <span>Ajoutez un lien vers une vidéo de répétition ou de référence.</span>
+            </div>
+
+            <div className="td-youtube-input-group">
+              <input
+                type="url"
+                placeholder="https://www.youtube.com/watch?v=..."
+                value={youtubeUrl}
+                onChange={(event) => setYoutubeUrl(event.target.value)}
+              />
+              <button
+                onClick={() => void handleAddYoutube()}
+                disabled={!youtubeUrl.trim() || uploading}
+              >
+                Ajouter le lien
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {selectedDocumentId !== null && (
+          <AddInstrumentForm
+            onSubmit={async (instrument) => {
+              try {
+                const res = await handleAddInstrumentSubmit(
+                  selectedDocumentId,
+                  instrument
+                );
+
+                setFiles((prev) =>
+                  prev.map((file) =>
+                    file.id === selectedDocumentId
+                      ? {
+                        ...file,
+                        instruments: res.instruments ?? [],
+                      }
+                      : file
+                  )
+                );
+
+                toast.success("Instrument associé.");
+                setSelectedDocumentId(null);
+              } catch {
+                toast.error("Erreur lors de l'association de l'instrument.");
+              }
+            }}
+            onClose={() => setSelectedDocumentId(null)}
+          />
+        )}
+
+        <footer className="td-footer">
+          <span>ESPACE MUSICAL</span>
+          <span>{trackData.ensemble} · {trackData.title}</span>
+        </footer>
       </main>
+
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
