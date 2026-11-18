@@ -12,6 +12,7 @@ interface AddInstrumentFormProps {
   onSubmit: (instrument: {
     id?: number;
     nom: string;
+    
     ensembleId?: number;
   }) => void;
   onClose: () => void;

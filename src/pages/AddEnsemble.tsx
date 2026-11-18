@@ -6,6 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { fetchEnsembleById, saveEnsemble } from "../api/ensemble";
 
 type TypeEnsemble =
   | "CHOEUR"
@@ -45,26 +46,40 @@ export const AddEnsemble = () => {
   const { ensembleId } = useParams<{ ensembleId: string }>();
   const { user, token, updateUserRole } = useAuth();
 
+  // useEffect(() => {
+  //   if (!ensembleId || !user) return;
+
+  //   console.log("Fetching ensembleId:", ensembleId, "userId:", user.id);
+
+  //   fetch(`http://localhost:8080/api/ensembles/${ensembleId}?userId=${user.id}`)
+  //     .then((res) => {
+  //       if (!res.ok) throw new Error("Ensemble non trouvé");
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       setName(data.nom);
+  //       setDescription(data.description);
+  //       setEnsembleType(data.typeEnsemble);
+  //       setEnsemble(data);
+  //     })
+  //     .catch((err) => {
+  //       toast.error("Erreur chargement de l'ensemble : " + err.message);
+  //     });
+  // }, [ensembleId, user]);
+
+
   useEffect(() => {
-    if (!ensembleId || !user) return;
+  if (!ensembleId || !user) return;
 
-    console.log("Fetching ensembleId:", ensembleId, "userId:", user.id);
-
-    fetch(`http://localhost:8080/api/ensembles/${ensembleId}?userId=${user.id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Ensemble non trouvé");
-        return res.json();
-      })
-      .then((data) => {
-        setName(data.nom);
-        setDescription(data.description);
-        setEnsembleType(data.typeEnsemble);
-        setEnsemble(data);
-      })
-      .catch((err) => {
-        toast.error("Erreur chargement de l'ensemble : " + err.message);
-      });
-  }, [ensembleId, user]);
+  fetchEnsembleById(ensembleId, Number(user.id))
+.then((data: Ensemble) => {
+      setName(data.nom);
+      setDescription(data.description);
+      setEnsembleType(data.typeEnsemble);
+      setEnsemble(data);
+    })
+  .catch((err: Error) => console.error(err));
+}, [ensembleId, user]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -103,28 +118,29 @@ export const AddEnsemble = () => {
 
     try {
       // Construire l'URL selon création ou modification
-      const url = ensembleId
-        ? `http://localhost:8080/api/ensembles/${ensembleId}?userId=${user.id}`
-        : `http://localhost:8080/api/ensembles?userId=${user.id}`;
+      // const url = ensembleId
+      //   ? `http://localhost:8080/api/ensembles/${ensembleId}?userId=${user.id}`
+      //   : `http://localhost:8080/api/ensembles?userId=${user.id}`;
 
-      const response = await fetch(url, {
-        method: ensembleId ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      // const response = await fetch(url, {
+      //   method: ensembleId ? "PUT" : "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     // Authorization: `Bearer ${token}`,
+      //   },
+      //   body: JSON.stringify(payload),
+      // });
 
-      if (!response.ok) {
-        throw new Error(
-          ensembleId
-            ? "Erreur lors de la mise à jour"
-            : "Erreur lors de la création",
-        );
-      }
+      // if (!response.ok) {
+      //   throw new Error(
+      //     ensembleId
+      //       ? "Erreur lors de la mise à jour"
+      //       : "Erreur lors de la création",
+      //   );
+      // }
 
-      const data = await response.json();
+      // const data = await response.json();
+      const data = await saveEnsemble(payload, ensembleId ?? null, token ?? "");
       const newEnsembleId = data.id;
       const isEditing = !!ensembleId;
 
@@ -134,9 +150,9 @@ export const AddEnsemble = () => {
       }
 
       //  Mise à jour du contexte pour que l'utilisateur devienne OWNER
-      if (!ensembleId) {
-        updateUserRole(newEnsembleId.toString(), "OWNER");
-      }
+      // if (!ensembleId) {
+      //   updateUserRole(newEnsembleId.toString(), "OWNER");
+      // }
 
       toast.success(
         ensembleId
